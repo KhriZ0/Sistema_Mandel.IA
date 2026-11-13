@@ -1,0 +1,429 @@
+:root {
+  --bg-color: #f3f4f6;
+  --yellow-primary: #f5b82e;
+  --yellow-hover: #e0a31c;
+  --yellow-light: #fef3c7;
+  --accent-red: #dc2626;
+  --text-dark: #1f2937;
+  --text-title: #111827;
+  --text-muted: #6b7280;
+  --border-color: #e5e7eb;
+  --white: #ffffff;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+}
+
+body {
+  background-color: var(--bg-color);
+  color: var(--text-dark);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.container {
+  width: 100%;
+  max-width: 960px;
+  background: var(--white);
+  border-radius: 20px;
+  border: 1px solid var(--border-color);
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  overflow: hidden;
+  min-height: 580px;
+}
+
+/* ================= PANEL IZQUIERDO ================= */
+.hero-panel {
+  flex: 1;
+  padding: 40px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid var(--border-color);
+  background: radial-gradient(circle at top left, rgba(245, 184, 46, 0.09), transparent 65%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Franja diagonal institucional idéntica al header del menú */
+.hero-panel::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 40px;
+  width: 240px;
+  height: 12px;
+  background: linear-gradient(135deg, #111827 33%, var(--accent-red) 33%, var(--accent-red) 66%, var(--yellow-primary) 66%);
+  transform: skewX(-45deg);
+}
+
+.hero-header {
+  display: flex;
+  gap: 18px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.mandela-avatar {
+  width: 82px;
+  height: 82px;
+  border-radius: 50%;
+  border: 3px solid var(--yellow-primary);
+  box-shadow: var(--shadow-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.mandela-avatar svg {
+  width: 100%;
+  height: 100%;
+}
+
+.hero-quote {
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #374151;
+  line-height: 1.4;
+}
+
+.hero-quote-author {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-title);
+  text-align: right;
+  margin-top: 4px;
+}
+
+.hero-body {
+  margin: 26px 0;
+}
+
+.institution-header-block {
+  border-left: 4px solid var(--yellow-primary);
+  padding-left: 14px;
+}
+
+.institution-name {
+  font-size: 1.65rem;
+  font-weight: 900;
+  color: var(--text-title);
+  line-height: 1.08;
+  letter-spacing: -0.5px;
+}
+
+.institution-subtitle {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-dark);
+  margin-top: 4px;
+}
+
+.institution-tagline {
+  font-size: 0.78rem;
+  font-style: italic;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+.hero-motto {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #374151;
+  margin: 22px 0 14px 0;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.feature-card {
+  background: #f9fafb;
+  padding: 12px;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  transition: all 0.2s ease;
+}
+
+.feature-card:hover {
+  border-color: var(--yellow-primary);
+  background-color: #fffbeb;
+}
+
+.feature-icon {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  background: var(--yellow-light);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.feature-icon svg {
+  width: 18px;
+  height: 18px;
+  fill: var(--text-title);
+}
+
+.feature-text {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  line-height: 1.25;
+}
+
+.hero-footer {
+  height: 6px;
+  width: 100%;
+  background: linear-gradient(90deg, #111827 0%, var(--accent-red) 50%, var(--yellow-primary) 100%);
+  border-radius: 3px;
+}
+
+/* ================= PANEL DERECHO (FORMULARIO) ================= */
+.form-panel {
+  width: 440px;
+  padding: 36px 42px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  background: var(--white);
+  position: relative;
+}
+
+.side-text {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%) rotate(90deg);
+  transform-origin: right center;
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 3px;
+  color: #9ca3af;
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+.form-header {
+  text-align: center;
+  margin-bottom: 24px;
+}
+
+.form-title {
+  font-size: 1.7rem;
+  font-weight: 800;
+  color: var(--text-title);
+  letter-spacing: -0.3px;
+}
+
+.form-subtitle {
+  font-size: 0.85rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+  line-height: 1.4;
+}
+
+.institution-tag {
+  font-weight: 700;
+  color: var(--text-title);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.input-group {
+  position: relative;
+}
+
+.input-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 19px;
+  height: 19px;
+  fill: #6b7280;
+}
+
+.toggle-password {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 2px;
+  display: flex;
+  align-items: center;
+}
+
+.toggle-password svg {
+  width: 18px;
+  height: 18px;
+  fill: #6b7280;
+}
+
+.toggle-password:hover svg {
+  fill: var(--text-title);
+}
+
+.input-field {
+  width: 100%;
+  padding: 13px 42px;
+  border: 1.5px solid var(--border-color);
+  border-radius: 12px;
+  font-size: 0.92rem;
+  color: var(--text-title);
+  outline: none;
+  background: #f9fafb;
+  transition: all 0.2s ease;
+}
+
+.input-field:focus {
+  background: var(--white);
+  border-color: var(--yellow-primary);
+  box-shadow: 0 0 0 3px rgba(245, 184, 46, 0.18);
+}
+
+.forgot-link {
+  align-self: flex-end;
+  font-size: 0.8rem;
+  color: var(--accent-red);
+  text-decoration: none;
+  font-weight: 600;
+  margin-top: -2px;
+}
+
+.forgot-link:hover {
+  text-decoration: underline;
+}
+
+.btn-submit {
+  margin-top: 6px;
+  padding: 13px;
+  background: var(--yellow-primary);
+  color: var(--text-title);
+  border: 1.5px solid #e5a922;
+  border-radius: 12px;
+  font-size: 0.98rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.2s ease;
+}
+
+.btn-submit:hover {
+  background: var(--yellow-hover);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.btn-submit:active {
+  transform: translateY(0);
+}
+
+.btn-submit svg {
+  width: 18px;
+  height: 18px;
+}
+
+/* ================= MASCOTA / LOGO IA (GATO) ================= */
+.mascot-section {
+  text-align: center;
+  margin-top: 22px;
+  padding: 12px 14px;
+  background: #fffbeb;
+  border: 1px solid #fde68a;
+  border-radius: 14px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.mascot-avatar {
+  width: 66px;
+  height: 66px;
+  margin-bottom: 6px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
+}
+
+.mascot-name {
+  font-size: 0.95rem;
+  font-weight: 900;
+  color: var(--accent-red);
+  letter-spacing: 0.6px;
+}
+
+.mascot-title {
+  font-size: 0.76rem;
+  font-weight: 700;
+  color: var(--text-title);
+}
+
+.mascot-sub {
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  margin-top: 1px;
+}
+
+.form-footer {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+}
+
+.form-footer svg {
+  width: 13px;
+  height: 13px;
+  fill: currentColor;
+}
+
+@media (max-width: 850px) {
+  .container {
+    flex-direction: column;
+    max-width: 480px;
+  }
+  .form-panel {
+    width: 100%;
+  }
+  .hero-panel {
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+  .side-text {
+    display: none;
+  }
+}

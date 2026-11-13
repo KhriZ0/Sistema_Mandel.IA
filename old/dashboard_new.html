@@ -1,0 +1,1183 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C.E.E. Nelson Mandela - Menú Offline</title>
+  <style>
+    :root {
+      --bg-color: #f3f4f6;
+      --yellow-primary: #f5b82e;
+      --yellow-hover: #e0a31c;
+      --yellow-light: #fef3c7;
+      --accent-red: #dc2626;
+      --dark-surface: #111827;
+      --text-dark: #1f2937;
+      --text-title: #111827;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      padding-bottom: 40px;
+      overflow-x: hidden;
+    }
+
+    /* ================= HEADER TOP ================= */
+    .top-header {
+      background-color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 12px 28px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top-header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 280px;
+      width: 320px;
+      height: 14px;
+      background: linear-gradient(135deg, #111827 33%, var(--accent-red) 33%, var(--accent-red) 66%, var(--yellow-primary) 66%);
+      transform: skewX(-45deg);
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-shrink: 0;
+    }
+
+    .avatar-mandela {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2.5px solid var(--yellow-primary);
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .avatar-mandela svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid var(--text-dark);
+      padding-right: 18px;
+    }
+
+    .brand-title h1 {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      color: var(--text-title);
+    }
+
+    .brand-subtitle {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-top: 2px;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    .ai-badge-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-left: 4px;
+      cursor: pointer;
+      padding: 6px 10px;
+      border-radius: 12px;
+      transition: background-color 0.2s ease;
+    }
+
+    .ai-badge-header:hover {
+      background-color: #fef3c7;
+    }
+
+    .ai-header-avatar {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+    }
+
+    .ai-header-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .ai-header-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--accent-red);
+      letter-spacing: 0.5px;
+    }
+
+    .ai-header-role {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .ai-header-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .quote-container {
+      font-size: 12.5px;
+      font-style: italic;
+      color: #374151;
+      max-width: 300px;
+      line-height: 1.4;
+      text-align: center;
+      padding: 0 12px;
+    }
+
+    .user-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease;
+    }
+
+    .user-card:hover {
+      border-color: var(--yellow-primary);
+    }
+
+    .user-card svg {
+      width: 22px;
+      height: 22px;
+      fill: #374151;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .user-role {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .location-info {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    #live-datetime {
+      display: inline-block;
+      margin-top: 2px;
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ================= BARRA DE MEMBRETE Y BOTONES ================= */
+    .control-bar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 18px 28px 10px 28px;
+      flex-wrap: wrap;
+    }
+
+    .membrete-box {
+      background: linear-gradient(135deg, var(--white) 0%, #fffbeb 100%);
+      border: 1.5px solid var(--yellow-primary);
+      border-left: 6px solid var(--accent-red);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+      user-select: none;
+      flex-shrink: 0;
+    }
+
+    .membrete-icon {
+      background: var(--yellow-primary);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .membrete-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #111827;
+    }
+
+    .membrete-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .membrete-badge {
+      font-size: 10px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      color: var(--accent-red);
+    }
+
+    .membrete-title {
+      font-weight: 900;
+      font-size: 16px;
+      color: #111827;
+      line-height: 1.2;
+    }
+
+    .membrete-desc {
+      font-size: 11.5px;
+      color: #4b5563;
+    }
+
+    .quick-actions-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+    }
+
+    .action-btn {
+      background-color: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      border-color: var(--yellow-primary);
+      background-color: #fffbeb;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-btn.active {
+      background-color: var(--yellow-light);
+      border-color: var(--yellow-primary);
+      color: #111827;
+      font-weight: 700;
+      box-shadow: 0 2px 5px rgba(245, 184, 46, 0.25);
+    }
+
+    .action-btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background-color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover .action-btn-icon,
+    .action-btn.active .action-btn-icon {
+      background-color: var(--yellow-primary);
+    }
+
+    .action-btn-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #1f2937;
+    }
+
+    /* ================= DASHBOARD PRINCIPAL ================= */
+    .main-layout {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 8px 28px;
+    }
+
+    .content-area {
+      width: 100%;
+      background: var(--white);
+      border-radius: 14px;
+      padding: 28px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      min-height: 460px;
+    }
+
+    .dashboard-header {
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 16px;
+      margin-bottom: 22px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .dashboard-header h2 {
+      font-size: 22px;
+      color: #111827;
+    }
+
+    .dashboard-header p {
+      color: #6b7280;
+      margin-top: 4px;
+      font-size: 14px;
+    }
+
+    .status-pill {
+      background-color: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      background-color: #10b981;
+      border-radius: 50%;
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 10px;
+    }
+
+    .stat-card {
+      background-color: #f9fafb;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .stat-label {
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .stat-value {
+      font-size: 24px;
+      font-weight: 800;
+      color: var(--text-title);
+    }
+
+    .stat-sub {
+      font-size: 11.5px;
+      color: #4b5563;
+    }
+
+    /* ================= BOTÓN FLOTANTE MANDEL.IA ================= */
+    .ai-fab-wrapper {
+      position: fixed;
+      bottom: 26px;
+      right: 28px;
+      z-index: 998;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .ai-fab-tooltip {
+      background: var(--dark-surface);
+      color: var(--white);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-size: 12.5px;
+      font-weight: 700;
+      border: 1px solid rgba(245, 184, 46, 0.5);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      opacity: 0;
+      transform: translateX(10px);
+      pointer-events: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ai-fab-wrapper:hover .ai-fab-tooltip {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .ai-fab-btn {
+      position: relative;
+      width: 68px;
+      height: 68px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      background: var(--yellow-light);
+      box-shadow: 0 10px 25px rgba(17, 24, 39, 0.3), 0 0 18px rgba(245, 184, 46, 0.45);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease;
+    }
+
+    /* Anillo giratorio exterior */
+    .ai-fab-btn::before {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      background: conic-gradient(from 0deg, var(--yellow-primary), var(--accent-red), #111827, var(--yellow-primary));
+      z-index: -1;
+      animation: spinRing 4s linear infinite;
+    }
+
+    /* Pulso exterior */
+    .ai-fab-btn::after {
+      content: "";
+      position: absolute;
+      inset: -4px;
+      border-radius: 50%;
+      border: 2px solid var(--yellow-primary);
+      opacity: 0.6;
+      animation: pulseAura 2.2s ease-out infinite;
+      pointer-events: none;
+    }
+
+    .ai-fab-btn:hover {
+      transform: scale(1.09) rotate(-3deg);
+      box-shadow: 0 14px 30px rgba(17, 24, 39, 0.4), 0 0 24px rgba(220, 38, 38, 0.55);
+    }
+
+    .ai-fab-btn:active {
+      transform: scale(0.96);
+    }
+
+    .ai-fab-btn svg {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+    }
+
+    .ai-fab-badge {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      background: var(--accent-red);
+      color: var(--white);
+      font-size: 9.5px;
+      font-weight: 900;
+      padding: 2px 6px;
+      border-radius: 10px;
+      border: 2px solid var(--dark-surface);
+      letter-spacing: 0.5px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+      z-index: 2;
+    }
+
+    @keyframes spinRing {
+      100% { transform: rotate(360deg); }
+    }
+
+    @keyframes pulseAura {
+      0% { transform: scale(1); opacity: 0.7; }
+      100% { transform: scale(1.38); opacity: 0; }
+    }
+
+    /* ================= BARRA LATERAL DESPLEGABLE (DRAWER CHAT IA) ================= */
+    .chat-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 24, 39, 0.35);
+      backdrop-filter: blur(2px);
+      z-index: 999;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .chat-backdrop.open {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .ai-chat-drawer {
+      position: fixed;
+      top: 0;
+      right: -430px;
+      width: 410px;
+      max-width: 100vw;
+      height: 100vh;
+      background: var(--white);
+      box-shadow: -8px 0 30px rgba(0, 0, 0, 0.18);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      border-left: 3px solid var(--yellow-primary);
+      transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .ai-chat-drawer.open {
+      right: 0;
+    }
+
+    /* Header del Chat */
+    .chat-drawer-header {
+      background: linear-gradient(135deg, #111827 0%, #1f2937 100%);
+      color: var(--white);
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--accent-red);
+    }
+
+    .chat-header-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chat-header-logo {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chat-header-logo svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    .chat-header-title h3 {
+      font-size: 16px;
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      color: var(--yellow-primary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .chat-header-title span {
+      font-size: 11px;
+      color: #d1d5db;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .online-indicator {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .chat-close-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: none;
+      color: var(--white);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      transition: background 0.2s;
+    }
+
+    .chat-close-btn:hover {
+      background: var(--accent-red);
+    }
+
+    /* Cuerpo de Mensajes */
+    .chat-messages {
+      flex: 1;
+      padding: 18px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      background-color: #f9fafb;
+    }
+
+    .msg-bubble {
+      max-width: 85%;
+      padding: 11px 14px;
+      border-radius: 14px;
+      font-size: 13.5px;
+      line-height: 1.45;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .msg-ai {
+      align-self: flex-start;
+      background: var(--white);
+      color: var(--text-dark);
+      border: 1px solid var(--border-color);
+      border-bottom-left-radius: 4px;
+    }
+
+    .msg-ai strong {
+      color: var(--accent-red);
+      font-size: 11.5px;
+      display: block;
+      margin-bottom: 3px;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--dark-surface);
+      color: var(--white);
+      border-bottom-right-radius: 4px;
+    }
+
+    /* Sugerencias rápidas dentro del chat */
+    .chat-suggestions {
+      padding: 10px 16px;
+      background: var(--white);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+    }
+
+    .suggestion-chip {
+      background: var(--yellow-light);
+      border: 1px solid var(--yellow-primary);
+      color: #111827;
+      font-size: 11.5px;
+      font-weight: 600;
+      padding: 5px 10px;
+      border-radius: 16px;
+      white-space: nowrap;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+
+    .suggestion-chip:hover {
+      background: var(--yellow-primary);
+    }
+
+    /* Input del Chat */
+    .chat-input-area {
+      padding: 14px 16px;
+      background: var(--white);
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .chat-input-area input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid var(--border-color);
+      border-radius: 10px;
+      font-size: 13.5px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .chat-input-area input:focus {
+      border-color: var(--yellow-primary);
+    }
+
+    .chat-send-btn {
+      background: var(--yellow-primary);
+      color: #111827;
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.2s, transform 0.1s;
+    }
+
+    .chat-send-btn:hover {
+      background: var(--yellow-hover);
+    }
+
+    .chat-send-btn:active {
+      transform: scale(0.95);
+    }
+
+    .chat-send-btn svg {
+      width: 18px;
+      height: 18px;
+      fill: #111827;
+    }
+
+    @media (max-width: 1150px) {
+      .quote-container {
+        display: none;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .top-header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .user-profile {
+        align-items: flex-start;
+      }
+      .location-info {
+        text-align: left;
+      }
+      .membrete-box {
+        width: 100%;
+      }
+    }
+  </style>
+</head> 
+<body>
+
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="top-header">
+    <div class="brand-container">
+      <div class="avatar-mandela">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="50" fill="#f5b82e"/>
+          <circle cx="50" cy="40" r="22" fill="#1f1f1f"/>
+          <path d="M15 90 C15 65 30 55 50 55 C70 55 85 65 85 90 Z" fill="#1f1f1f"/>
+        </svg>
+      </div>
+      
+      <div class="brand-title">
+        <h1>C.E.E.<br>Nelson Mandela</h1>
+        <span class="brand-subtitle">Sistema Integral de Gestión Educativa</span>
+        <span class="brand-tagline">"Educar hoy para un mejor mañana"</span>
+      </div>
+
+      <div class="ai-badge-header" onclick="toggleChatIA()" title="Abrir chat con MANDEL.IA">
+        <svg class="ai-header-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+          <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+          <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+          <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+          <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+          <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+          <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+          <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="ai-header-info">
+          <span class="ai-header-name">MANDEL.IA</span>
+          <span class="ai-header-role">Asistente IA</span>
+          <span class="ai-header-sub">Académico Offline</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-container">
+      "La educación es el arma más poderosa para cambiar el mundo."<br>
+      <strong>— Nelson Mandela.</strong>
+    </div>
+
+    <div class="user-profile">
+      <div class="user-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <div class="user-info">
+          <span class="user-name">{USER}</span>
+          <span class="user-role">Docente</span>
+        </div>
+        <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="location-info">
+        <strong>Ocumare, Miranda</strong><br>
+        Jardines de Betania • Valles del Tuy<br>
+        <span id="live-datetime">Cargando fecha...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MEMBRETE DE GESTIÓN DE LICEO Y BOTONES -->
+  <section class="control-bar-container">
+    <div class="membrete-box">
+      <div class="membrete-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+      </div>
+      <div class="membrete-text">
+        <span class="membrete-badge">Nivel Media General</span>
+        <span class="membrete-title">Gestión de Liceo</span>
+        <span class="membrete-desc">Panel Docente</span>
+      </div>
+    </div>
+
+    <div class="quick-actions-grid" id="actions-nav">
+      <button type="button" class="action-btn active" onclick="mostrarInicio(this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </div>
+        <span>Inicio</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Cargar Calificaciones', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        </div>
+        <span>Cargar Calificaciones</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Generar Boletas', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <span>Generar Boletas</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Ver Horarios', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        </div>
+        <span>Ver Horarios</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Consultar Estudiantes', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </div>
+        <span>Consultar Estudiantes</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div class="main-layout">
+    <main class="content-area" id="main-content">
+      <!-- Contenido cargado dinámicamente desde mostrarInicio() -->
+    </main>
+  </div>
+
+  <!-- BOTÓN FLOTANTE CON EL LOGO SUPERIOR DE MANDEL.IA -->
+  <div class="ai-fab-wrapper">
+    <div class="ai-fab-tooltip">
+      <span>⚡ Consultar a MANDEL.IA</span>
+    </div>
+    <button type="button" class="ai-fab-btn" onclick="toggleChatIA()" aria-label="Abrir Asistente MANDEL.IA">
+      <span class="ai-fab-badge">IA</span>
+      <!-- Mismo logo de la parte superior -->
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+        <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+        <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+        <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+        <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+        <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+        <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+        <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+        <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+        <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+        <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+        <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- FONDO OSCURO AL ABRIR EL CHAT -->
+  <div class="chat-backdrop" id="chat-backdrop" onclick="toggleChatIA()"></div>
+
+  <!-- BARRA LATERAL DESPLEGABLE DEL CHAT MANDEL.IA -->
+  <aside class="ai-chat-drawer" id="ai-chat-drawer">
+    <div class="chat-drawer-header">
+      <div class="chat-header-brand">
+        <div class="chat-header-logo">
+          <!-- Mismo logo de la parte superior -->
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+            <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+            <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+            <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+            <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+            <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+            <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+            <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+            <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+            <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+            <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+            <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="chat-header-title">
+          <h3>MANDEL.IA</h3>
+          <span><i class="online-indicator"></i> Motor Local Offline • Listo</span>
+        </div>
+      </div>
+      <button type="button" class="chat-close-btn" onclick="toggleChatIA()" title="Cerrar chat">✕</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg-bubble msg-ai">
+        <strong>MANDEL.IA</strong>
+        ¡Hola, {USER}! Estoy activo en modo local sin internet. Puedo ayudarte a consultar promedios, verificar secciones de 1ro a 5to año o redactar observaciones para boletas. ¿Qué necesitas?
+      </div>
+    </div>
+
+    <div class="chat-suggestions">
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Resumen de secciones')">📊 Resumen de secciones</button>
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Estudiantes aplazados')">⚠️ Estudiantes aplazados</button>
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Redactar observación')">📝 Redactar observación</button>
+    </div>
+
+    <form class="chat-input-area" onsubmit="enviarMensaje(event)">
+      <input type="text" id="chat-input" placeholder="Pregúntale algo a MANDEL.IA..." autocomplete="off">
+      <button type="submit" class="chat-send-btn" title="Enviar mensaje">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </form>
+  </aside>
+
+  <script>
+    // Reloj en tiempo real 100% offline
+    function actualizarReloj() {
+      const elemento = document.getElementById('live-datetime');
+      if (!elemento) return;
+
+      const ahora = new Date();
+      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+      const fechaFormateada = ahora.toLocaleDateString('es-ES', opcionesFecha);
+      const horaFormateada = ahora.toLocaleTimeString('es-ES');
+
+      elemento.textContent = `${fechaFormateada} • ${horaFormateada}`;
+    }
+
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+
+    // Gestión de estado activo en los botones
+    function activarBoton(botonSeleccionado) {
+      const botones = document.querySelectorAll('.action-btn');
+      botones.forEach(btn => btn.classList.remove('active'));
+      if (botonSeleccionado) {
+        botonSeleccionado.classList.add('active');
+      }
+    }
+
+    // Vista Principal (Inicio)
+    function mostrarInicio(boton) {
+      activarBoton(boton);
+      const contenedor = document.getElementById('main-content');
+      contenedor.innerHTML = `
+        <div class="dashboard-header">
+          <div>
+            <h2>Bienvenida, {USER}!</h2>
+            <p>Panel principal de Gestión de Liceo. Selecciona una herramienta superior para comenzar.</p>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            Modo Offline Activo
+          </div>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-label">Nivel Activo</span>
+            <span class="stat-value">Media General</span>
+            <span class="stat-sub">1ro a 5to Año</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Base de Datos Local</span>
+            <span class="stat-value">Sincronizada</span>
+            <span class="stat-sub">Lista para consultas sin conexión</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-label">Asistente MANDEL.IA</span>
+            <span class="stat-value">Disponible</span>
+            <span class="stat-sub">Haz clic en el ícono inferior derecho</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Interacción visual para los módulos rápidos
+    function seleccionarAccion(modulo, boton) {
+      activarBoton(boton);
+      const contenedor = document.getElementById('main-content');
+      contenedor.innerHTML = `
+        <div class="dashboard-header">
+          <div>
+            <h2>Módulo: ${modulo}</h2>
+            <p>Has abierto la vista de trabajo para <strong>${modulo}</strong> dentro de Gestión de Liceo.</p>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            Sesión Local
+          </div>
+        </div>
+        <p style="color: #6b7280; font-size: 14px;">Aquí puedes integrar los formularios, tablas o consultas correspondientes a este apartado.</p>
+      `;
+    }
+
+    // Control de apertura/cierre de la barra lateral de MANDEL.IA
+    function toggleChatIA() {
+      const drawer = document.getElementById('ai-chat-drawer');
+      const backdrop = document.getElementById('chat-backdrop');
+      const isOpen = drawer.classList.contains('open');
+
+      if (isOpen) {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+      } else {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        setTimeout(() => document.getElementById('chat-input').focus(), 200);
+      }
+    }
+
+    // Envío de mensajes en el chat local
+    function enviarMensaje(event) {
+      event.preventDefault();
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      agregarBurbuja(texto, 'user');
+      input.value = '';
+
+      // Simulación de respuesta local
+      setTimeout(() => {
+        agregarBurbuja(`Procesando consulta en la base de datos local sobre: "<em>${texto}</em>"... (Conecta aquí tu endpoint de Ollama / Python).`, 'ai');
+      }, 450);
+    }
+
+    function enviarSugerencia(texto) {
+      document.getElementById('chat-input').value = texto;
+      enviarMensaje(new Event('submit'));
+    }
+
+    function agregarBurbuja(htmlTexto, remitente) {
+      const contenedor = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `msg-bubble ${remitente === 'user' ? 'msg-user' : 'msg-ai'}`;
+      
+      if (remitente === 'ai') {
+        div.innerHTML = `<strong>MANDEL.IA</strong>${htmlTexto}`;
+      } else {
+        div.textContent = htmlTexto;
+      }
+
+      contenedor.appendChild(div);
+      contenedor.scrollTop = contenedor.scrollHeight;
+    }
+
+    // Cargar la vista de inicio al abrir la página
+    mostrarInicio(document.querySelector('.action-btn.active'));
+  </script>
+</body>
+</html>

@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C.E.E. Nelson Mandela - Login</title>
+  <style>
+    :root {
+      --bg-gradient: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%);
+      --card-bg: #ffffff;
+      --text-main: #1f2937;
+      --text-muted: #6b7280;
+      --primary-yellow: #f59e0b;
+      --primary-yellow-hover: #d97706;
+      --accent-red: #dc2626;
+      --border-color: #e5e7eb;
+      --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    }
+
+    body {
+      background: var(--bg-gradient);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 960px;
+      background: var(--card-bg);
+      border-radius: 20px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      overflow: hidden;
+      min-height: 580px;
+    }
+
+    /* Left Hero Panel */
+    .hero-panel {
+      flex: 1;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      border-right: 1px solid var(--border-color);
+      background: radial-gradient(circle at top left, rgba(245, 158, 11, 0.05), transparent);
+      position: relative;
+    }
+
+    .hero-header {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .mandela-avatar-container {
+      position: relative;
+    }
+
+    .mandela-avatar {
+      width: 100px;
+      height: 100px;
+      border-radius: 50%;
+      background: #f3f4f6;
+      border: 3px solid #ffffff;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .mandela-avatar svg {
+      width: 70px;
+      height: 70px;
+      fill: #4b5563;
+    }
+
+    .hero-quote {
+      font-size: 0.85rem;
+      font-style: italic;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .institution-name {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: var(--text-main);
+      line-height: 1.1;
+    }
+
+    .institution-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .hero-body {
+      margin: 30px 0;
+    }
+
+    .hero-motto {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #374151;
+      margin-bottom: 20px;
+    }
+
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    .feature-card {
+      background: #f9fafb;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid #f3f4f6;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .feature-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: var(--text-main);
+    }
+
+    .feature-text {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #4b5563;
+      line-height: 1.2;
+    }
+
+    .hero-footer {
+      height: 6px;
+      width: 100%;
+      background: linear-gradient(90deg, var(--accent-red) 0%, var(--primary-yellow) 100%);
+      border-radius: 3px;
+    }
+
+    /* Right Form Panel */
+    .form-panel {
+      width: 440px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+      position: relative;
+    }
+
+    .side-text {
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%) rotate(90deg);
+      transform-origin: right center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 3px;
+      color: #9ca3af;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .form-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .form-title {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .form-subtitle {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 6px;
+    }
+
+    .institution-tag {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .login-form {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    .input-group {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 20px;
+      height: 20px;
+      fill: #9ca3af;
+    }
+
+    .toggle-password {
+      position: absolute;
+      right: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .toggle-password svg {
+      width: 18px;
+      height: 18px;
+      fill: #9ca3af;
+    }
+
+    .input-field {
+      width: 100%;
+      padding: 14px 42px;
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      font-size: 0.95rem;
+      outline: none;
+      background: #f9fafb;
+    }
+
+    .input-field:focus {
+      background: #ffffff;
+      border-color: var(--primary-yellow);
+    }
+
+    .forgot-link {
+      align-self: flex-end;
+      font-size: 0.8rem;
+      color: var(--accent-red);
+      text-decoration: none;
+      font-weight: 500;
+      margin-top: -4px;
+    }
+
+    .btn-submit {
+      margin-top: 10px;
+      padding: 14px;
+      background: var(--primary-yellow);
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.25);
+    }
+
+    .btn-submit svg {
+      width: 18px;
+      height: 18px;
+      fill: currentColor;
+    }
+
+    /* Mascot Section */
+    .mascot-section {
+      text-align: center;
+      margin-top: 25px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .mascot-avatar {
+      width: 64px;
+      height: 64px;
+      margin-bottom: 6px;
+    }
+
+    .mascot-name {
+      font-size: 1rem;
+      font-weight: 800;
+      color: #991b1b;
+      letter-spacing: 0.5px;
+    }
+
+    .mascot-title {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .mascot-sub {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+    }
+
+    .form-footer {
+      margin-top: 20px;
+      text-align: center;
+      font-size: 0.7rem;
+      color: #9ca3af;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+
+    .form-footer svg {
+      width: 12px;
+      height: 12px;
+      fill: currentColor;
+    }
+
+    @media (max-width: 850px) {
+      .container {
+        flex-direction: column;
+        max-width: 480px;
+      }
+      .form-panel {
+        width: 100%;
+      }
+      .hero-panel {
+        border-right: none;
+        border-bottom: 1px solid var(--border-color);
+      }
+      .side-text {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Panel Izquierdo -->
+    <div class="hero-panel">
+      <div>
+        <div class="hero-header">
+          <div class="mandela-avatar-container">
+            <div class="mandela-avatar">
+              <svg viewBox="0 0 24 24">
+                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/>
+              </svg>
+            </div>
+          </div>
+          <div>
+            <p class="hero-quote">"La educación es el arma más poderosa para cambiar el mundo."</p>
+            <p class="hero-quote" style="text-align: right; font-weight: 600;">— Nelson Mandela</p>
+          </div>
+        </div>
+
+        <div class="hero-body">
+          <h1 class="institution-name">C.E.E.<br>Nelson Mandela</h1>
+          <p class="institution-subtitle">Sistema Integral de Gestión Educativa</p>
+          
+          <div style="margin-top: 25px;">
+            <p class="hero-motto">Formación, inclusión y oportunidades para un mejor mañana.</p>
+            
+            <div class="features-grid">
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+                </div>
+                <span class="feature-text">Primaria y Media General</span>
+              </div>
+              
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-5 14H7v-2h7v2zm3-4H7v-2h10v2zm0-4H7V7h10v2z"/></svg>
+                </div>
+                <span class="feature-text">Gestión Académica</span>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-5.45 9-12V5l-9-4zm-2 16l-4-4 1.41-1.41L10 14.17l6.59-6.59L18 9l-8 8z"/></svg>
+                </div>
+                <span class="feature-text">Información Segura</span>
+              </div>
+
+              <div class="feature-card">
+                <div class="feature-icon">
+                  <svg viewBox="0 0 24 24"><path d="M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z"/></svg>
+                </div>
+                <span class="feature-text">Compromiso Institucional</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-footer"></div>
+    </div>
+
+    <!-- Panel Derecho (Formulario con Redirección a dashboard.html) -->
+    <div class="form-panel">
+      <div class="side-text">DISCIPLINA | RESPETO | EDUCACIÓN | FUTURO</div>
+
+      <div class="form-header">
+        <h2 class="form-title">Bienvenido</h2>
+        <p class="form-subtitle">Accede al Sistema Integral de Gestión Educativa<br><span class="institution-tag">C.E.E. Nelson Mandela</span></p>
+      </div>
+
+      <!-- Redirección automática al enviar -->
+      <form class="login-form" onsubmit="event.preventDefault(); window.location.href='dashboard.html';">
+        <div class="input-group">
+          <input type="text" class="input-field" placeholder="Usuario" required>
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+
+        <div class="input-group">
+          <input type="password" id="password" class="input-field" placeholder="Contraseña" required>
+          <svg class="input-icon" viewBox="0 0 24 24">
+            <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
+          </svg>
+          <button type="button" class="toggle-password" onclick="togglePasswordVisibility()">
+            <svg viewBox="0 0 24 24">
+              <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+            </svg>
+          </button>
+        </div>
+
+        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+
+        <button type="submit" class="btn-submit">
+          Iniciar sesión
+          <svg viewBox="0 0 24 24">
+            <path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          </svg>
+        </button>
+      </form>
+
+      <!-- Mascota / Asistente -->
+      <div class="mascot-section">
+        <svg class="mascot-avatar" viewBox="0 0 100 100">
+          <circle cx="50" cy="50" r="45" fill="#fef3c7" stroke="#f59e0b" stroke-width="3"/>
+          <path d="M30 35 L40 15 L50 30 L60 15 L70 35 Z" fill="#dc2626"/>
+          <circle cx="35" cy="45" r="6" fill="#1f2937"/>
+          <circle cx="65" cy="45" r="6" fill="#1f2937"/>
+          <path d="M40 65 Q50 75 60 65" stroke="#1f2937" stroke-width="3" fill="none"/>
+        </svg>
+        <span class="mascot-name">MANDEL.IA</span>
+        <span class="mascot-title">Asistente Académico Inteligente</span>
+        <span class="mascot-sub">Conocimiento que acompaña tu educación</span>
+      </div>
+
+      <div class="form-footer">
+        <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+        <span>Acceso controlado según tu perfil institucional</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function togglePasswordVisibility() {
+      const passwordInput = document.getElementById('password');
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    }
+  </script>
+
+</body>
+</html>

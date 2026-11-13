@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C.E.E. Nelson Mandela - Menú Offline</title>
+  <style>
+    :root {
+      --bg-color: #f3f4f6;
+      --yellow-primary: #f5b82e;
+      --yellow-hover: #e0a31c;
+      --yellow-light: #fef3c7;
+      --accent-red: #dc2626;
+      --text-dark: #1f2937;
+      --text-title: #111827;
+      --text-muted: #6b7280;
+      --border-color: #e5e7eb;
+      --white: #ffffff;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-dark);
+      padding-bottom: 24px;
+    }
+
+    /* ================= HEADER TOP ================= */
+    .top-header {
+      background-color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 28px;
+      border-bottom: 1px solid var(--border-color);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .top-header::after {
+      content: "";
+      position: absolute;
+      top: 0;
+      right: 280px;
+      width: 320px;
+      height: 14px;
+      background: linear-gradient(135deg, #111827 33%, var(--accent-red) 33%, var(--accent-red) 66%, var(--yellow-primary) 66%);
+      transform: skewX(-45deg);
+    }
+
+    .brand-container {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .avatar-mandela {
+      width: 58px;
+      height: 58px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      border: 2.5px solid var(--yellow-primary);
+      box-shadow: var(--shadow-sm);
+      flex-shrink: 0;
+    }
+
+    .avatar-mandela svg {
+      width: 100%;
+      height: 100%;
+    }
+
+    /* Contenedor del título con la línea vertical al borde derecho */
+    .brand-title {
+      display: flex;
+      flex-direction: column;
+      border-right: 2px solid var(--text-dark);
+      padding-right: 18px;
+    }
+
+    .brand-title h1 {
+      font-size: 24px;
+      font-weight: 900;
+      line-height: 1.05;
+      letter-spacing: -0.5px;
+      color: var(--text-title);
+    }
+
+    .brand-subtitle {
+      font-size: 12.5px;
+      font-weight: 700;
+      color: var(--text-dark);
+      margin-top: 2px;
+    }
+
+    .brand-tagline {
+      font-size: 11px;
+      font-style: italic;
+      color: var(--text-muted);
+    }
+
+    /* Logo y datos de MANDEL.IA ubicados justo después de la línea separadora */
+    .ai-badge-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding-left: 14px;
+    }
+
+    .ai-header-avatar {
+      width: 44px;
+      height: 44px;
+      flex-shrink: 0;
+      filter: drop-shadow(0 1px 2px rgba(0,0,0,0.08));
+    }
+
+    .ai-header-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.2;
+    }
+
+    .ai-header-name {
+      font-size: 14px;
+      font-weight: 900;
+      color: var(--accent-red);
+      letter-spacing: 0.5px;
+    }
+
+    .ai-header-role {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--text-title);
+    }
+
+    .ai-header-sub {
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+
+    .quote-container {
+      font-size: 13px;
+      font-style: italic;
+      color: #374151;
+      max-width: 310px;
+      line-height: 1.4;
+      margin-left: -475px; 
+    }
+
+    .user-profile {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 5px;
+    }
+
+    .user-card {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--white);
+      border: 1px solid var(--border-color);
+      padding: 6px 14px;
+      border-radius: 24px;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      transition: border-color 0.2s ease;
+    }
+
+    .user-card:hover {
+      border-color: var(--yellow-primary);
+    }
+
+    .user-card svg {
+      width: 22px;
+      height: 22px;
+      fill: #374151;
+    }
+
+    .user-info {
+      display: flex;
+      flex-direction: column;
+      line-height: 1.15;
+    }
+
+    .user-name {
+      font-weight: 700;
+      font-size: 13px;
+    }
+
+    .user-role {
+      font-size: 10.5px;
+      color: var(--text-muted);
+    }
+
+    .location-info {
+      font-size: 11px;
+      color: var(--text-muted);
+      text-align: right;
+      line-height: 1.35;
+    }
+
+    #live-datetime {
+      display: inline-block;
+      margin-top: 2px;
+      font-weight: 600;
+      color: #374151;
+      background: #f3f4f6;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+
+    /* ================= PESTAÑA DE NIVEL Y ACCIONES RÁPIDAS ================= */
+    .level-tabs-container {
+      display: flex;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 28px 6px 248px;
+      flex-wrap: wrap;
+    }
+
+    .tab-card {
+      min-width: 250px;
+      background-color: var(--yellow-light);
+      border: 1.5px solid var(--yellow-primary);
+      border-radius: 12px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .tab-icon {
+      background: var(--yellow-primary);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 42px;
+      height: 42px;
+      flex-shrink: 0;
+    }
+
+    .tab-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: #111827;
+    }
+
+    .tab-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .tab-title {
+      font-weight: 800;
+      font-size: 15.5px;
+      color: #111827;
+    }
+
+    .tab-desc {
+      font-size: 11.5px;
+      color: #4b5563;
+    }
+
+    /* Botones de Acción Rápida */
+    .quick-actions-grid {
+      flex: 1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));
+      gap: 10px;
+    }
+
+    .action-btn {
+      background-color: var(--white);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      color: var(--text-dark);
+      font-size: 13px;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.2s ease;
+    }
+
+    .action-btn:hover {
+      border-color: var(--yellow-primary);
+      background-color: #fffbeb;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .action-btn:active {
+      transform: translateY(0);
+    }
+
+    .action-btn-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background-color: #f3f4f6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease;
+    }
+
+    .action-btn:hover .action-btn-icon {
+      background-color: var(--yellow-primary);
+    }
+
+    .action-btn-icon svg {
+      width: 18px;
+      height: 18px;
+      fill: #1f2937;
+    }
+
+    /* ================= LAYOUT PRINCIPAL Y SIDEBAR ================= */
+    .main-layout {
+      display: flex;
+      padding: 12px 28px;
+      gap: 20px;
+    }
+
+    .sidebar-menu {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      flex-shrink: 0;
+    }
+
+    .menu-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 16px;
+      border-radius: 12px;
+      text-decoration: none;
+      color: var(--text-dark);
+      font-size: 13.5px;
+      font-weight: 500;
+      transition: all 0.15s ease;
+    }
+
+    .menu-item svg {
+      width: 18px;
+      height: 18px;
+      fill: #4b5563;
+      flex-shrink: 0;
+    }
+
+    .menu-item:hover {
+      background-color: #e5e7eb;
+    }
+
+    .menu-item.active {
+      background-color: var(--yellow-light);
+      color: #111827;
+      font-weight: 700;
+      border-left: 4px solid var(--yellow-primary);
+    }
+
+    .menu-item.active svg {
+      fill: #111827;
+    }
+
+    .content-area {
+      flex: 1;
+      background: var(--white);
+      border-radius: 14px;
+      padding: 24px;
+      border: 1px solid var(--border-color);
+      box-shadow: var(--shadow-sm);
+      min-height: 420px;
+    }
+
+    .content-area h2 {
+      font-size: 20px;
+      color: #111827;
+    }
+
+    @media (max-width: 1100px) {
+      .quote-container {
+        display: none;
+      }
+    }
+
+    @media (max-width: 960px) {
+      .level-tabs-container {
+        padding-left: 28px;
+      }
+    }
+  </style>
+</head> 
+<body>
+
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="top-header">
+    <div class="brand-container">
+      <div class="avatar-mandela">
+        <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="50" fill="#f5b82e"/>
+          <circle cx="50" cy="40" r="22" fill="#1f1f1f"/>
+          <path d="M15 90 C15 65 30 55 50 55 C70 55 85 65 85 90 Z" fill="#1f1f1f"/>
+        </svg>
+      </div>
+      
+      <!-- TÍTULO INSTITUCIONAL (CON LA LÍNEA SEPARADORA A LA DERECHA) -->
+      <div class="brand-title">
+        <h1>C.E.E.<br>Nelson Mandela</h1>
+        <span class="brand-subtitle">Sistema Integral de Gestión Educativa</span>
+        <span class="brand-tagline">"Educar hoy para un mejor mañana"</span>
+      </div>
+
+      <!-- MANDEL.IA COLOCADO JUSTO AL LADO DE LA LÍNEA SEPARADORA -->
+      <div class="ai-badge-header">
+        <svg class="ai-header-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+          <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+          <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+          <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+          <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+          <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+          <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+          <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="ai-header-info">
+          <span class="ai-header-name">MANDEL.IA</span>
+          <span class="ai-header-role">Asistente IA</span>
+          <span class="ai-header-sub">Académico Offline</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-container">
+      "La educación es el arma más poderosa para cambiar el mundo."<br>
+      <strong>— Nelson Mandela.</strong>
+    </div>
+
+    <div class="user-profile">
+      <div class="user-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <div class="user-info">
+          <span class="user-name">{USER}</span>
+          <span class="user-role">Docente</span>
+        </div>
+        <svg viewBox="0 0 24 24" style="width:14px; height:14px;"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="location-info">
+        <strong>Ocumare, Miranda</strong><br>
+        Jardines de Betania • Valles del Tuy<br>
+        <span id="live-datetime">Cargando fecha...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- PESTAÑA DE NIVEL EDUCATIVO Y ACCIONES RÁPIDAS -->
+  <section class="level-tabs-container">
+    <div class="tab-card">
+      <div class="tab-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+      </div>
+      <div class="tab-text">
+        <span class="tab-title">Liceo</span>
+        <span class="tab-desc">Gestión del nivel media general</span>
+      </div>
+    </div>
+
+    <!-- BOTONES DE ACCIÓN RÁPIDA -->
+    <div class="quick-actions-grid">
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Cargar Calificaciones')">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        </div>
+        <span>Cargar Calificaciones</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Generar Boletas')">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <span>Generar Boletas</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Ver Horarios')">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        </div>
+        <span>Ver Horarios</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Consultar Estudiantes')">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </div>
+        <span>Consultar Estudiantes</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- ESTRUCTURA PRINCIPAL: MENÚ LATERAL Y CONTENIDO -->
+  <div class="main-layout">
+    <nav class="sidebar-menu">
+      <a href="#" class="menu-item active">
+        <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        <span>Inicio</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+        <span>Estudiantes</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M4 6h16v12H4z" fill="none" stroke="currentColor" stroke-width="2"/><path d="M2 4h20v14H2z" fill="none"/></svg>
+        <span>Secciones</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+        <span>Materias</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        <span>Horarios</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-9 14l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+        <span>Notas</span>
+      </a>
+      <a href="#" class="menu-item">
+        <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        <span>Boletines</span>
+      </a>
+    </nav>
+
+    <!-- ÁREA DE CONTENIDO -->
+    <main class="content-area" id="main-content">
+      <h2>Bienvenida, {USER}!</h2>
+      <p style="color: #6b7280; margin-top: 6px;">Selecciona una opción del menú lateral o utiliza los accesos directos superiores para comenzar.</p>
+    </main>
+  </div>
+
+  <script>
+    // Reloj en tiempo real 100% offline
+    function actualizarReloj() {
+      const elemento = document.getElementById('live-datetime');
+      if (!elemento) return;
+
+      const ahora = new Date();
+      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+      const fechaFormateada = ahora.toLocaleDateString('es-ES', opcionesFecha);
+      const horaFormateada = ahora.toLocaleTimeString('es-ES');
+
+      elemento.textContent = `${fechaFormateada} • ${horaFormateada}`;
+    }
+
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+
+    // Interacción visual básica para los botones rápidos
+    function seleccionarAccion(modulo) {
+      const contenedor = document.getElementById('main-content');
+      contenedor.innerHTML = `
+        <h2>Módulo: ${modulo}</h2>
+        <p style="color: #6b7280; margin-top: 6px;">Has abierto la vista rápida para <strong>${modulo}</strong>.</p>
+      `;
+    }
+  </script>
+</body>
+</html>

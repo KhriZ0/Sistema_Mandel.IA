@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>C.E.E. Nelson Mandela - Menú Offline</title>
+  <!-- Vinculación al archivo CSS local -->
+  <link rel="stylesheet" href="styles.css">
+</head> 
+<body>
+
+  <!-- ENCABEZADO SUPERIOR -->
+  <header class="top-header">
+    <div class="brand-container">
+      <div class="avatar-mandela">
+        <img src="assets/mandela-logo.png" alt="Logo" class="brand-logo">
+      </div>
+      
+      <div class="brand-title">
+        <h1>C.E.E.<br>Nelson Mandela</h1>
+        <span class="brand-subtitle">Sistema Integral de Gestión Educativa</span>
+        <span class="brand-tagline">"Educar hoy para un mejor mañana"</span>
+      </div>
+
+      <div class="ai-badge-header" onclick="toggleChatIA()" title="Abrir chat con MANDEL.IA">
+        <svg class="ai-header-avatar" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+          <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+          <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+          <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+          <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+          <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+          <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+          <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+          <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+          <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+          <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        </svg>
+        <div class="ai-header-info">
+          <span class="ai-header-name">MANDEL.IA</span>
+          <span class="ai-header-role">Asistente IA</span>
+          <span class="ai-header-sub">Académico Offline</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="quote-container">
+      "La educación es el arma más poderosa para cambiar el mundo."<br>
+      <strong>— Nelson Mandela.</strong>
+    </div>
+
+    <div class="user-profile">
+      <div class="user-card">
+        <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 3c1.66 0 3 1.34 3 3s-1.34 3-3 3-3-1.34-3-3 1.34-3 3-3zm0 14.2c-2.5 0-4.71-1.28-6-3.22.03-1.99 4-3.08 6-3.08 1.99 0 5.97 1.09 6 3.08-1.29 1.94-3.5 3.22-6 3.22z"/></svg>
+        <div class="user-info">
+          <span class="user-name">{USER}</span>
+          <span class="user-role">Docente</span>
+        </div>
+        <svg viewBox="0 0 24 24" class="chevron-icon"><path d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6z"/></svg>
+      </div>
+      <div class="location-info">
+        <strong>Ocumare, Miranda</strong><br>
+        Jardines de Betania • Valles del Tuy<br>
+        <span id="live-datetime">Cargando fecha...</span>
+      </div>
+    </div>
+  </header>
+
+  <!-- MEMBRETE DE GESTIÓN DE LICEO Y BOTONES -->
+  <section class="control-bar-container">
+    <div class="membrete-box">
+      <div class="membrete-icon">
+        <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+      </div>
+      <div class="membrete-text">
+        <span class="membrete-badge">Nivel Media General</span>
+        <span class="membrete-title">Gestión de Liceo</span>
+        <span class="membrete-desc">Panel Docente</span>
+      </div>
+    </div>
+
+    <div class="quick-actions-grid" id="actions-nav">
+      <button type="button" class="action-btn active" onclick="mostrarInicio(this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg>
+        </div>
+        <span>Inicio</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Cargar Calificaciones', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-2 10h-4v4h-2v-4H7v-2h4V7h2v4h4v2z"/></svg>
+        </div>
+        <span>Cargar Calificaciones</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Generar Boletas', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M14 2H6c-1.1 0-1.99.9-1.99 2L4 20c0 1.1.89 2 1.99 2H18c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+        </div>
+        <span>Generar Boletas</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Ver Horarios', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67z"/></svg>
+        </div>
+        <span>Ver Horarios</span>
+      </button>
+
+      <button type="button" class="action-btn" onclick="seleccionarAccion('Consultar Estudiantes', this)">
+        <div class="action-btn-icon">
+          <svg viewBox="0 0 24 24"><path d="M15.5 14h-.79l-.28-.27A6.471 6.471 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/></svg>
+        </div>
+        <span>Consultar Estudiantes</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- DASHBOARD PRINCIPAL -->
+  <div class="main-layout">
+    <main class="content-area" id="main-content">
+      <!-- Contenido cargado dinámicamente desde mostrarInicio() -->
+    </main>
+  </div>
+
+  <!-- BOTÓN FLOTANTE MANDEL.IA -->
+  <div class="ai-fab-wrapper">
+    <div class="ai-fab-tooltip">
+      <span>😺 Consultar a MANDEL.IA</span>
+    </div>
+    <button type="button" class="ai-fab-btn" onclick="toggleChatIA()" aria-label="Abrir Asistente MANDEL.IA">
+      <span class="ai-fab-badge">IA</span>
+      <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+        <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+        <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+        <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+        <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+        <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+        <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+        <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+        <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+        <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+        <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+        <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+        <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+        <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+      </svg>
+    </button>
+  </div>
+
+  <!-- FONDO OSCURO AL ABRIR EL CHAT -->
+  <div class="chat-backdrop" id="chat-backdrop" onclick="toggleChatIA()"></div>
+
+  <!-- BARRA LATERAL DESPLEGABLE DEL CHAT MANDEL.IA -->
+  <aside class="ai-chat-drawer" id="ai-chat-drawer">
+    <div class="chat-drawer-header">
+      <div class="chat-header-brand">
+        <div class="chat-header-logo">
+          <svg viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="46" fill="#fef3c7" stroke="#f5b82e" stroke-width="3.5"/>
+            <path d="M25 46 L23 19 L44 33 Z" fill="#111827"/>
+            <path d="M75 46 L77 19 L56 33 Z" fill="#111827"/>
+            <path d="M28 42 L27 25 L40 34 Z" fill="#dc2626"/>
+            <path d="M72 42 L73 25 L60 34 Z" fill="#dc2626"/>
+            <ellipse cx="50" cy="55" rx="28" ry="23" fill="#111827"/>
+            <circle cx="39" cy="52" r="5" fill="#f5b82e"/>
+            <circle cx="61" cy="52" r="5" fill="#f5b82e"/>
+            <circle cx="40.5" cy="50.5" r="1.8" fill="#ffffff"/>
+            <circle cx="62.5" cy="50.5" r="1.8" fill="#ffffff"/>
+            <polygon points="47,59 53,59 50,62.5" fill="#dc2626"/>
+            <path d="M43 65 Q46.5 68 50 64.5 Q53.5 68 57 65" stroke="#ffffff" stroke-width="1.8" stroke-linecap="round" fill="none"/>
+            <line x1="17" y1="54" x2="29" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="17" y1="60" x2="29" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="83" y1="54" x2="71" y2="56" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+            <line x1="83" y1="60" x2="71" y2="60" stroke="#f5b82e" stroke-width="1.8" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="chat-header-title">
+          <h3>MANDEL.IA</h3>
+          <span><i class="online-indicator"></i> Motor Local Offline • Listo</span>
+        </div>
+      </div>
+      <button type="button" class="chat-close-btn" onclick="toggleChatIA()" title="Cerrar chat">✕</button>
+    </div>
+
+    <div class="chat-messages" id="chat-messages">
+      <div class="msg-bubble msg-ai">
+        <strong>MANDEL.IA</strong>
+        ¡Hola, {USER}! Estoy activo en modo local sin internet. Puedo ayudarte a consultar promedios, verificar secciones de 1ro a 5to año o redactar observaciones para boletas. ¿Qué necesitas?
+      </div>
+    </div>
+
+    <div class="chat-suggestions">
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Resumen de secciones')">📊 Resumen de secciones</button>
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Estudiantes aplazados')">⚠️ Estudiantes aplazados</button>
+      <button type="button" class="suggestion-chip" onclick="enviarSugerencia('Redactar observación')">📝 Redactar observación</button>
+    </div>
+
+    <form class="chat-input-area" onsubmit="enviarMensaje(event)">
+      <input type="text" id="chat-input" placeholder="Pregúntale algo a MANDEL.IA..." autocomplete="off">
+      <button type="submit" class="chat-send-btn" title="Enviar mensaje">
+        <svg viewBox="0 0 24 24"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+      </button>
+    </form>
+  </aside>
+
+  <script>
+    // Reloj en tiempo real 100% offline
+    function actualizarReloj() {
+      const elemento = document.getElementById('live-datetime');
+      if (!elemento) return;
+
+      const ahora = new Date();
+      const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+      const fechaFormateada = ahora.toLocaleDateString('es-ES', opcionesFecha);
+      const horaFormateada = ahora.toLocaleTimeString('es-ES');
+
+      elemento.textContent = `${fechaFormateada} • ${horaFormateada}`;
+    }
+
+    setInterval(actualizarReloj, 1000);
+    actualizarReloj();
+
+    // Gestión de estado activo en los botones
+    function activarBoton(botonSeleccionado) {
+      const botones = document.querySelectorAll('.action-btn');
+      botones.forEach(btn => btn.classList.remove('active'));
+      if (botonSeleccionado) {
+        botonSeleccionado.classList.add('active');
+      }
+    }
+
+    // Vista Principal (Inicio)
+    function mostrarInicio(boton) {
+      activarBoton(boton);
+      const contenedor = document.getElementById('main-content');
+      contenedor.innerHTML = `
+        <div class="dashboard-header">
+          <div class="welcome-box">
+            <h2>¡Bienvenido(a), <span class="highlight-user">{USER}</span>!</h2>
+            <p class="welcome-subtitle">Panel principal de Gestión de Liceo • C.E.E. Nelson Mandela</p>
+        </div>
+  
+          <div class="user-meta-badges">
+           <div class="meta-badge">
+              <svg viewBox="0 0 24 24"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/></svg>
+            <span><strong>Cargo:</strong> Docente</span>
+          </div>
+          <div class="meta-badge">
+            <svg viewBox="0 0 24 24"><path d="M12 3L1 9l11 6 9-4.91V17h2V9L12 3z M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82z"/></svg>
+            <span><strong>Área:</strong> Media General</span>
+          </div>
+
+        </div>
+      </div>
+        <div class="stats-grid">
+          <div class="stat-card">
+            <span class="stat-value">Secciones Asignadas</span>
+            <span class="stat-sub">Cantidad de secciones que tienes asignadas.</span>
+          </div>
+          <div class="stat-card">
+            <span class="stat-value">Horarios</span>
+            <span class="stat-sub">Hora de clases y salones asignados.</span>
+          </div>
+        </div>
+      `;
+    }
+
+    // Interacción visual para los módulos rápidos
+    function seleccionarAccion(modulo, boton) {
+      activarBoton(boton);
+      const contenedor = document.getElementById('main-content');
+      contenedor.innerHTML = `
+        <div class="dashboard-header">
+          <div>
+            <h2>Módulo: ${modulo}</h2>
+            <p>Has abierto la vista de trabajo para <strong>${modulo}</strong> dentro de Gestión de Liceo.</p>
+          </div>
+          <div class="status-pill">
+            <span class="status-dot"></span>
+            Sesión Local
+          </div>
+        </div>
+        <p class="module-placeholder-text">Aquí puedes integrar los formularios, tablas o consultas correspondientes a este apartado.</p>
+      `;
+    }
+
+    // Control de apertura/cierre de la barra lateral de MANDEL.IA
+    function toggleChatIA() {
+      const drawer = document.getElementById('ai-chat-drawer');
+      const backdrop = document.getElementById('chat-backdrop');
+      const isOpen = drawer.classList.contains('open');
+
+      if (isOpen) {
+        drawer.classList.remove('open');
+        backdrop.classList.remove('open');
+      } else {
+        drawer.classList.add('open');
+        backdrop.classList.add('open');
+        setTimeout(() => document.getElementById('chat-input').focus(), 200);
+      }
+    }
+
+    // Envío de mensajes en el chat local
+    function enviarMensaje(event) {
+      event.preventDefault();
+      const input = document.getElementById('chat-input');
+      const texto = input.value.trim();
+      if (!texto) return;
+
+      agregarBurbuja(texto, 'user');
+      input.value = '';
+
+      // Simulación de respuesta local
+      setTimeout(() => {
+        agregarBurbuja(`Procesando consulta en la base de datos local sobre: "<em>${texto}</em>"... (Conecta aquí tu endpoint de Ollama / Python).`, 'ai');
+      }, 450);
+    }
+
+    function enviarSugerencia(texto) {
+      document.getElementById('chat-input').value = texto;
+      enviarMensaje(new Event('submit'));
+    }
+
+    function agregarBurbuja(htmlTexto, remitente) {
+      const contenedor = document.getElementById('chat-messages');
+      const div = document.createElement('div');
+      div.className = `msg-bubble ${remitente === 'user' ? 'msg-user' : 'msg-ai'}`;
+      
+      if (remitente === 'ai') {
+        div.innerHTML = `<strong>MANDEL.IA</strong>${htmlTexto}`;
+      } else {
+        div.textContent = htmlTexto;
+      }
+
+      contenedor.appendChild(div);
+      contenedor.scrollTop = contenedor.scrollHeight;
+    }
+
+    // Cargar la vista de inicio al abrir la página
+    mostrarInicio(document.querySelector('.action-btn.active'));
+  </script>
+</body>
+</html>
