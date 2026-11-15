@@ -213,7 +213,7 @@ body {
 .side-text {
   position: absolute;
   right: 14px;
-  top: 50%;
+  top: 65%;
   transform: translateY(-50%) rotate(90deg);
   transform-origin: right center;
   font-size: 0.7rem;
@@ -340,6 +340,43 @@ body {
   transition: all 0.2s ease;
 }
 
+.btn-submit:disabled {
+  cursor: wait;
+}
+
+.login-submit-spinner {
+  width: 18px;
+  height: 18px;
+  border: 2px solid rgba(17, 24, 39, 0.2);
+  border-top-color: var(--text-title);
+  border-radius: 50%;
+  animation: login-spinner 700ms linear infinite;
+}
+
+.login-status {
+  margin-top: -6px;
+  color: var(--text-muted);
+  font-size: 0.78rem;
+  text-align: center;
+}
+
+.container.login-transition-out {
+  animation: login-page-exit 300ms ease-in both;
+}
+
+@keyframes login-spinner {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes login-page-exit {
+  to {
+    opacity: 0;
+    transform: translateY(-12px) scale(0.985);
+  }
+}
+
 .btn-submit:hover {
   background: var(--yellow-hover);
   transform: translateY(-1px);
@@ -425,5 +462,12 @@ body {
   }
   .side-text {
     display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login-submit-spinner,
+  .container.login-transition-out {
+    animation: none;
   }
 }
