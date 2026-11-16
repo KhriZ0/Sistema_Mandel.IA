@@ -1,0 +1,746 @@
+:root {
+    --amarillo: #f5c225;
+    --rojo: #a62323;
+    --negro: #1a1a1a;
+    --gris-fondo: #f5f6fa;
+    --blanco: #ffffff;
+    --texto-oscuro: #333333;
+    --borde: #e0e0e0;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background-color: var(--gris-fondo);
+    color: var(--texto-oscuro);
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+}
+
+/* ================= ENCABEZADO ================= */
+.top-header {
+    background-color: var(--blanco);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 30px 6px 30px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    position: relative;
+    overflow: hidden;
+}
+
+/* Barra horizontal multicolor iniciando en amarillo a la izquierda */
+.top-header::after {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6px;
+    z-index: 3;
+    background: linear-gradient(90deg, 
+        var(--amarillo) 0%, var(--amarillo) 11%,
+        var(--rojo) 11%, var(--rojo) 54%, 
+        var(--amarillo) 54%, var(--amarillo) 65%, 
+        var(--negro) 65%, var(--negro) 71%, 
+        var(--amarillo) 71%, var(--amarillo) 80%, 
+        var(--rojo) 80%, var(--rojo) 100%
+    );
+}
+
+/* Imagen de Miranda anclada abajo sobre la barra multicolor */
+.header-bg {
+    position: absolute;
+    bottom: 6px;
+    right: 250px; 
+    height: calc(100% - 6px);
+    width: 403px;
+    object-fit: contain; 
+    object-position: right bottom;
+    z-index: 1;
+    pointer-events: none;
+}
+
+/* Grupo izquierdo del encabezado */
+.header-left-group {
+    display: flex;
+    align-items: center;
+    z-index: 2;
+}
+
+.logo-container {
+    display: flex;
+    align-items: flex-end;
+    gap: 15px;
+}
+
+.logo-mandela {
+    width: 120px;
+    height: auto;
+    display: block;
+}
+
+.logo-text {
+    align-self: center;
+}
+
+.logo-text h2 {
+    font-size: 22px;
+}
+
+/* Línea vertical separadora */
+.header-divider {
+    width: 2px;
+    height: 80px;
+    background-color: var(--borde);
+    margin: 0 20px;
+}
+
+.quote-container {
+    font-style: italic;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.4;
+    max-width: 320px;
+}
+
+/* Perfil de usuario */
+.user-profile {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logout-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 7px 10px;
+    color: var(--rojo);
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    font-size: 12px;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.logout-link:hover {
+    background: #fff4f4;
+    border-color: var(--rojo);
+}
+
+.logout-link:focus-visible {
+    outline: 2px solid var(--amarillo);
+    outline-offset: 2px;
+}
+
+.user-text {
+    text-align: right;
+}
+
+.img-usuario {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%; 
+    object-fit: cover;
+}
+
+/* ================= DISEÑO PRINCIPAL (2 COLUMNAS) ================= */
+.main-layout {
+    display: grid;
+    grid-template-columns: 240px 1fr;
+    flex-grow: 1;
+    overflow: hidden;
+}
+
+/* ================= BARRA LATERAL IZQUIERDA ================= */
+.sidebar-left {
+    background-color: var(--gris-fondo);
+    padding: 15px 10px;
+    border-right: 1px solid var(--borde);
+    overflow-y: auto;
+}
+
+/* Membrete Lateral (Administración / Liceo) */
+.sidebar-membrete {
+    background-color: var(--blanco);
+    border: 1px solid var(--borde);
+    border-left: 5px solid var(--amarillo);
+    border-radius: 10px;
+    padding: 12px;
+    margin-bottom: 14px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.04);
+}
+
+.membrete-icon-box {
+    width: 38px;
+    height: 38px;
+    background-color: var(--amarillo);
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.membrete-icon-box svg {
+    width: 22px;
+    height: 22px;
+    fill: var(--negro);
+}
+
+.membrete-info {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+}
+
+.membrete-badge {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: var(--rojo);
+    letter-spacing: 0.4px;
+}
+
+.membrete-title {
+    font-size: 14px;
+    font-weight: 800;
+    color: var(--negro);
+    margin: 2px 0;
+}
+
+.membrete-desc {
+    font-size: 12px;
+    color: #555;
+}
+
+.nav-btn {
+    width: 100%;
+    padding: 8px 12px;
+    margin-bottom: 4px;
+    text-align: left;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: 0.3s;
+    
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.nav-icon {
+    width: 20px;
+    height: 20px;
+    object-fit: contain;
+    opacity: 0.7; 
+}
+
+.nav-btn:hover {
+    background-color: #e8e8e8;
+}
+
+.nav-btn:hover .nav-icon {
+    opacity: 1;
+}
+
+.nav-btn.active {
+    background-color: var(--amarillo);
+    font-weight: bold;
+    border-color: #d4a71b;
+}
+
+.nav-btn.active .nav-icon {
+    opacity: 1;
+}
+
+/* ================= PANEL CENTRAL ================= */
+.content-center {
+    padding: 20px 30px;
+    overflow-y: auto;
+}
+
+.welcome-banner {
+    background-color: var(--blanco);
+    background-image: url('img/img_presentacion.png');
+    background-size: cover;
+    background-position: right center;
+    background-repeat: no-repeat;
+    padding: 30px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.widgets-row, .charts-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.widget, .chart-box {
+    background-color: var(--blanco);
+    padding: 20px;
+    border-radius: 10px;
+    border: 1px solid var(--borde);
+    flex: 1;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.action-buttons button {
+    padding: 10px 14px;
+    background-color: var(--gris-fondo);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.action-buttons button:hover {
+    background-color: #e2e2e2;
+}
+
+/* ================= BOTÓN FLOTANTE Y CAJÓN MANDEL.IA ================= */
+.ai-fab-wrapper {
+    position: fixed;
+    bottom: 25px;
+    right: 25px;
+    z-index: 90;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.ai-fab-tooltip {
+    background-color: var(--negro);
+    color: var(--blanco);
+    padding: 8px 14px;
+    border-radius: 20px;
+    font-size: 13px;
+    font-weight: bold;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    opacity: 0;
+    transform: translateX(10px);
+    transition: all 0.25s ease;
+    pointer-events: none;
+}
+
+.ai-fab-wrapper:hover .ai-fab-tooltip {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+.ai-fab-btn {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background-color: var(--blanco);
+    border: 3px solid var(--amarillo);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+    cursor: pointer;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s ease;
+}
+
+.ai-fab-btn:hover {
+    transform: scale(1.06);
+}
+
+.ai-fab-btn img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+.ai-fab-badge {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background-color: var(--rojo);
+    color: var(--blanco);
+    font-size: 10px;
+    font-weight: bold;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 2px solid var(--blanco);
+}
+
+.chat-backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.35);
+    z-index: 95;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+
+.chat-backdrop.open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.ai-chat-drawer {
+    position: fixed;
+    top: 0;
+    right: -380px;
+    width: 360px;
+    height: 100vh;
+    background-color: var(--blanco);
+    box-shadow: -4px 0 20px rgba(0,0,0,0.15);
+    z-index: 100;
+    display: flex;
+    flex-direction: column;
+    transition: right 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+.ai-chat-drawer.open {
+    right: 0;
+}
+
+@media (max-width: 760px) {
+    .user-profile {
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+
+    .logout-link {
+        padding: 6px 8px;
+        font-size: 11px;
+    }
+}
+
+.chat-drawer-header {
+    padding: 16px 20px;
+    border-bottom: 2px solid var(--amarillo);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: var(--gris-fondo);
+}
+
+.chat-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.chat-header-logo {
+    width: 45px;
+    height: 45px;
+    object-fit: contain;
+}
+
+.chat-header-title h3 {
+    font-size: 16px;
+    color: var(--texto-oscuro);
+}
+
+.chat-header-title span {
+    font-size: 12px;
+    color: #555;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.online-indicator {
+    width: 8px;
+    height: 8px;
+    background-color: #22c55e;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+.chat-close-btn {
+    background: transparent;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    color: #666;
+    padding: 4px 8px;
+    border-radius: 6px;
+}
+
+.chat-close-btn:hover {
+    background-color: #e2e2e2;
+    color: var(--negro);
+}
+
+.chat-messages {
+    flex: 1;
+    padding: 16px;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.msg-bubble {
+    padding: 12px 14px;
+    border-radius: 10px;
+    font-size: 13.5px;
+    line-height: 1.45;
+    max-width: 88%;
+}
+
+.msg-ai {
+    background-color: var(--gris-fondo);
+    color: var(--texto-oscuro);
+    align-self: flex-start;
+    border-bottom-left-radius: 2px;
+}
+
+.msg-ai strong {
+    display: block;
+    font-size: 11px;
+    color: var(--rojo);
+    margin-bottom: 4px;
+}
+
+.msg-user {
+    background-color: var(--amarillo);
+    color: var(--negro);
+    align-self: flex-end;
+    border-bottom-right-radius: 2px;
+    font-weight: 500;
+}
+
+.chat-suggestions {
+    padding: 10px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    border-top: 1px solid var(--borde);
+}
+
+.suggestion-chip {
+    background-color: var(--gris-fondo);
+    border: 1px solid var(--borde);
+    padding: 6px 12px;
+    border-radius: 16px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.suggestion-chip:hover {
+    background-color: var(--amarillo);
+    border-color: #d4a71b;
+}
+
+.chat-input-area {
+    padding: 12px 16px;
+    border-top: 1px solid var(--borde);
+    display: flex;
+    gap: 8px;
+}
+
+.chat-input-area input {
+    flex: 1;
+    padding: 10px 14px;
+    border: 1px solid var(--borde);
+    border-radius: 20px;
+    font-size: 13.5px;
+    outline: none;
+}
+
+.chat-input-area input:focus {
+    border-color: var(--amarillo);
+}
+
+.chat-send-btn {
+    background-color: var(--amarillo);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+.chat-send-btn:hover {
+    background-color: #e0b01e;
+}
+
+/* ================= COMPONENTES INTERNOS DE MÓDULOS ================= */
+.admin-filters-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.admin-label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 6px;
+    color: var(--texto-oscuro);
+}
+
+.admin-input {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font-size: 14px;
+    outline: none;
+}
+
+.admin-input:focus {
+    border-color: var(--amarillo);
+}
+
+.section-select-control {
+    position: relative;
+}
+
+.section-select-toggle {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.section-select-menu {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    width: 100%;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 10;
+    padding: 8px;
+}
+
+.section-select-option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 8px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+}
+
+.section-select-option:hover {
+    background-color: var(--gris-fondo);
+}
+
+.student-search-control {
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    background: var(--blanco);
+    position: relative;
+}
+
+.student-id-type {
+    padding: 10px 14px;
+    background: var(--gris-fondo);
+    border: none;
+    border-right: 1px solid var(--borde);
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 6px 0 0 6px;
+}
+
+.student-id-type-menu {
+    position: absolute;
+    top: 105%;
+    left: 0;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    z-index: 10;
+    overflow: hidden;
+}
+
+.student-id-type-menu button {
+    display: block;
+    width: 45px;
+    padding: 8px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.student-id-type-menu button:hover {
+    background: var(--amarillo);
+}
+
+.admin-input-clean {
+    flex: 1;
+    border: none;
+    padding: 10px 12px;
+    font-size: 14px;
+    outline: none;
+}
+
+.btn-amarillo {
+    background-color: var(--amarillo);
+    border: none;
+    padding: 10px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    border-radius: 0 5px 5px 0;
+}
+
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+}
+
+.admin-table th, .admin-table td {
+    padding: 10px;
+    border-bottom: 1px solid var(--borde);
+    text-align: left;
+}
+
+.admin-table th {
+    background-color: var(--gris-fondo);
+    font-weight: bold;
+}
+
+.grade-lapso-input {
+    width: 60px;
+    padding: 6px;
+    border: 1px solid var(--borde);
+    border-radius: 4px;
+    text-align: center;
+}

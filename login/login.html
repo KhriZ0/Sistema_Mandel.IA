@@ -14,16 +14,10 @@
     <div class="hero-panel">
       <div>
         <div class="hero-header">
-          <div class="mandela-avatar">
-            <svg viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="50" cy="50" r="50" fill="#f5b82e"/>
-              <circle cx="50" cy="40" r="22" fill="#1f1f1f"/>
-              <path d="M15 90 C15 65 30 55 50 55 C70 55 85 65 85 90 Z" fill="#1f1f1f"/>
-            </svg>
-          </div>
-          <div>
+          <div class="quote-block">
             <p class="hero-quote">"La educación es el arma más poderosa para cambiar el mundo."</p>
             <p class="hero-quote-author">— Nelson Mandela</p>
+            <span class="quote-stripe" aria-hidden="true"></span>
           </div>
         </div>
 
@@ -68,39 +62,51 @@
         </div>
       </div>
 
-      <div class="hero-footer"></div>
+      <div class="mandela-avatar">
+        <img src="assets/mandela-portrait.png" alt="Nelson Mandela">
+      </div>
+      <img class="hero-tree" src="assets/institution-tree.png" alt="" aria-hidden="true">
+      <p class="hero-signature">Madiba<br>vive en<br>la Educación</p>
+      <div class="hero-footer" aria-hidden="true"></div>
     </div>
 
     <!-- Panel Derecho -->
     <div class="form-panel">
-      <div class="side-text">DISCIPLINA | RESPETO | EDUCACIÓN | FUTURO</div>
-
       <div class="form-header">
         <h2 class="form-title">Bienvenido</h2>
         <p class="form-subtitle">Accede al Sistema Integral de Gestión Educativa<br><span class="institution-tag">C.E.E. Nelson Mandela</span></p>
       </div>
 
       <form class="login-form" id="login-form">
+        <div class="login-role-group">
+          <label for="login-role">Perfil</label>
+          <select class="input-field login-role-field" id="login-role" name="rol" required>
+            <option value="docente">Docente</option>
+            <option value="administracion">Administración</option>
+          </select>
+        </div>
+
         <div class="input-group">
-          <input type="text" class="input-field" placeholder="Usuario" required>
+          <input type="text" class="input-field" name="usuario" autocomplete="username" placeholder="Usuario" aria-label="Usuario" required>
           <svg class="input-icon" viewBox="0 0 24 24">
             <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
           </svg>
         </div>
 
         <div class="input-group">
-          <input type="password" id="password" class="input-field" placeholder="Contraseña" required>
+          <input type="password" id="password" class="input-field" name="password" autocomplete="current-password" placeholder="Contraseña" aria-label="Contraseña" required>
           <svg class="input-icon" viewBox="0 0 24 24">
             <path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/>
           </svg>
-          <button type="button" class="toggle-password">
-            <svg viewBox="0 0 24 24">
+          <button type="button" class="toggle-password" aria-label="Mostrar contraseña" aria-pressed="false">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z"/>
+              <path class="password-visibility-slash" d="M3 21 21 3" fill="none" stroke="#6b7280" stroke-width="2" stroke-linecap="round"/>
             </svg>
           </button>
         </div>
 
-        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+        <a href="#" class="forgot-link">Recuperar clave administrativa</a>
 
         <button type="submit" class="btn-submit" id="login-submit">
           <span id="login-submit-label">Iniciar sesión</span>
@@ -111,6 +117,8 @@
         </button>
         <p class="login-status" id="login-status" role="status" aria-live="polite" hidden>Preparando tu panel...</p>
       </form>
+
+      <div class="form-divider" aria-hidden="true"><span></span><i></i><span></span></div>
 
       <!-- Mascota / Asistente IA (Gato) -->
       <div class="mascot-section">
@@ -139,7 +147,10 @@
 
       <div class="form-footer">
         <svg viewBox="0 0 24 24"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-        <span>Acceso controlado según tu perfil institucional</span>
+        <div>
+          <span>Acceso local de demostración: no valida credenciales.</span>
+          <small>C.E.E. Nelson Mandela | Ocumare, Miranda</small>
+        </div>
       </div>
     </div>
   </div>

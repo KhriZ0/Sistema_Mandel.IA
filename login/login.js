@@ -7,6 +7,15 @@ function iniciarSesion(event) {
       const contenedor = document.querySelector('.container');
       const estado = document.getElementById('login-status');
       const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      const usuario = formulario.elements.usuario.value.trim();
+      const rol = formulario.elements.rol.value;
+      const destino = rol === 'administracion' ? '../admin_dashboard.html' : '../liceo_dashboard.html';
+      const urlDestino = new URL(destino, window.location.href);
+
+      urlDestino.searchParams.set('usuario', usuario);
+      urlDestino.searchParams.set('rol', rol);
+      sessionStorage.setItem('mandel.usuario', usuario);
+      sessionStorage.setItem('mandel.rol', rol);
 
       formulario.classList.add('is-submitting');
       formulario.setAttribute('aria-busy', 'true');
@@ -19,14 +28,19 @@ function iniciarSesion(event) {
       window.setTimeout(() => {
         contenedor.classList.add('login-transition-out');
         window.setTimeout(() => {
-          window.location.href = '../dashboard_liceo/dashboard.html';
+          window.location.href = urlDestino.href;
         }, movimientoReducido ? 0 : 300);
       }, movimientoReducido ? 250 : 500);
     }
 
     function togglePasswordVisibility() {
       const passwordInput = document.getElementById('password');
-      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+      const mostrar = passwordInput.type === 'password';
+      passwordInput.type = mostrar ? 'text' : 'password';
+
+      const boton = document.querySelector('.toggle-password');
+      boton.setAttribute('aria-pressed', String(mostrar));
+      boton.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
     }
 
     document.getElementById('login-form').addEventListener('submit', iniciarSesion);
