@@ -123,15 +123,24 @@ body {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 7px 10px;
+    width: 38px;
+    height: 38px;
+    padding: 0;
     color: var(--rojo);
     background: var(--blanco);
     border: 1px solid var(--borde);
     border-radius: 7px;
-    font-size: 12px;
+    font-size: 0;
     text-decoration: none;
     white-space: nowrap;
     transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.logout-link::before {
+    content: "";
+    width: 20px;
+    height: 20px;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a62323' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M13 3H5v18h8'/%3E%3Cpath d='M10 12h11m-4-4 4 4-4 4'/%3E%3C/svg%3E") center / contain no-repeat;
 }
 
 .logout-link:hover {
@@ -319,6 +328,85 @@ body {
     background-color: #e2e2e2;
 }
 
+.action-buttons--shortcuts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.action-buttons--shortcuts .shortcut-button {
+    display: flex;
+    flex: 1 1 130px;
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    min-height: 64px;
+    padding: 10px 12px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    text-align: left;
+    font-size: 13px;
+    font-weight: 700;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.action-buttons--shortcuts .shortcut-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+.action-buttons--shortcuts .shortcut-button:focus-visible {
+    outline: 3px solid var(--negro);
+    outline-offset: 2px;
+}
+
+.action-buttons--shortcuts .shortcut-button--grades {
+    color: #1558a6;
+    background-color: #edf5ff;
+    border-color: #c9def8;
+}
+
+.action-buttons--shortcuts .shortcut-button--grades:hover {
+    background-color: #dcecff;
+}
+
+.action-buttons--shortcuts .shortcut-button--schedule {
+    color: #6841a5;
+    background-color: #f4efff;
+    border-color: #ded0f7;
+}
+
+.action-buttons--shortcuts .shortcut-button--schedule:hover {
+    background-color: #e9ddff;
+}
+
+.action-buttons--shortcuts .shortcut-button--courses {
+    color: #18764d;
+    background-color: #eaf8f0;
+    border-color: #c7ead5;
+}
+
+.action-buttons--shortcuts .shortcut-button--courses:hover {
+    background-color: #d8f1e2;
+}
+
+.shortcut-icon {
+    display: inline-flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, 0.8);
+}
+
+.shortcut-icon svg {
+    width: 21px;
+    height: 21px;
+}
+
 /* ================= BOTÓN FLOTANTE Y CAJÓN MANDEL.IA ================= */
 .ai-fab-wrapper {
     position: fixed;
@@ -426,10 +514,6 @@ body {
         justify-content: flex-end;
     }
 
-    .logout-link {
-        padding: 6px 8px;
-        font-size: 11px;
-    }
 }
 
 .chat-drawer-header {
