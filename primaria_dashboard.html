@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>C.E.E. Nelson Mandela - Panel Docente (Primaria)</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <!-- Encabezado Principal Unificado -->
+    <header class="top-header">
+        <img src="img/img_miranda.png" class="header-bg" alt="Fondo Miranda">
+        
+        <div class="header-left-group">
+            <div class="logo-container">
+                <img src="img/logo_mandela.png" alt="Nelson Mandela" class="logo-mandela">
+                <div class="logo-text">
+                    <h2>C.E.E. Nelson Mandela</h2>
+                    <p>Sistema Integral de Gestión Educativa</p>
+                </div>
+            </div>
+            
+            <div class="header-divider"></div>
+            
+            <div class="quote-container">
+                <p>"Una buena cabeza y un buen corazón son siempre una combinación formidable"<br>— Nelson Mandela.</p>
+            </div>
+        </div>
+        
+        <!-- Perfil del Docente -->
+        <div class="user-profile">
+            <div class="user-text">
+                <p><strong data-session-user>Docente</strong><br>Docente • Primaria</p>
+            </div>
+            <img src="img/img_usuario.png" alt="Usuario" class="img-usuario">
+            <a class="logout-link" href="logout.html">Cerrar sesión</a>
+        </div>
+    </header>
+
+    <!-- Contenedor Principal de 2 Columnas -->
+    <div class="main-layout">
+        
+        <!-- Columna Izquierda: Membrete + Menú acotado al rol Docente -->
+        <nav class="sidebar-left" id="actions-nav">
+            
+            <!-- Membrete de Gestión de Primaria -->
+            <div class="sidebar-membrete">
+                <div class="membrete-icon-box">
+                    <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
+                </div>
+                <div class="membrete-info">
+                    <span class="membrete-badge">NIVEL PRIMARIA</span>
+                    <strong class="membrete-title">Gestión de Primaria</strong>
+                    <span class="membrete-desc">Panel Docente</span>
+                </div>
+            </div>
+
+            <button type="button" class="nav-btn active" data-action="home">
+                <img src="img/img_inicio.png" class="nav-icon" alt="Inicio"> Inicio
+            </button>
+            <button type="button" class="nav-btn" data-module="Cargar Calificaciones">
+                <img src="img/img_notas.png" class="nav-icon" alt="Notas"> Cargar Calificaciones
+            </button>
+            <button type="button" class="nav-btn" data-module="Ver Horarios">
+                <img src="img/img_horario.png" class="nav-icon" alt="Horarios"> Ver Horarios
+            </button>
+            <button type="button" class="nav-btn" data-module="Consultar Estudiantes">
+                <img src="img/img_estudiante.png" class="nav-icon" alt="Estudiantes"> Consultar Estudiantes
+            </button>
+        </nav>
+
+        <!-- Columna Central Expandida: Área dinámica de Primaria -->
+        <main class="content-center" id="main-content">
+            <div class="welcome-banner">
+                <h1>Bienvenido(a), <span data-session-user>Docente</span></h1>
+                <p>Gestión de Primaria (1ro a 6to Grado) • Escala 1 a 20.<br>Rol: Docente.</p>
+            </div>
+
+            <div class="widgets-row">
+                <div class="widget">
+                    <h3>Período académico actual</h3>
+                    <p>Año escolar: 2026 - 2027 (En curso)</p>
+                </div>
+                <div class="widget actions">
+                    <h3>Accesos directos</h3>
+                    <div class="action-buttons">
+                        <button type="button" data-module="Cargar Calificaciones">Cargar Calificaciones</button>
+                        <button type="button" data-module="Ver Horarios">Ver Horarios</button>
+                        <button type="button" data-module="Consultar Estudiantes">Consultar Estudiantes</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Resumen del docente -->
+            <div class="charts-row">
+                <div class="chart-box">
+                    <h3>Secciones Asignadas</h3>
+                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Cantidad de secciones bajo tu carga académica en Primaria.</p>
+                </div>
+                <div class="chart-box">
+                    <h3>Horarios de Clase</h3>
+                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Bloques horarios y aulas asignadas para la semana.</p>
+                </div>
+            </div>
+        </main>
+
+    </div>
+
+    <!-- BOTÓN FLOTANTE INFERIOR MANDEL.IA -->
+    <div class="ai-fab-wrapper">
+        <div class="ai-fab-tooltip">
+            <span>Consultar a MandellA</span>
+        </div>
+        <button type="button" class="ai-fab-btn" data-chat-toggle aria-label="Abrir Asistente MandellA">
+            <span class="ai-fab-badge">IA</span>
+            <img src="img/logo_mandelia.png" alt="MandellA">
+        </button>
+    </div>
+
+    <!-- FONDO OSCURO AL ABRIR EL CHAT -->
+    <div class="chat-backdrop" id="chat-backdrop" data-chat-toggle></div>
+
+    <!-- CAJÓN LATERAL DESPLEGABLE DEL CHAT MANDEL.IA -->
+    <aside class="ai-chat-drawer" id="ai-chat-drawer">
+        <div class="chat-drawer-header">
+            <div class="chat-header-brand">
+                <img src="img/logo_mandelia.png" alt="Logo MandellA" class="chat-header-logo">
+                <div class="chat-header-title">
+                    <h3>MandellA</h3>
+                    <span><i class="online-indicator"></i> Motor Local Offline • Listo</span>
+                </div>
+            </div>
+            <button type="button" class="chat-close-btn" data-chat-toggle title="Cerrar chat">✕</button>
+        </div>
+
+        <div class="chat-messages" id="chat-messages">
+            <div class="msg-bubble msg-ai">
+                <strong>MandellA</strong>
+                ¡Hola, <span data-session-user>Docente</span>! Estoy activo en modo local sin internet. Puedo ayudarte a consultar promedios, verificar secciones de 1ro a 6to Grado o redactar observaciones académicas. ¿Qué necesitas?
+            </div>
+        </div>
+
+        <div class="chat-suggestions">
+            <button type="button" class="suggestion-chip" data-suggestion="Resumen de secciones">Resumen de secciones</button>
+            <button type="button" class="suggestion-chip" data-suggestion="Estudiantes aplazados">Estudiantes aplazados</button>
+            <button type="button" class="suggestion-chip" data-suggestion="Redactar observación">Redactar observación</button>
+        </div>
+
+        <form class="chat-input-area" id="chat-form">
+            <input type="text" id="chat-input" placeholder="Pregúntale algo a MandellA..." autocomplete="off">
+            <button type="submit" class="chat-send-btn" title="Enviar mensaje">➤</button>
+        </form>
+    </aside>
+
+    <!-- Lógica acoplada de Primaria -->
+    <script src="primaria_dashboard.js"></script>
+</body>
+</html>
