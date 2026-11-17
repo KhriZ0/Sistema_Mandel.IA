@@ -9,7 +9,20 @@ function iniciarSesion(event) {
       const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       const usuario = formulario.elements.usuario.value.trim();
       const rol = formulario.elements.rol.value;
-      const destino = rol === 'administracion' ? '../admin_dashboard.html' : '../liceo_dashboard.html';
+      let destino;
+      switch (rol) {
+        case 'administracion':
+          destino = '../admin_dashboard.html';
+          break;
+        case 'docente_primaria':
+          destino = '../primaria_dashboard.html';
+          break;
+        case 'docente':
+          destino = '../liceo_dashboard.html';
+          break;
+        default:
+          throw new Error(`Perfil de acceso no reconocido: ${rol}`);
+      }
       const urlDestino = new URL(destino, window.location.href);
 
       urlDestino.searchParams.set('usuario', usuario);

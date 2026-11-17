@@ -43,7 +43,7 @@ function mostrarInicio(boton) {
         contenedor.innerHTML = `
             <div class="welcome-banner">
                 <h1>Bienvenido(a), <span data-session-user>${usuarioSesion}</span></h1>
-                <p>Gestión de Liceo (1ro a 5to Año) • Escala 1 a 20.<br>Rol: Docente.</p>
+                <p>Gestión de Liceo (1ro a 5to Año)</p>
             </div>
 
             <div class="widgets-row">
@@ -53,10 +53,25 @@ function mostrarInicio(boton) {
                 </div>
                 <div class="widget actions">
                     <h3>Accesos directos</h3>
-                    <div class="action-buttons">
-                        <button type="button" data-module="Cargar Calificaciones">Cargar Calificaciones</button>
-                        <button type="button" data-module="Ver Horarios">Ver Horarios</button>
-                        <button type="button" data-module="Consultar Estudiantes">Consultar Estudiantes</button>
+                    <div class="action-buttons action-buttons--shortcuts">
+                        <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
+                            <span class="shortcut-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.75h7l4 4v12.5H7z"/><path d="M14 3.75v4h4M10 12h5M10 16h5"/></svg>
+                            </span>
+                            <span>Cargar notas</span>
+                        </button>
+                        <button type="button" class="shortcut-button shortcut-button--schedule" data-module="Ver Horarios">
+                            <span class="shortcut-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h2M14 14h2M8 17h2"/></svg>
+                            </span>
+                            <span>Ver Horario</span>
+                        </button>
+                        <button type="button" class="shortcut-button shortcut-button--courses" data-module="Consultar Estudiantes">
+                            <span class="shortcut-icon" aria-hidden="true">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5v15M8 7h8M8 11h8"/></svg>
+                            </span>
+                            <span>Cursos</span>
+                        </button>
                     </div>
                 </div>
             </div>
