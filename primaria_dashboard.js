@@ -43,7 +43,7 @@ function mostrarInicio(boton) {
         contenedor.innerHTML = `
             <div class="welcome-banner">
                 <h1>Bienvenido(a), <span data-session-user>${usuarioSesion}</span></h1>
-                <p>Gestión de Liceo (1ro a 5to Año) • Escala 1 a 20.<br>Rol: Docente.</p>
+                <p>Gestión de Primaria (1ro a 6to Grado) • Escala 1 a 20.<br>Rol: Docente.</p>
             </div>
 
             <div class="widgets-row">
