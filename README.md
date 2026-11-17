@@ -1,6 +1,6 @@
 # 🎓 Sistema MANDEL.IA
 
-**MANDEL.IA** es una aplicación de escritorio de arquitectura *offline-first* diseñada para optimizar la gestión académica, el registro de matrícula y el control de aulas de computación en el**Complejo Educativo Estatal "Nelson Mandela"**.
+**MANDEL.IA** es una aplicación de escritorio de arquitectura *offline-first* diseñada para optimizar la gestión académica, el registro de matrícula y el control de aulas de computación en el **Complejo Educativo Estatal "Nelson Mandela"**.
 
 El sistema opera de manera completamente local sin depender de conexión a internet, integrando una base de datos relacional robusta y un asistente de inteligencia artificial ejecutado en el propio equipo para facilitar consultas administrativas y soporte educativo.
 
