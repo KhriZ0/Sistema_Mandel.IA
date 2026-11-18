@@ -64,7 +64,7 @@
             <button type="button" class="nav-btn" data-module="Ver Horarios">
                 <img src="img/img_horario.png" class="nav-icon" alt="Horarios"> Ver Horario
             </button>
-            <button type="button" class="nav-btn" data-module="Consultar Estudiantes">
+            <button type="button" class="nav-btn" data-module="Cursos">
                 <img src="img/img_estudiante.png" class="nav-icon" alt="Estudiantes"> Cursos
             </button>
         </nav>
@@ -86,19 +86,19 @@
                     <div class="action-buttons action-buttons--shortcuts">
                         <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3.75h7l4 4v12.5H7z"/><path d="M14 3.75v4h4M10 12h5M10 16h5"/></svg>
+                                <img src="img/img_notas.png" alt="">
                             </span>
                             <span>Cargar notas</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--schedule" data-module="Ver Horarios">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="5" width="16" height="15" rx="2"/><path d="M8 3v4M16 3v4M4 10h16M8 14h2M14 14h2M8 17h2"/></svg>
+                                <img src="img/img_horario.png" alt="">
                             </span>
                             <span>Ver Horario</span>
                         </button>
-                        <button type="button" class="shortcut-button shortcut-button--courses" data-module="Consultar Estudiantes">
+                        <button type="button" class="shortcut-button shortcut-button--courses" data-module="Cursos">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5z"/><path d="M4 5.5v15M8 7h8M8 11h8"/></svg>
+                                <img src="img/img_estudiante.png" alt="">
                             </span>
                             <span>Cursos</span>
                         </button>
@@ -108,9 +108,15 @@
 
             <!-- Resumen del docente -->
             <div class="charts-row">
-                <div class="chart-box">
-                    <h3>Secciones Asignadas</h3>
-                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Cantidad de secciones bajo tu carga académica en Media General.</p>
+                <div class="chart-box assigned-courses-box">
+                    <div class="assigned-courses-heading">
+                        <div>
+                            <h3>Secciones Asignadas</h3>
+                            <p id="assigned-courses-summary" aria-live="polite"></p>
+                        </div>
+                        <span class="assigned-courses-count" id="assigned-courses-count"></span>
+                    </div>
+                    <div class="assigned-courses-list" id="assigned-courses-list" role="list"></div>
                 </div>
                 <div class="chart-box">
                     <h3>Horarios de Clase</h3>
