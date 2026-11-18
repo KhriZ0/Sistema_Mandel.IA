@@ -1,60 +1,61 @@
 function iniciarSesion(event) {
-      event.preventDefault();
-      const formulario = document.getElementById('login-form');
-      if (!formulario.reportValidity() || formulario.classList.contains('is-submitting')) return;
+  event.preventDefault();
+  const formulario = document.getElementById('login-form');
+  if (!formulario.reportValidity() || formulario.classList.contains('is-submitting')) return;
 
-      const boton = document.getElementById('login-submit');
-      const contenedor = document.querySelector('.container');
-      const estado = document.getElementById('login-status');
-      const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-      const usuario = formulario.elements.usuario.value.trim();
-      const rol = formulario.elements.rol.value;
-      let destino;
-      switch (rol) {
-        case 'administracion':
-          destino = '../admin_dashboard.html';
-          break;
-        case 'docente_primaria':
-          destino = '../primaria_dashboard.html';
-          break;
-        case 'docente':
-          destino = '../liceo_dashboard.html';
-          break;
-        default:
-          throw new Error(`Perfil de acceso no reconocido: ${rol}`);
-      }
-      const urlDestino = new URL(destino, window.location.href);
+  const boton = document.getElementById('login-submit');
+  const contenedor = document.querySelector('.container');
+  const estado = document.getElementById('login-status');
+  const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const usuario = formulario.elements.usuario.value.trim();
+  const rol = formulario.elements.rol.value;
 
-      urlDestino.searchParams.set('usuario', usuario);
-      urlDestino.searchParams.set('rol', rol);
-      sessionStorage.setItem('mandel.usuario', usuario);
-      sessionStorage.setItem('mandel.rol', rol);
+  let destino;
+  switch (rol) {
+    case 'administracion':
+      destino = '../admin_dashboard.html';
+      break;
+    case 'docente_primaria':
+      destino = '../primaria_dashboard.html';
+      break;
+    case 'docente':
+      destino = '../liceo_dashboard.html';
+      break;
+    default:
+      throw new Error(`Perfil de acceso no reconocido: ${rol}`);
+  }
 
-      formulario.classList.add('is-submitting');
-      formulario.setAttribute('aria-busy', 'true');
-      boton.disabled = true;
-      document.getElementById('login-submit-label').textContent = 'Ingresando...';
-      document.getElementById('login-submit-spinner').hidden = false;
-      document.getElementById('login-submit-icon').hidden = true;
-      estado.hidden = false;
+  const urlDestino = new URL(destino, window.location.href);
+  urlDestino.searchParams.set('usuario', usuario);
+  urlDestino.searchParams.set('rol', rol);
+  sessionStorage.setItem('mandel.usuario', usuario);
+  sessionStorage.setItem('mandel.rol', rol);
 
-      window.setTimeout(() => {
-        contenedor.classList.add('login-transition-out');
-        window.setTimeout(() => {
-          window.location.href = urlDestino.href;
-        }, movimientoReducido ? 0 : 300);
-      }, movimientoReducido ? 250 : 500);
-    }
+  formulario.classList.add('is-submitting');
+  formulario.setAttribute('aria-busy', 'true');
+  boton.disabled = true;
+  document.getElementById('login-submit-label').textContent = 'Ingresando...';
+  document.getElementById('login-submit-spinner').hidden = false;
+  document.getElementById('login-submit-icon').hidden = true;
+  estado.hidden = false;
 
-    function togglePasswordVisibility() {
-      const passwordInput = document.getElementById('password');
-      const mostrar = passwordInput.type === 'password';
-      passwordInput.type = mostrar ? 'text' : 'password';
+  window.setTimeout(() => {
+    contenedor.classList.add('login-transition-out');
+    window.setTimeout(() => {
+      window.location.href = urlDestino.href;
+    }, movimientoReducido ? 0 : 300);
+  }, movimientoReducido ? 250 : 500);
+}
 
-      const boton = document.querySelector('.toggle-password');
-      boton.setAttribute('aria-pressed', String(mostrar));
-      boton.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
-    }
+function togglePasswordVisibility() {
+  const passwordInput = document.getElementById('password');
+  const mostrar = passwordInput.type === 'password';
+  passwordInput.type = mostrar ? 'text' : 'password';
 
-    document.getElementById('login-form').addEventListener('submit', iniciarSesion);
-    document.querySelector('.toggle-password').addEventListener('click', togglePasswordVisibility);
+  const boton = document.querySelector('.toggle-password');
+  boton.setAttribute('aria-pressed', String(mostrar));
+  boton.setAttribute('aria-label', mostrar ? 'Ocultar contraseña' : 'Mostrar contraseña');
+}
+
+document.getElementById('login-form').addEventListener('submit', iniciarSesion);
+document.querySelector('.toggle-password').addEventListener('click', togglePasswordVisibility);

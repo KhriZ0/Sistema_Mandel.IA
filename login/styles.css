@@ -1,17 +1,12 @@
 :root {
-  --bg-color: #f3f4f6;
-  --yellow-primary: #f5b82e;
-  --yellow-hover: #e0a31c;
-  --yellow-light: #fef3c7;
-  --accent-red: #dc2626;
+  --yellow-primary: #f4c52f;
+  --yellow-hover: #e5b31c;
+  --accent-red: #c71f2d;
   --text-dark: #1f2937;
   --text-title: #111827;
   --text-muted: #6b7280;
-  --border-color: #e5e7eb;
+  --border-color: #d1d5db;
   --white: #ffffff;
-  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
-  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 8px 10px -6px rgba(0, 0, 0, 0.04);
 }
 
 * {
@@ -22,218 +17,276 @@
 }
 
 body {
-  background-color: var(--bg-color);
-  color: var(--text-dark);
+  position: relative;
+  isolation: isolate;
   min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 20px;
+  overflow-x: hidden;
+  background: radial-gradient(circle at 25% 20%, #f3f4f6 0%, #e5e7eb 55%, #d1d5db 100%);
+}
+
+/* Halo ambiental gris neutro muy sutil */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse at 20% 15%, rgba(255, 255, 255, 0.7), transparent 45%),
+    radial-gradient(ellipse at 85% 85%, rgba(156, 163, 175, 0.2), transparent 50%);
+  pointer-events: none;
 }
 
 .container {
+  position: relative;
   width: 100%;
-  max-width: 960px;
+  max-width: 980px;
+  height: min(690px, calc(100vh - 40px));
+  min-height: 630px;
   background: var(--white);
   border-radius: 20px;
-  border: 1px solid var(--border-color);
-  box-shadow: var(--shadow-lg);
+  border: 1px solid #d1d5db;
+  box-shadow: 0 22px 55px rgba(17, 24, 39, 0.14);
   display: flex;
   overflow: hidden;
-  min-height: 580px;
 }
 
 /* ================= PANEL IZQUIERDO ================= */
 .hero-panel {
-  flex: 1;
-  padding: 40px;
+  flex: 1.28;
+  min-width: 0;
+  padding: 36px 32px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  border-right: 1px solid var(--border-color);
-  background: radial-gradient(circle at top left, rgba(245, 184, 46, 0.09), transparent 65%);
+  border-right: 1px solid #e5e7eb;
+  /* Blanco puro arriba para que el degradado de Mandela sea invisible, hacia gris claro abajo */
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 48%, #f4f5f7 82%, #eaecf0 100%);
   position: relative;
   overflow: hidden;
 }
 
-/* Franja diagonal institucional idéntica al header del menú */
-.hero-panel::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  right: 40px;
-  width: 240px;
-  height: 12px;
-  background: linear-gradient(135deg, #111827 33%, var(--accent-red) 33%, var(--accent-red) 66%, var(--yellow-primary) 66%);
-  transform: skewX(-45deg);
-}
-
-.hero-header {
-  display: flex;
-  gap: 18px;
-  align-items: center;
-  margin-top: 8px;
-}
-
+/* Retrato de Mandela en .png centrado sobre el bloque institucional */
 .mandela-avatar {
-  width: 96px;
-  height: 96px;
+  position: absolute;
+  top: 30px;
+  left: 45%;
+  transform: translateX(-50%);
+  width: 66%;
+  height: 62%;
+  z-index: 0;
+  pointer-events: none;
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: visible;
-  flex-shrink: 0;
+  align-items: flex-start;
 }
 
 .mandela-avatar img {
   display: block;
   width: 100%;
   height: 100%;
-  object-fit: cover;
-  filter: drop-shadow(0 3px 5px rgba(17, 24, 39, 0.14));
+  object-fit: contain;
+  object-position: center top;
+  mix-blend-mode: multiply;
+}
+
+/* Cita superior izquierda */
+.hero-header {
+  position: relative;
+  z-index: 2;
+  width: 138px;
+  margin-top: 38px;
 }
 
 .hero-quote {
-  font-size: 0.85rem;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.98rem;
   font-style: italic;
+  line-height: 1.45;
   color: #374151;
-  line-height: 1.4;
 }
 
 .hero-quote-author {
+  margin-top: 14px;
   font-size: 0.8rem;
-  font-weight: 700;
-  color: var(--text-title);
-  text-align: right;
-  margin-top: 4px;
+  font-weight: 500;
+  color: #6b7280;
 }
 
+.quote-stripe {
+  display: block;
+  width: 92px;
+  height: 4.5px;
+  margin-top: 12px;
+  background: linear-gradient(90deg, #f4c52f 0 35%, #c71f2d 35% 68%, #151515 68%);
+}
+
+/* Bloque central e inferior del panel izquierdo */
 .hero-body {
-  margin: 26px 0;
+  position: relative;
+  z-index: 2;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding-bottom: 6px;
 }
 
 .institution-header-block {
-  border-left: 4px solid var(--yellow-primary);
-  padding-left: 14px;
+  width: 100%;
 }
 
 .institution-name {
-  font-size: 1.65rem;
-  font-weight: 900;
-  color: var(--text-title);
-  line-height: 1.08;
-  letter-spacing: -0.5px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: clamp(2.1rem, 3.3vw, 2.65rem);
+  font-weight: 700;
+  line-height: 0.96;
+  letter-spacing: -1px;
+  color: #111827;
 }
 
 .institution-subtitle {
-  font-size: 0.85rem;
-  font-weight: 700;
-  color: var(--text-dark);
-  margin-top: 4px;
+  margin-top: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  color: #374151;
 }
 
-.institution-tagline {
-  font-size: 0.78rem;
-  font-style: italic;
-  color: var(--text-muted);
-  margin-top: 2px;
+.institution-header-block::after {
+  content: "";
+  display: block;
+  width: min(84%, 320px);
+  height: 5px;
+  margin: 10px auto 0;
+  background: linear-gradient(90deg, #f4c52f 0 52%, #c71f2d 52% 81%, #151515 81%);
+  border-radius: 3px;
 }
 
 .hero-motto {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: #374151;
-  margin: 22px 0 14px 0;
+  max-width: 280px;
+  margin: 12px 0 18px;
+  font-size: 0.84rem;
+  font-weight: 500;
+  line-height: 1.35;
+  color: #4b5563;
 }
 
 .features-grid {
+  width: 100%;
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  padding-left: 76px;
 }
 
 .feature-card {
-  background: #f9fafb;
-  padding: 12px;
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  min-height: 54px;
+  padding: 4px 6px;
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 10px;
-  transition: all 0.2s ease;
+  justify-content: center;
+  gap: 5px;
+  border-left: 1px solid #d1d5db;
+  text-align: center;
 }
 
-.feature-card:hover {
-  border-color: var(--yellow-primary);
-  background-color: #fffbeb;
+.feature-card:first-child {
+  border-left: 0;
 }
 
 .feature-icon {
-  width: 34px;
-  height: 34px;
-  border-radius: 8px;
-  background: var(--yellow-light);
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-shrink: 0;
 }
 
 .feature-icon svg {
-  width: 18px;
-  height: 18px;
-  fill: var(--text-title);
+  width: 21px;
+  height: 21px;
+  fill: #1f2937;
 }
 
 .feature-text {
-  font-size: 0.78rem;
+  font-size: 0.64rem;
   font-weight: 600;
-  color: var(--text-dark);
-  line-height: 1.25;
+  line-height: 1.15;
+  color: #374151;
+}
+
+/* Árbol anclado al borde izquierdo y apoyado sobre la franja inferior */
+.hero-tree {
+  position: absolute;
+  z-index: 1;
+  bottom: 9px;
+  left: 0;
+  width: 112px;
+  height: auto;
+  opacity: 0.45;
+  mix-blend-mode: multiply;
+  pointer-events: none;
+}
+
+.hero-signature {
+  position: absolute;
+  z-index: 2;
+  bottom: 24px;
+  left: 16px;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 0.74rem;
+  font-style: italic;
+  line-height: 1.05;
+  color: #374151;
+  transform: rotate(-7deg);
+}
+
+.hero-footer {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 3;
+  height: 9px;
+  background: linear-gradient(90deg, #f4c52f 0 36%, #c71f2d 36% 68%, #151515 68%);
 }
 
 /* ================= PANEL DERECHO (FORMULARIO) ================= */
 .form-panel {
-  width: 440px;
-  padding: 36px 42px;
+  flex: 0 0 43%;
+  min-width: 0;
+  padding: 28px 36px 68px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
   background: var(--white);
   position: relative;
-}
-
-.side-text {
-  position: absolute;
-  right: 14px;
-  top: 65%;
-  transform: translateY(-50%) rotate(90deg);
-  transform-origin: right center;
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 3px;
-  color: #9ca3af;
-  white-space: nowrap;
-  pointer-events: none;
+  overflow: hidden;
 }
 
 .form-header {
   text-align: center;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
 }
 
 .form-title {
-  font-size: 1.7rem;
+  font-size: 1.58rem;
   font-weight: 800;
   color: var(--text-title);
-  letter-spacing: -0.3px;
+  letter-spacing: -0.4px;
 }
 
 .form-subtitle {
-  font-size: 0.85rem;
+  font-size: 0.76rem;
   color: var(--text-muted);
-  margin-top: 6px;
-  line-height: 1.4;
+  margin-top: 4px;
+  line-height: 1.35;
 }
 
 .institution-tag {
@@ -244,24 +297,24 @@ body {
 .login-form {
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 10px;
 }
 
 .login-role-group {
-  display: grid;
-  gap: 6px;
-  color: var(--text-muted);
-  font-size: 0.75rem;
-  font-weight: 600;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .login-role-group label {
+  font-size: 0.74rem;
+  font-weight: 700;
   color: var(--text-title);
 }
 
 .login-role-field {
-  min-height: 42px;
-  padding: 10px 12px;
+  min-height: 40px !important;
+  padding: 8px 12px !important;
   cursor: pointer;
 }
 
@@ -274,14 +327,14 @@ body {
   left: 14px;
   top: 50%;
   transform: translateY(-50%);
-  width: 19px;
-  height: 19px;
-  fill: #6b7280;
+  width: 17px;
+  height: 17px;
+  fill: #4b5563;
 }
 
 .toggle-password {
   position: absolute;
-  right: 14px;
+  right: 13px;
   top: 50%;
   transform: translateY(-50%);
   background: none;
@@ -293,9 +346,9 @@ body {
 }
 
 .toggle-password svg {
-  width: 18px;
-  height: 18px;
-  fill: #6b7280;
+  width: 17px;
+  height: 17px;
+  fill: #4b5563;
 }
 
 .password-visibility-slash {
@@ -309,35 +362,31 @@ body {
   opacity: 0;
 }
 
-.toggle-password:hover svg {
-  fill: var(--text-title);
-}
-
 .input-field {
   width: 100%;
-  padding: 13px 42px;
-  border: 1.5px solid var(--border-color);
-  border-radius: 12px;
-  font-size: 0.92rem;
+  min-height: 42px;
+  padding: 10px 40px;
+  border: 1px solid #d1d5db;
+  border-radius: 11px;
+  background: #f9fafb;
+  font-size: 0.83rem;
   color: var(--text-title);
   outline: none;
-  background: #f9fafb;
   transition: all 0.2s ease;
 }
 
 .input-field:focus {
   background: var(--white);
-  border-color: var(--yellow-primary);
-  box-shadow: 0 0 0 3px rgba(245, 184, 46, 0.18);
+  border-color: #9ca3af;
+  box-shadow: 0 0 0 3px rgba(156, 163, 175, 0.18);
 }
 
 .forgot-link {
   align-self: flex-end;
-  font-size: 0.8rem;
+  font-size: 0.71rem;
   color: var(--accent-red);
   text-decoration: none;
   font-weight: 600;
-  margin-top: -2px;
 }
 
 .forgot-link:hover {
@@ -345,30 +394,40 @@ body {
 }
 
 .btn-submit {
-  margin-top: 6px;
-  padding: 13px;
-  background: var(--yellow-primary);
+  min-height: 41px;
+  margin-top: 2px;
+  padding: 10px;
+  background: linear-gradient(100deg, #f5c52f, #f1b91f);
   color: var(--text-title);
-  border: 1.5px solid #e5a922;
-  border-radius: 12px;
-  font-size: 0.98rem;
+  border: 1px solid #e5b31c;
+  border-radius: 11px;
+  font-size: 0.88rem;
   font-weight: 700;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
-  box-shadow: var(--shadow-sm);
   transition: all 0.2s ease;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(100deg, #edb820, #e5a914);
+  box-shadow: 0 4px 12px rgba(17, 24, 39, 0.1);
 }
 
 .btn-submit:disabled {
   cursor: wait;
 }
 
+.btn-submit svg {
+  width: 17px;
+  height: 17px;
+}
+
 .login-submit-spinner {
-  width: 18px;
-  height: 18px;
+  width: 17px;
+  height: 17px;
   border: 2px solid rgba(17, 24, 39, 0.2);
   border-top-color: var(--text-title);
   border-radius: 50%;
@@ -376,9 +435,8 @@ body {
 }
 
 .login-status {
-  margin-top: -6px;
   color: var(--text-muted);
-  font-size: 0.78rem;
+  font-size: 0.74rem;
   text-align: center;
 }
 
@@ -387,481 +445,90 @@ body {
 }
 
 @keyframes login-spinner {
-  to {
-    transform: rotate(360deg);
-  }
+  to { transform: rotate(360deg); }
 }
 
 @keyframes login-page-exit {
   to {
     opacity: 0;
-    transform: translateY(-12px) scale(0.985);
+    transform: translateY(-10px) scale(0.985);
   }
 }
 
-.btn-submit:hover {
-  background: var(--yellow-hover);
-  transform: translateY(-1px);
-  box-shadow: var(--shadow-md);
-}
-
-.btn-submit:active {
-  transform: translateY(0);
-}
-
-.btn-submit svg {
-  width: 18px;
-  height: 18px;
-}
-
-/* ================= MASCOTA / LOGO IA (GATO) ================= */
-.mascot-section {
-  text-align: center;
-  margin-top: 22px;
-  padding: 12px 14px;
-  background: #fffbeb;
-  border: 1px solid #fde68a;
-  border-radius: 14px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.mascot-avatar {
-  width: 66px;
-  height: 66px;
-  margin-bottom: 6px;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.08));
-}
-
-.mascot-name {
-  font-size: 0.95rem;
-  font-weight: 900;
-  color: var(--accent-red);
-  letter-spacing: 0.6px;
-}
-
-.mascot-title {
-  font-size: 0.76rem;
-  font-weight: 700;
-  color: var(--text-title);
-}
-
-.mascot-sub {
-  font-size: 0.7rem;
-  color: var(--text-muted);
-  margin-top: 1px;
-}
-
-.form-footer {
-  margin-top: 16px;
-  text-align: center;
-  font-size: 0.72rem;
-  color: var(--text-muted);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 5px;
-}
-
-.form-footer svg {
-  width: 13px;
-  height: 13px;
-  fill: currentColor;
-}
-
-@media (max-width: 850px) {
-  .container {
-    flex-direction: column;
-    max-width: 480px;
-  }
-  .form-panel {
-    width: 100%;
-  }
-  .hero-panel {
-    border-right: none;
-    border-bottom: 1px solid var(--border-color);
-  }
-  .side-text {
-    display: none;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .login-submit-spinner,
-  .container.login-transition-out {
-    animation: none;
-  }
-
-  .password-visibility-slash {
-    transition: none;
-  }
-}
-
-/* Diseño del login inspirado en la referencia institucional */
-body {
-  position: relative;
-  isolation: isolate;
-  overflow-x: hidden;
-  padding: 30px;
-  background:
-    radial-gradient(ellipse at 10% 22%, rgba(123, 133, 121, 0.2), transparent 30%),
-    radial-gradient(ellipse at 88% 75%, rgba(135, 132, 119, 0.22), transparent 35%),
-    #e8e7e1;
-}
-
-body::before {
-  content: "";
-  position: fixed;
-  inset: -24px;
-  z-index: -1;
-  background:
-    radial-gradient(ellipse at 15% 70%, rgba(101, 111, 101, 0.12), transparent 26%),
-    radial-gradient(ellipse at 78% 30%, rgba(255, 255, 255, 0.48), transparent 36%),
-    linear-gradient(145deg, #dcdfd9, #e8e5de 58%, #d7d7d0);
-  filter: blur(14px);
-  transform: scale(1.04);
-}
-
-.container {
-  position: relative;
-  width: min(100%, 1000px);
-  max-width: 1000px;
-  height: min(706px, calc(100vh - 60px));
-  min-height: 650px;
-  border: 1px solid rgba(255, 255, 255, 0.8);
-  border-radius: 20px;
-  box-shadow: 0 22px 65px rgba(34, 34, 31, 0.2);
-  background: rgba(255, 255, 255, 0.95);
-}
-
-.hero-panel {
-  flex: 1.28;
-  min-width: 0;
-  padding: 42px 32px 38px;
-  border-right: 1px solid rgba(31, 41, 55, 0.1);
-  background: #f9f8f5;
-}
-
-.hero-panel::before {
-  display: none;
-}
-
-.hero-panel > div:first-child {
-  position: relative;
-  z-index: 2;
-  height: 100%;
-}
-
-.hero-header {
-  width: 126px;
-  margin: 56px 0 0;
-}
-
-.quote-block {
-  position: relative;
-}
-
-.hero-quote {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 1rem;
-  font-style: italic;
-  line-height: 1.48;
-  color: #30333a;
-}
-
-.hero-quote-author {
-  margin-top: 18px;
-  font-size: 0.82rem;
-  font-weight: 400;
-  text-align: left;
-  color: #4b5563;
-}
-
-.quote-stripe {
-  display: block;
-  width: 98px;
-  height: 5px;
-  margin-top: 14px;
-  background: linear-gradient(90deg, #f4c52f 0 35%, #c71f2d 35% 68%, #151515 68%);
-}
-
-.mandela-avatar {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
-
-.mandela-avatar img {
-  object-fit: cover;
-  object-position: center top;
-  filter: none;
-}
-
-.hero-tree {
-  position: absolute;
-  z-index: 1;
-  bottom: 38px;
-  left: 18px;
-  width: 112px;
-  height: auto;
-  opacity: 0.42;
-  mix-blend-mode: multiply;
-  pointer-events: none;
-}
-
-.hero-body {
-  position: absolute;
-  inset: auto 0 0;
-  display: flex;
-  height: 45%;
-  margin: 0;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.institution-header-block {
-  width: 100%;
-  padding: 0;
-  border: 0;
-}
-
-.institution-name {
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: clamp(2rem, 3.2vw, 2.55rem);
-  font-weight: 700;
-  line-height: 0.98;
-  letter-spacing: -1.2px;
-  color: #101216;
-}
-
-.institution-subtitle {
-  margin-top: 8px;
-  font-size: 1.02rem;
-  font-weight: 500;
-  letter-spacing: 0.7px;
-}
-
-.institution-tagline {
-  display: none;
-}
-
-.institution-header-block::after {
-  content: "";
-  display: block;
-  width: min(82%, 310px);
-  height: 5px;
-  margin: 10px auto 0;
-  background: linear-gradient(90deg, #f4c52f 0 52%, #c71f2d 52% 81%, #151515 81%);
-  border-radius: 4px;
-}
-
-.hero-motto {
-  max-width: 270px;
-  margin: 12px 0 0;
-  font-size: 0.83rem;
-  font-weight: 500;
-  line-height: 1.35;
-}
-
-.features-grid {
-  width: 100%;
-  margin-top: auto;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 0;
-  padding-left: 58px;
-  margin-bottom: 5px;
-}
-
-.feature-card {
-  min-height: 56px;
-  padding: 4px 7px;
-  flex-direction: column;
-  justify-content: center;
-  gap: 4px;
-  border: 0;
-  border-left: 1px solid rgba(31, 41, 55, 0.09);
-  border-radius: 0;
-  background: transparent;
-  text-align: center;
-}
-
-.feature-card:first-child {
-  border-left: 0;
-}
-
-.feature-card:hover {
-  border-color: rgba(31, 41, 55, 0.09);
-  background: rgba(245, 184, 46, 0.08);
-}
-
-.feature-icon {
-  width: 28px;
-  height: 28px;
-  border-radius: 0;
-  background: transparent;
-}
-
-.feature-icon svg {
-  width: 22px;
-  height: 22px;
-}
-
-.feature-text {
-  font-size: 0.63rem;
-  line-height: 1.18;
-}
-
-.hero-signature {
-  position: absolute;
-  z-index: 2;
-  bottom: 32px;
-  left: 16px;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 0.75rem;
-  font-style: italic;
-  line-height: 1.05;
-  color: #343434;
-  transform: rotate(-7deg);
-}
-
-.hero-footer {
-  position: absolute;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  z-index: 3;
-  height: 10px;
-  background: linear-gradient(90deg, #f4c52f 0 36%, #c71f2d 36% 68%, #151515 68%);
-}
-
-.form-panel {
-  flex: 0 0 43%;
-  width: auto;
-  min-width: 0;
-  padding: 48px 36px 86px;
-  justify-content: space-between;
-  background: rgba(255, 255, 255, 0.94);
-}
-
-.side-text {
-  display: none;
-}
-
-.form-header {
-  margin: 0 0 16px;
-}
-
-.form-title {
-  font-size: 1.55rem;
-  letter-spacing: -0.5px;
-}
-
-.form-subtitle {
-  font-size: 0.78rem;
-}
-
-.login-form {
-  gap: 13px;
-}
-
-.input-field {
-  min-height: 48px;
-  border: 1px solid #d5d7da;
-  border-radius: 12px;
-  background: rgba(249, 250, 251, 0.78);
-  font-size: 0.83rem;
-}
-
-.input-icon {
-  width: 18px;
-  height: 18px;
-  fill: #202630;
-}
-
-.toggle-password {
-  right: 13px;
-}
-
-.toggle-password svg {
-  fill: #3f4650;
-}
-
-.forgot-link {
-  margin-top: 1px;
-  font-size: 0.7rem;
-}
-
-.btn-submit {
-  min-height: 44px;
-  margin-top: 0;
-  border: 0;
-  border-radius: 11px;
-  background: linear-gradient(100deg, #f5c52f, #f1b91f);
-  box-shadow: none;
-  font-size: 0.88rem;
-}
-
-.btn-submit:hover {
-  background: linear-gradient(100deg, #edb820, #e5a914);
-  box-shadow: 0 5px 14px rgba(184, 132, 15, 0.18);
-}
-
+/* Separador con punto central */
 .form-divider {
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 1px 0 -7px;
+  margin: 12px 0 8px;
 }
 
 .form-divider span {
   height: 1px;
   flex: 1;
-  background: linear-gradient(90deg, transparent, #b9bdc1);
+  background: linear-gradient(90deg, transparent, #d1d5db);
 }
 
 .form-divider span:last-child {
-  background: linear-gradient(90deg, #b9bdc1, transparent);
+  background: linear-gradient(90deg, #d1d5db, transparent);
 }
 
 .form-divider i {
   width: 5px;
   height: 5px;
   border-radius: 50%;
-  background: #969a9e;
+  background: #9ca3af;
 }
 
+/* Bloque MANDELIA */
 .mascot-section {
-  margin: 0;
-  padding: 0;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+  z-index: 2;
 }
 
 .mascot-avatar {
-  width: 104px;
-  height: 104px;
-  margin-bottom: 0;
+  width: 82px;
+  height: 82px;
+  object-fit: contain;
+  margin-bottom: 2px;
 }
 
 .mascot-name {
-  font-size: 1.45rem;
-  letter-spacing: -0.5px;
+  font-size: 1.3rem;
+  font-weight: 900;
+  color: var(--accent-red);
+  letter-spacing: -0.3px;
+  line-height: 1.1;
 }
 
 .mascot-title {
   font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--text-title);
+  margin-top: 2px;
 }
 
 .mascot-sub {
-  margin-top: 5px;
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-style: italic;
+  color: var(--text-muted);
+  margin-top: 2px;
+}
+
+/* Cinta curva tricolor de Miranda sobre el pie */
+.miranda-ribbon {
+  position: absolute;
+  right: 0;
+  bottom: 54px;
+  left: 0;
+  width: 100%;
+  height: 50px;
+  z-index: 1;
+  pointer-events: none;
 }
 
 .form-footer {
@@ -869,163 +536,51 @@ body::before {
   right: 0;
   bottom: 0;
   left: 0;
-  min-height: 68px;
-  margin: 0;
-  padding: 12px 14px 10px;
-  background: rgba(243, 244, 246, 0.85);
+  height: 54px;
+  padding: 8px 16px;
+  background: #f3f4f6;
+  border-top: 1px solid #d1d5db;
   font-size: 0.65rem;
+  color: #4b5563;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  z-index: 2;
+}
+
+.form-footer svg {
+  width: 13px;
+  height: 13px;
+  fill: #111827;
+  flex-shrink: 0;
 }
 
 .form-footer > div {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 2px;
 }
 
 .form-footer small {
   color: #9ca3af;
-  font-size: 0.62rem;
+  font-size: 0.61rem;
 }
 
 @media (max-width: 850px) {
-  body {
-    align-items: flex-start;
-    padding: 18px;
-  }
-
   .container {
-    width: 100%;
-    max-width: 540px;
+    flex-direction: column;
     height: auto;
-    min-height: 0;
-    margin: auto;
+    max-width: 480px;
   }
-
   .hero-panel {
-    flex: none;
     min-height: 440px;
     border-right: 0;
-    border-bottom: 1px solid rgba(31, 41, 55, 0.1);
+    border-bottom: 1px solid #d1d5db;
   }
-
-  .hero-panel > div:first-child {
-    min-height: 358px;
-  }
-
-  .hero-body {
-    height: 52%;
-  }
-
-  .features-grid {
-    margin-bottom: 16px;
-  }
-
-  .feature-card {
-    min-height: 66px;
-  }
-
   .form-panel {
     flex: none;
     width: 100%;
-    min-height: 610px;
-    padding: 38px 42px 86px;
-  }
-}
-
-@media (max-width: 520px) {
-  body {
-    padding: 10px;
-  }
-
-  .container {
-    border-radius: 16px;
-  }
-
-  .hero-panel {
-    min-height: 398px;
-    padding: 28px 20px 34px;
-  }
-
-  .hero-panel > div:first-child {
-    min-height: 336px;
-  }
-
-  .hero-header {
-    width: 126px;
-    margin-top: 36px;
-  }
-
-  .hero-quote {
-    font-size: 0.83rem;
-  }
-
-  .hero-quote-author {
-    margin-top: 12px;
-    font-size: 0.72rem;
-  }
-
-  .mandela-avatar {
-    inset: 0;
-    width: 100%;
-    height: 100%;
-  }
-
-  .hero-tree {
-    bottom: 25px;
-    left: 10px;
-    width: 78px;
-  }
-
-  .hero-body {
-    height: 52%;
-  }
-
-  .institution-name {
-    font-size: clamp(2rem, 9vw, 2.5rem);
-  }
-
-  .institution-subtitle {
-    font-size: 0.8rem;
-    letter-spacing: 0;
-  }
-
-  .hero-motto {
-    max-width: 230px;
-    font-size: 0.75rem;
-  }
-
-  .feature-card {
-    padding-right: 3px;
-    padding-left: 3px;
-  }
-
-  .features-grid {
-    padding-left: 46px;
-    margin-bottom: 16px;
-  }
-
-  .feature-icon {
-    width: 24px;
-    height: 24px;
-  }
-
-  .feature-icon svg {
-    width: 19px;
-    height: 19px;
-  }
-
-  .feature-text {
-    font-size: 0.56rem;
-  }
-
-  .hero-signature {
-    bottom: 54px;
-    left: 12px;
-    font-size: 0.65rem;
-  }
-
-  .form-panel {
-    min-height: 590px;
-    padding: 34px 24px 86px;
+    min-height: 560px;
   }
 }
