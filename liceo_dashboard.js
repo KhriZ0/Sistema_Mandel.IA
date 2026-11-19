@@ -99,16 +99,36 @@ function mostrarInicio(boton) {
     
     mostrarCargaModulo(contenedor, () => {
         contenedor.innerHTML = `
-            <div class="welcome-banner">
-                <h1>Bienvenido(a), <span data-session-user>${usuarioSesion}</span></h1>
-                <p>Gestión de Liceo (1ro a 5to Año)</p>
+            <div class="welcome-banner course-module-banner home-module-banner">
+                <div>
+                    <h1>¡Bienvenido(a), <span data-session-user>${usuarioSesion}</span>!</h1>
+                    <h2>Gestión de Educación Media General</h2>
+                    <p class="course-module-description">Desde aquí puedes revisar tus asignaciones y acceder rápidamente a cursos, horarios y calificaciones.</p>
+                </div>
+                <span class="course-catalog-mark home-module-mark" aria-hidden="true">
+                    <img src="img/img_inicio.png" alt="">
+                </span>
             </div>
 
             <div class="widgets-row">
-                <div class="widget">
-                    <h3>Período académico actual</h3>
-                    <p>Año escolar: 2026 - 2027 (En curso)</p>
-                </div>
+                <section class="widget academic-period-card" aria-labelledby="academic-period-title" data-period-status="in-progress">
+                    <div class="academic-period-top">
+                        <span class="academic-period-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="3" y="5" width="18" height="16" rx="2"></rect>
+                                <path d="M16 3v4M8 3v4M3 11h18"></path>
+                            </svg>
+                        </span>
+                        <span class="academic-period-status" role="status" aria-live="polite">
+                            <span class="academic-period-status-dot" aria-hidden="true"></span>
+                            <span data-period-status-label>En curso</span>
+                        </span>
+                    </div>
+                    <div class="academic-period-content">
+                        <h3 id="academic-period-title">Período académico actual</h3>
+                        <p class="academic-period-year" data-academic-period-year>2026 - 2027</p>
+                    </div>
+                </section>
                 <div class="widget actions">
                     <h3>Accesos directos</h3>
                     <div class="action-buttons action-buttons--shortcuts">
@@ -192,116 +212,79 @@ function renderizarCatalogoCursos(contenedor) {
         filtroSeccion.appendChild(opcion);
     });
 
-    anos.forEach(ano => {
-        const bloqueAno = document.createElement('section');
-        bloqueAno.className = 'course-year-block';
-        bloqueAno.dataset.year = String(ano);
-        bloqueAno.setAttribute('aria-labelledby', `course-year-title-${ano}`);
+    const materias = agruparCursosPorMateria(cursosCatalogo);
+    materias.forEach(materiaAsignada => {
+        const bloqueMateria = document.createElement('section');
+        bloqueMateria.className = 'course-subject-block';
+        bloqueMateria.dataset.subject = normalizar(materiaAsignada.nombre);
 
-        const encabezadoAno = document.createElement('div');
-        encabezadoAno.className = 'course-year-heading';
-        const tituloAno = document.createElement('h2');
-        tituloAno.id = `course-year-title-${ano}`;
-        tituloAno.textContent = etiquetaAnoEscolar(ano);
-        const etiquetaNivel = document.createElement('span');
-        etiquetaNivel.textContent = 'Educación media general';
-        encabezadoAno.append(tituloAno, etiquetaNivel);
-        bloqueAno.appendChild(encabezadoAno);
+        const encabezado = document.createElement('div');
+        encabezado.className = 'course-subject-heading';
+        encabezado.appendChild(crearIconoMateria(materiaAsignada.nombre));
+        const titulo = document.createElement('h2');
+        titulo.textContent = materiaAsignada.nombre;
+        encabezado.appendChild(titulo);
 
-        secciones.forEach(seccion => {
-            const cursosSeccion = cursosCatalogo.filter(curso =>
-                Number(curso.ano) === ano && String(curso.seccion).trim() === seccion
-            );
-            if (!cursosSeccion.length) return;
+        const ubicaciones = document.createElement('div');
+        ubicaciones.className = 'course-location-list';
+        materiaAsignada.asignaciones.forEach(curso => {
+            const ubicacion = document.createElement('article');
+            ubicacion.className = 'course-location-card';
+            ubicacion.dataset.year = String(curso.ano);
+            ubicacion.dataset.section = String(curso.seccion);
 
-            const grupoSeccion = document.createElement('div');
-            grupoSeccion.className = 'course-section-group';
-            grupoSeccion.dataset.section = seccion;
+            const etiqueta = document.createElement('span');
+            etiqueta.className = 'course-location-label';
+            etiqueta.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
+            ubicacion.appendChild(etiqueta);
 
-            const encabezadoSeccion = document.createElement('div');
-            encabezadoSeccion.className = 'course-section-heading';
-            const tituloSeccion = document.createElement('h3');
-            tituloSeccion.textContent = `Sección ${seccion}`;
-            encabezadoSeccion.appendChild(tituloSeccion);
+            const nombreDocente = String(curso.docente || '').trim();
+            if (nombreDocente) {
+                const docente = document.createElement('div');
+                docente.className = 'course-teacher';
+                const avatar = document.createElement('span');
+                avatar.className = 'course-teacher-avatar';
+                avatar.textContent = nombreDocente.charAt(0).toLocaleUpperCase('es');
+                avatar.setAttribute('aria-hidden', 'true');
+                const nombre = document.createElement('span');
+                nombre.textContent = nombreDocente;
+                docente.append(avatar, nombre);
+                ubicacion.appendChild(docente);
+            }
 
-            const tarjetas = document.createElement('div');
-            tarjetas.className = 'course-cards';
-
-            cursosSeccion.forEach(curso => {
-                const tarjeta = document.createElement('article');
-                tarjeta.className = 'course-card';
-                tarjeta.dataset.subject = normalizar(curso.materia);
-                tarjeta.dataset.year = String(ano);
-                tarjeta.dataset.section = String(seccion);
-
-                const materia = document.createElement('h4');
-                materia.textContent = curso.materia;
-                const detalle = document.createElement('p');
-                detalle.className = 'course-card-detail';
-                detalle.textContent = 'Asignatura';
-                const encabezado = document.createElement('div');
-                encabezado.className = 'course-card-heading';
-                const textos = document.createElement('div');
-                textos.className = 'course-card-copy';
-                textos.append(materia, detalle);
-                encabezado.append(crearIconoMateria(curso.materia), textos);
-
-                const nombreDocente = String(curso.docente || '').trim();
-                tarjeta.appendChild(encabezado);
-                if (nombreDocente) {
-                    const docente = document.createElement('div');
-                    docente.className = 'course-teacher';
-                    const avatar = document.createElement('span');
-                    avatar.className = 'course-teacher-avatar';
-                    avatar.textContent = nombreDocente.charAt(0).toLocaleUpperCase('es');
-                    avatar.setAttribute('aria-hidden', 'true');
-                    const nombre = document.createElement('span');
-                    nombre.textContent = nombreDocente;
-                    docente.append(avatar, nombre);
-                    tarjeta.appendChild(docente);
-                }
-
-                tarjetas.appendChild(tarjeta);
-            });
-
-            grupoSeccion.append(encabezadoSeccion, tarjetas);
-            bloqueAno.appendChild(grupoSeccion);
+            ubicaciones.appendChild(ubicacion);
         });
 
-        listaCursos.appendChild(bloqueAno);
+        bloqueMateria.append(encabezado, ubicaciones);
+        listaCursos.appendChild(bloqueMateria);
     });
 
     function aplicarFiltros() {
         const consulta = normalizar(busquedaMateria.value);
-        let resultados = 0;
+        let materiasVisibles = 0;
+        let asignacionesVisibles = 0;
 
-        listaCursos.querySelectorAll('.course-year-block').forEach(bloqueAno => {
-            const coincideAno = !filtroAno.value || bloqueAno.dataset.year === filtroAno.value;
-            let hayCursosEnAno = false;
-
-            bloqueAno.querySelectorAll('.course-section-group').forEach(grupo => {
-                const coincideSeccion = !filtroSeccion.value || grupo.dataset.section === filtroSeccion.value;
-                let hayCursosEnSeccion = false;
-
-                grupo.querySelectorAll('.course-card').forEach(tarjeta => {
-                    const visible = coincideAno && coincideSeccion && tarjeta.dataset.subject.includes(consulta);
-                    tarjeta.hidden = !visible;
-                    if (visible) {
-                        resultados++;
-                        hayCursosEnSeccion = true;
-                    }
-                });
-
-                grupo.hidden = !hayCursosEnSeccion;
-                if (hayCursosEnSeccion) hayCursosEnAno = true;
+        listaCursos.querySelectorAll('.course-subject-block').forEach(bloque => {
+            const coincideMateria = bloque.dataset.subject.includes(consulta);
+            let tieneUbicacionesVisibles = false;
+            bloque.querySelectorAll('.course-location-card').forEach(ubicacion => {
+                const visible = coincideMateria
+                    && (!filtroAno.value || ubicacion.dataset.year === filtroAno.value)
+                    && (!filtroSeccion.value || ubicacion.dataset.section === filtroSeccion.value);
+                ubicacion.hidden = !visible;
+                if (visible) {
+                    asignacionesVisibles++;
+                    tieneUbicacionesVisibles = true;
+                }
             });
 
-            bloqueAno.hidden = !hayCursosEnAno;
+            bloque.hidden = !tieneUbicacionesVisibles;
+            if (tieneUbicacionesVisibles) materiasVisibles++;
         });
 
-        contador.textContent = `${resultados} ${resultados === 1 ? 'asignatura encontrada' : 'asignaturas encontradas'}`;
+        contador.textContent = `${materiasVisibles} ${materiasVisibles === 1 ? 'materia' : 'materias'} • ${asignacionesVisibles} ${asignacionesVisibles === 1 ? 'asignación' : 'asignaciones'}`;
         estadoVacio.textContent = 'No encontramos asignaturas con esos filtros. Prueba con otra búsqueda.';
-        estadoVacio.hidden = resultados > 0;
+        estadoVacio.hidden = asignacionesVisibles > 0;
         listaCursos.setAttribute('aria-busy', 'false');
     }
 
@@ -328,30 +311,50 @@ function crearIconoMateria(materia) {
     return icono;
 }
 
+function agruparCursosPorMateria(cursos) {
+    const materias = new Map();
+    cursos.forEach((curso, indice) => {
+        const nombre = String(curso.materia).trim();
+        const claveMateria = nombre.normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '').toLocaleLowerCase('es');
+        if (!materias.has(claveMateria)) {
+            materias.set(claveMateria, { nombre, asignaciones: new Map() });
+        }
+
+        const asignaciones = materias.get(claveMateria).asignaciones;
+        const claveAsignacion = `${curso.ano}|${curso.seccion}`;
+        if (!asignaciones.has(claveAsignacion)) {
+            asignaciones.set(claveAsignacion, { ...curso, indice });
+        }
+    });
+
+    return [...materias.values()]
+        .map(materia => ({
+            ...materia,
+            asignaciones: [...materia.asignaciones.values()].sort((a, b) =>
+                a.ano - b.ano || a.seccion.localeCompare(b.seccion, 'es')
+            )
+        }))
+        .sort((a, b) => a.nombre.localeCompare(b.nombre, 'es'));
+}
+
 function renderizarResumenCursos() {
     const lista = document.getElementById('assigned-courses-list');
     const resumen = document.getElementById('assigned-courses-summary');
     const contador = document.getElementById('assigned-courses-count');
     if (!lista || !resumen || !contador) return;
 
-    const grupos = new Map();
-    cursosCatalogo.forEach(curso => {
-        const clave = `${curso.ano}|${curso.seccion}`;
-        if (!grupos.has(clave)) {
-            grupos.set(clave, { ano: curso.ano, seccion: curso.seccion, materias: [] });
-        }
-        grupos.get(clave).materias.push(curso.materia);
-    });
-
-    const asignaciones = [...grupos.values()].sort((a, b) =>
-        a.ano - b.ano || a.seccion.localeCompare(b.seccion, 'es')
-    );
+    const materiasOrdenadas = agruparCursosPorMateria(cursosCatalogo);
     lista.replaceChildren();
 
-    resumen.textContent = `${cursosCatalogo.length} ${cursosCatalogo.length === 1 ? 'materia asignada' : 'materias asignadas'}`;
-    contador.textContent = `${asignaciones.length} ${asignaciones.length === 1 ? 'sección' : 'secciones'}`;
+    const cantidadAsignaciones = materiasOrdenadas.reduce(
+        (total, materia) => total + materia.asignaciones.length,
+        0
+    );
+    resumen.textContent = `${cantidadAsignaciones} ${cantidadAsignaciones === 1 ? 'asignación académica' : 'asignaciones académicas'}`;
+    contador.textContent = `${materiasOrdenadas.length} ${materiasOrdenadas.length === 1 ? 'materia' : 'materias'}`;
 
-    if (!asignaciones.length) {
+    if (!materiasOrdenadas.length) {
         const vacio = document.createElement('p');
         vacio.className = 'assigned-courses-empty';
         vacio.textContent = 'Aún no tienes materias asignadas.';
@@ -359,31 +362,29 @@ function renderizarResumenCursos() {
         return;
     }
 
-    asignaciones.forEach(asignacion => {
+    materiasOrdenadas.forEach(materiaAsignada => {
         const grupo = document.createElement('section');
         grupo.className = 'assigned-course-group';
         grupo.setAttribute('role', 'listitem');
 
         const encabezado = document.createElement('div');
         encabezado.className = 'assigned-course-group-heading';
-        const ano = document.createElement('span');
-        ano.className = 'assigned-course-year';
-        ano.textContent = etiquetaAnoEscolar(asignacion.ano);
-        const seccion = document.createElement('span');
-        seccion.className = 'assigned-course-section';
-        seccion.textContent = `Sección ${asignacion.seccion}`;
-        encabezado.append(ano, seccion);
+        encabezado.appendChild(crearIconoMateria(materiaAsignada.nombre));
+        const nombre = document.createElement('h4');
+        nombre.className = 'assigned-course-name';
+        nombre.textContent = materiaAsignada.nombre;
+        encabezado.appendChild(nombre);
 
-        const materias = document.createElement('div');
-        materias.className = 'assigned-course-subjects';
-        asignacion.materias.forEach(materia => {
-            const etiqueta = document.createElement('span');
-            etiqueta.className = 'assigned-course-subject';
-            etiqueta.textContent = materia;
-            materias.appendChild(etiqueta);
+        const asignaciones = document.createElement('div');
+        asignaciones.className = 'assigned-course-locations';
+        materiaAsignada.asignaciones.forEach(asignacion => {
+                const etiqueta = document.createElement('span');
+                etiqueta.className = 'assigned-course-section';
+                etiqueta.textContent = `${etiquetaAnoEscolar(asignacion.ano)} • Sección ${asignacion.seccion}`;
+                asignaciones.appendChild(etiqueta);
         });
 
-        grupo.append(encabezado, materias);
+        grupo.append(encabezado, asignaciones);
         lista.appendChild(grupo);
     });
 }
@@ -421,91 +422,69 @@ function renderizarAsignacionesCalificaciones(contenedor) {
         .normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
     const contador = contenedor.querySelector('#grade-assignment-count');
     const estadoVacio = contenedor.querySelector('#grade-assignment-empty');
-    const cursosFiltrados = cursosCatalogo
-        .map((curso, indice) => ({ ...curso, indice }))
-        .filter(curso =>
-            (!filtroAno || curso.ano === Number(filtroAno))
-            && (!filtroSeccion || curso.seccion === filtroSeccion)
-            && curso.materia.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(consulta)
+    const materiasFiltradas = agruparCursosPorMateria(cursosCatalogo)
+        .map(materia => ({
+            ...materia,
+            asignaciones: materia.asignaciones.filter(curso =>
+                (!filtroAno || curso.ano === Number(filtroAno))
+                && (!filtroSeccion || curso.seccion === filtroSeccion)
+            )
+        }))
+        .filter(materia =>
+            materia.asignaciones.length > 0
+            && materia.nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().includes(consulta)
         );
-    const anos = [...new Set(cursosFiltrados.map(curso => curso.ano))].sort((a, b) => a - b);
 
     lista.replaceChildren();
-    anos.forEach(ano => {
-        const bloqueAno = document.createElement('section');
-        bloqueAno.className = 'course-year-block';
+    materiasFiltradas.forEach(materiaAsignada => {
+        const bloqueMateria = document.createElement('section');
+        bloqueMateria.className = 'course-subject-block';
 
-        const encabezadoAno = document.createElement('div');
-        encabezadoAno.className = 'course-year-heading';
-        const tituloAno = document.createElement('h2');
-        tituloAno.textContent = etiquetaAnoEscolar(ano);
-        const etiquetaNivel = document.createElement('span');
-        etiquetaNivel.textContent = 'Educación media general';
-        encabezadoAno.append(tituloAno, etiquetaNivel);
-        bloqueAno.appendChild(encabezadoAno);
+        const encabezado = document.createElement('div');
+        encabezado.className = 'course-subject-heading';
+        encabezado.appendChild(crearIconoMateria(materiaAsignada.nombre));
+        const titulo = document.createElement('h2');
+        titulo.textContent = materiaAsignada.nombre;
+        encabezado.appendChild(titulo);
 
-        const secciones = [...new Set(cursosFiltrados
-            .filter(curso => curso.ano === ano)
-            .map(curso => curso.seccion))].sort((a, b) => a.localeCompare(b, 'es'));
+        const ubicaciones = document.createElement('div');
+        ubicaciones.className = 'course-location-list';
+        materiaAsignada.asignaciones.forEach(curso => {
+            const tarjeta = document.createElement('button');
+            tarjeta.type = 'button';
+            tarjeta.className = 'course-location-card grade-assignment-card';
+            tarjeta.dataset.courseIndex = String(curso.indice);
+            const seleccionado = cursoCalificacionesSeleccionado
+                && cursoCalificacionesSeleccionado.ano === curso.ano
+                && cursoCalificacionesSeleccionado.seccion === curso.seccion
+                && cursoCalificacionesSeleccionado.materia === curso.materia;
+            tarjeta.setAttribute('aria-pressed', String(Boolean(seleccionado)));
+            tarjeta.setAttribute('aria-label', `Cargar calificaciones de ${materiaAsignada.nombre}, ${etiquetaAnoEscolar(curso.ano)}, Sección ${curso.seccion}`);
 
-        secciones.forEach(seccion => {
-            const grupo = document.createElement('div');
-            grupo.className = 'course-section-group';
+            const etiqueta = document.createElement('span');
+            etiqueta.className = 'course-location-label';
+            etiqueta.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
 
-            const encabezadoSeccion = document.createElement('div');
-            encabezadoSeccion.className = 'course-section-heading';
-            const tituloSeccion = document.createElement('h3');
-            tituloSeccion.textContent = `Sección ${seccion}`;
-            encabezadoSeccion.appendChild(tituloSeccion);
-
-            const tarjetas = document.createElement('div');
-            tarjetas.className = 'course-cards';
-            cursosFiltrados
-                .filter(curso => curso.ano === ano && curso.seccion === seccion)
-                .forEach(curso => {
-                    const tarjeta = document.createElement('button');
-                    tarjeta.type = 'button';
-                    tarjeta.className = 'course-card grade-assignment-card';
-                    tarjeta.dataset.courseIndex = String(curso.indice);
-                    const seleccionado = cursoCalificacionesSeleccionado
-                        && cursoCalificacionesSeleccionado.ano === curso.ano
-                        && cursoCalificacionesSeleccionado.seccion === curso.seccion
-                        && cursoCalificacionesSeleccionado.materia === curso.materia;
-                    tarjeta.setAttribute('aria-pressed', String(Boolean(seleccionado)));
-
-                    const encabezado = document.createElement('div');
-                    encabezado.className = 'course-card-heading';
-                    encabezado.appendChild(crearIconoMateria(curso.materia));
-
-                    const copia = document.createElement('div');
-                    copia.className = 'course-card-copy';
-                    const materia = document.createElement('h4');
-                    materia.textContent = curso.materia;
-                    const detalle = document.createElement('p');
-                    detalle.className = 'course-card-detail';
-                    detalle.textContent = 'Asignatura asignada';
-                    copia.append(materia, detalle);
-                    encabezado.appendChild(copia);
-
-                    const accion = document.createElement('span');
-                    accion.className = 'grade-assignment-action';
-                    accion.textContent = 'Cargar calificaciones';
-                    tarjeta.append(encabezado, accion);
-                    tarjetas.appendChild(tarjeta);
-                });
-
-            grupo.append(encabezadoSeccion, tarjetas);
-            bloqueAno.appendChild(grupo);
+            const accion = document.createElement('span');
+            accion.className = 'grade-assignment-action';
+            accion.textContent = 'Cargar notas';
+            tarjeta.append(etiqueta, accion);
+            ubicaciones.appendChild(tarjeta);
         });
 
-        lista.appendChild(bloqueAno);
+        bloqueMateria.append(encabezado, ubicaciones);
+        lista.appendChild(bloqueMateria);
     });
 
-    contador.textContent = `${cursosFiltrados.length} ${cursosFiltrados.length === 1 ? 'materia asignada' : 'materias asignadas'}`;
+    const asignacionesVisibles = materiasFiltradas.reduce(
+        (total, materia) => total + materia.asignaciones.length,
+        0
+    );
+    contador.textContent = `${materiasFiltradas.length} ${materiasFiltradas.length === 1 ? 'materia' : 'materias'} • ${asignacionesVisibles} ${asignacionesVisibles === 1 ? 'asignación' : 'asignaciones'}`;
     estadoVacio.textContent = cursosCatalogo.length
         ? 'No encontramos materias con esos filtros.'
         : 'No tienes materias asignadas para cargar calificaciones.';
-    estadoVacio.hidden = cursosFiltrados.length > 0;
+    estadoVacio.hidden = asignacionesVisibles > 0;
     lista.setAttribute('aria-busy', 'false');
 }
 
@@ -593,7 +572,7 @@ function seleccionarAccion(modulo, boton) {
                     </div>
                     <div class="course-results-heading">
                         <span id="grade-assignment-count" role="status" aria-live="polite"></span>
-                        <span>Listado por año y sección</span>
+                        <span>Materias agrupadas por asignación</span>
                     </div>
                     <div id="grade-assigned-courses" class="course-years" aria-busy="true"></div>
                     <p id="grade-assignment-empty" class="course-empty-state" hidden></p>
@@ -718,7 +697,6 @@ function seleccionarAccion(modulo, boton) {
                         <span class="course-eyebrow">PERÍODO ACADÉMICO 2026–2027</span>
                         <h1>Módulo: ${configuracionEncabezado.titulo}</h1>
                         <h2 ${configuracionEncabezado.tituloId ? `id="${configuracionEncabezado.tituloId}"` : ''}>${configuracionEncabezado.subtitulo}</h2>
-                        <p class="course-module-meta">Gestión de Liceo • Panel Docente</p>
                         <p class="course-module-description">${configuracionEncabezado.descripcion}</p>
                     </div>
                     <span class="course-catalog-mark ${configuracionEncabezado.marcaClase || ''}" aria-hidden="true">
@@ -729,7 +707,6 @@ function seleccionarAccion(modulo, boton) {
             : `
                 <div class="welcome-banner" style="padding: 20px 30px;">
                     <h1>Módulo: ${modulo}</h1>
-                    <p>Gestión de Liceo • Panel Docente</p>
                 </div>
             `;
 
