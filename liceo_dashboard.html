@@ -127,7 +127,7 @@
             </div>
 
             <!-- Resumen del docente -->
-            <div class="charts-row">
+            <div class="charts-row home-charts-row">
                 <div class="chart-box assigned-courses-box">
                     <div class="assigned-courses-heading">
                         <div>
@@ -138,10 +138,17 @@
                     </div>
                     <div class="assigned-courses-list" id="assigned-courses-list" role="list"></div>
                 </div>
-                <div class="chart-box">
-                    <h3>Horarios de Clase</h3>
-                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Bloques horarios y aulas asignadas para la semana.</p>
-                </div>
+                <section class="chart-box schedule-box" aria-labelledby="schedule-title">
+                    <div class="schedule-heading">
+                        <div>
+                            <h3 id="schedule-title">Horarios de Clase</h3>
+                            <p>Bloques horarios y materias asignadas para la semana.</p>
+                        </div>
+                        <span class="schedule-demo-label">Demostración</span>
+                    </div>
+                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de demostración"></div>
+                    <p class="schedule-note">Materias de demostración · Aulas por asignar</p>
+                </section>
             </div>
         </main>
 

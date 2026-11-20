@@ -154,7 +154,7 @@ function mostrarInicio(boton) {
                 </div>
             </div>
 
-            <div class="charts-row">
+            <div class="charts-row home-charts-row">
                 <div class="chart-box assigned-courses-box">
                     <div class="assigned-courses-heading">
                         <div>
@@ -165,13 +165,21 @@ function mostrarInicio(boton) {
                     </div>
                     <div class="assigned-courses-list" id="assigned-courses-list" role="list"></div>
                 </div>
-                <div class="chart-box">
-                    <h3>Horarios de Clase</h3>
-                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Bloques horarios y aulas asignadas para la semana.</p>
-                </div>
+                <section class="chart-box schedule-box" aria-labelledby="schedule-title">
+                    <div class="schedule-heading">
+                        <div>
+                            <h3 id="schedule-title">Horarios de Clase</h3>
+                            <p>Bloques horarios y materias asignadas para la semana.</p>
+                        </div>
+                        <span class="schedule-demo-label">Demostración</span>
+                    </div>
+                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de demostración"></div>
+                    <p class="schedule-note">Materias de demostración · Aulas por asignar</p>
+                </section>
             </div>
         `;
         renderizarResumenCursos();
+        renderizarHorarioDemostracion();
     });
 }
 
@@ -389,7 +397,61 @@ function renderizarResumenCursos() {
     });
 }
 
+function renderizarHorarioDemostracion() {
+    const horario = document.getElementById('demo-schedule');
+    if (!horario) return;
+
+    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+    const bloques = ['7:00 – 8:20', '8:30 – 9:50', '10:00 – 11:20'];
+    horario.replaceChildren();
+
+    if (!cursosCatalogo.length) {
+        const vacio = document.createElement('p');
+        vacio.className = 'schedule-empty';
+        vacio.textContent = 'No hay materias de demostración para mostrar.';
+        horario.appendChild(vacio);
+        return;
+    }
+
+    const columnas = dias.map((dia, indiceDia) => {
+        const columna = document.createElement('section');
+        columna.className = 'schedule-day';
+        columna.setAttribute('aria-label', dia);
+
+        const titulo = document.createElement('h4');
+        titulo.textContent = dia;
+        columna.appendChild(titulo);
+
+        const materiasDelDia = cursosCatalogo
+            .map((curso, indiceCurso) => ({ curso, indiceBloque: Math.floor(indiceCurso / dias.length) }))
+            .filter(({ curso }, indiceCurso) => indiceCurso % dias.length === indiceDia);
+        materiasDelDia.forEach(({ curso, indiceBloque }) => {
+            const bloque = document.createElement('article');
+            bloque.className = 'schedule-class';
+
+            const hora = document.createElement('span');
+            hora.className = 'schedule-time';
+            hora.textContent = bloques[indiceBloque] || `${indiceBloque + 1}° bloque`;
+
+            const nombre = document.createElement('h5');
+            nombre.textContent = curso.materia;
+
+            const seccion = document.createElement('span');
+            seccion.className = 'schedule-section';
+            seccion.textContent = `${etiquetaAnoEscolar(curso.ano)} · Sección ${curso.seccion}`;
+
+            bloque.append(hora, nombre, seccion);
+            columna.appendChild(bloque);
+        });
+
+        return columna;
+    });
+
+    columnas.forEach(columna => horario.appendChild(columna));
+}
+
 renderizarResumenCursos();
+renderizarHorarioDemostracion();
 
 function renderizarFiltrosAsignaciones(contenedor) {
     const filtroAno = contenedor.querySelector('#grade-assignment-year');
@@ -510,6 +572,7 @@ function actualizarCatalogoCursos(cursos) {
 
     sincronizarSeccionesConCursos();
     renderizarResumenCursos();
+    renderizarHorarioDemostracion();
 
     const moduloCursos = document.querySelector('#course-years');
     if (moduloCursos) {
