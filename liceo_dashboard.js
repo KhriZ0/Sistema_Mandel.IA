@@ -374,6 +374,7 @@ function renderizarResumenCursos() {
         const grupo = document.createElement('section');
         grupo.className = 'assigned-course-group';
         grupo.setAttribute('role', 'listitem');
+        grupo.dataset.subject = normalizarTextoHorario(materiaAsignada.nombre);
 
         const encabezado = document.createElement('div');
         encabezado.className = 'assigned-course-group-heading';
@@ -382,6 +383,8 @@ function renderizarResumenCursos() {
         nombre.className = 'assigned-course-name';
         nombre.textContent = materiaAsignada.nombre;
         encabezado.appendChild(nombre);
+        encabezado.dataset.subject = normalizarTextoHorario(materiaAsignada.nombre);
+        encabezado.tabIndex = 0;
 
         const asignaciones = document.createElement('div');
         asignaciones.className = 'assigned-course-locations';
@@ -389,12 +392,24 @@ function renderizarResumenCursos() {
                 const etiqueta = document.createElement('span');
                 etiqueta.className = 'assigned-course-section';
                 etiqueta.textContent = `${etiquetaAnoEscolar(asignacion.ano)} • Sección ${asignacion.seccion}`;
+                etiqueta.dataset.subject = normalizarTextoHorario(materiaAsignada.nombre);
+                etiqueta.dataset.year = String(asignacion.ano);
+                etiqueta.dataset.section = String(asignacion.seccion);
+                etiqueta.tabIndex = 0;
                 asignaciones.appendChild(etiqueta);
         });
 
         grupo.append(encabezado, asignaciones);
         lista.appendChild(grupo);
     });
+}
+
+function normalizarTextoHorario(texto) {
+    return String(texto)
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .toLowerCase()
+        .trim();
 }
 
 function renderizarHorarioDemostracion() {
@@ -428,6 +443,9 @@ function renderizarHorarioDemostracion() {
         materiasDelDia.forEach(({ curso, indiceBloque }) => {
             const bloque = document.createElement('article');
             bloque.className = 'schedule-class';
+            bloque.dataset.subject = normalizarTextoHorario(curso.materia);
+            bloque.dataset.year = String(curso.ano);
+            bloque.dataset.section = String(curso.seccion);
 
             const hora = document.createElement('span');
             hora.className = 'schedule-time';
@@ -448,6 +466,51 @@ function renderizarHorarioDemostracion() {
     });
 
     columnas.forEach(columna => horario.appendChild(columna));
+    activarResaltadoHorarioDesdeAsignaciones();
+}
+
+function activarResaltadoHorarioDesdeAsignaciones() {
+    const lista = document.getElementById('assigned-courses-list');
+    const horario = document.getElementById('demo-schedule');
+    if (!lista || !horario) return;
+
+    const limpiar = () => {
+        horario.classList.remove('has-schedule-highlight');
+        horario.querySelectorAll('.schedule-class').forEach(bloque => {
+            bloque.classList.remove('is-schedule-highlight');
+        });
+    };
+
+    const resaltar = elemento => {
+        limpiar();
+        const materia = elemento.dataset.subject || '';
+        const ano = elemento.dataset.year || '';
+        const seccion = elemento.dataset.section || '';
+        let coincidencias = 0;
+
+        horario.querySelectorAll('.schedule-class').forEach(bloque => {
+            const coincideMateria = bloque.dataset.subject === materia;
+            const coincideAsignacion = !ano
+                || (bloque.dataset.year === ano && bloque.dataset.section === seccion);
+
+            if (coincideMateria && coincideAsignacion) {
+                bloque.classList.add('is-schedule-highlight');
+                coincidencias++;
+            }
+        });
+
+        if (coincidencias > 0) {
+            horario.classList.add('has-schedule-highlight');
+        }
+    };
+
+    lista.querySelectorAll('[data-subject]').forEach(elemento => {
+        if (elemento.classList.contains('assigned-course-group')) return;
+        elemento.addEventListener('mouseenter', () => resaltar(elemento));
+        elemento.addEventListener('mouseleave', limpiar);
+        elemento.addEventListener('focus', () => resaltar(elemento));
+        elemento.addEventListener('blur', limpiar);
+    });
 }
 
 renderizarResumenCursos();

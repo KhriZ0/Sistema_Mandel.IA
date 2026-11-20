@@ -477,6 +477,20 @@ body {
     border: 1px solid var(--borde);
     border-left: 3px solid var(--amarillo);
     border-radius: 7px;
+    transition: opacity 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.schedule-week.has-schedule-highlight .schedule-class {
+    opacity: 0.38;
+}
+
+.schedule-week.has-schedule-highlight .schedule-class.is-schedule-highlight {
+    position: relative;
+    z-index: 1;
+    opacity: 1;
+    border-color: #d4a71b;
+    box-shadow: 0 7px 16px rgba(245, 194, 37, 0.28);
+    transform: translateY(-3px) scale(1.02);
 }
 
 .schedule-time {
@@ -561,6 +575,13 @@ body {
     border: 1px solid #e8edf3;
     border-radius: 8px;
     box-shadow: var(--sombra-bloque);
+    transition: border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.assigned-course-group:hover {
+    border-color: #d4a71b;
+    box-shadow: 0 6px 15px rgba(245, 194, 37, 0.18);
+    transform: translateY(-1px);
 }
 
 .assigned-course-group-heading,
@@ -600,11 +621,21 @@ body {
     padding: 3px 7px;
     color: #574300;
     background: #fff6d8;
-    border: 1px solid #efd16a;
+    border: 1.5px solid #d4a71b;
     border-radius: 6px;
     font-size: 10px;
     font-weight: 700;
     line-height: 1.4;
+    box-shadow: 0 2px 7px rgba(245, 194, 37, 0.12);
+    cursor: default;
+    transition: background-color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+}
+
+.assigned-course-section:hover {
+    background: #fff1b8;
+    border-color: #b98b08;
+    box-shadow: 0 4px 10px rgba(245, 194, 37, 0.22);
+    transform: translateY(-1px);
 }
 
 .assigned-courses-empty {
