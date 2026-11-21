@@ -200,7 +200,34 @@ function renderizarCatalogoCursos(contenedor) {
     const contador = contenedor.querySelector('#course-results-count');
     const estadoVacio = contenedor.querySelector('#course-empty-state');
     const botonLimpiar = contenedor.querySelector('#course-clear-filters');
+    const vistaCatalogo = contenedor.querySelector('#course-catalog-view');
+    const panelEstudiantes = contenedor.querySelector('#course-students-panel');
+    const tituloMateriaSeleccionada = contenedor.querySelector('#course-selected-subject');
+    const seccionSeleccionada = contenedor.querySelector('#course-selected-section-name');
+    const busquedaEstudiante = contenedor.querySelector('#course-student-search');
+    const contadorEstudiantes = contenedor.querySelector('#course-student-count');
+    const cuerpoTablaEstudiantes = contenedor.querySelector('#course-students-table-body');
+    const botonVolver = contenedor.querySelector('#course-back-to-catalog');
+    const dialogoEstudiante = contenedor.querySelector('#course-student-detail-dialog');
+    const nombreEstudianteDetalle = contenedor.querySelector('#course-student-detail-title');
+    const cedulaEstudianteDetalle = contenedor.querySelector('#course-student-detail-id');
+    const avatarEstudianteDetalle = contenedor.querySelector('#course-student-detail-avatar');
+    const seccionEstudianteDetalle = contenedor.querySelector('#course-student-detail-section');
+    const nacimientoEstudianteDetalle = contenedor.querySelector('#course-student-detail-birth');
+    const apoyoEstudianteDetalle = contenedor.querySelector('#course-student-detail-support');
+    const materiasEstudianteDetalle = contenedor.querySelector('#course-student-detail-subjects');
+    const representanteEstudianteDetalle = contenedor.querySelector('#course-student-detail-guardian');
+    const telefonoRepresentanteDetalle = contenedor.querySelector('#course-student-detail-phone');
+    const reportesEstudianteDetalle = contenedor.querySelector('#course-student-detail-reports');
+    const botonCerrarDialogo = contenedor.querySelector('#course-student-detail-close');
     const normalizar = texto => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
+    let cursoSeleccionado = null;
+
+    vistaCatalogo.hidden = false;
+    panelEstudiantes.hidden = true;
+    busquedaEstudiante.value = '';
+    if (dialogoEstudiante.open) dialogoEstudiante.close();
+    botonCerrarDialogo.onclick = () => dialogoEstudiante.close();
 
     const anos = [...new Set(cursosCatalogo.map(curso => Number(curso.ano)))].sort((a, b) => a - b);
     const secciones = [...new Set(cursosCatalogo.map(curso => String(curso.seccion).trim()).filter(Boolean))]
@@ -236,10 +263,16 @@ function renderizarCatalogoCursos(contenedor) {
         const ubicaciones = document.createElement('div');
         ubicaciones.className = 'course-location-list';
         materiaAsignada.asignaciones.forEach(curso => {
-            const ubicacion = document.createElement('article');
+            const ubicacion = document.createElement('button');
+            ubicacion.type = 'button';
             ubicacion.className = 'course-location-card';
+            ubicacion.dataset.courseIndex = String(curso.indice);
             ubicacion.dataset.year = String(curso.ano);
             ubicacion.dataset.section = String(curso.seccion);
+            ubicacion.setAttribute(
+                'aria-label',
+                `Ver estudiantes de ${materiaAsignada.nombre}, ${etiquetaAnoEscolar(curso.ano)}, Sección ${curso.seccion}`
+            );
 
             const etiqueta = document.createElement('span');
             etiqueta.className = 'course-location-label';
@@ -266,6 +299,124 @@ function renderizarCatalogoCursos(contenedor) {
         bloqueMateria.append(encabezado, ubicaciones);
         listaCursos.appendChild(bloqueMateria);
     });
+
+    function renderizarEstudiantesDemostracion(curso) {
+        const codigoSeccion = `${curso.ano}${curso.seccion}`;
+        const consulta = normalizar(busquedaEstudiante.value);
+        const estudiantes = [1, 2, 3].map(numero => ({
+            cedula: `DEMO-${codigoSeccion}-${String(numero).padStart(2, '0')}`,
+            nombre: `Estudiante de demostración ${codigoSeccion}-${numero}`,
+            ultimaObservacion: numero === 2
+                ? 'Participa activamente en clase. (Observación de demostración)'
+                : ''
+        })).filter(estudiante =>
+            normalizar(`${estudiante.cedula} ${estudiante.nombre}`).includes(consulta)
+        );
+
+        tituloMateriaSeleccionada.textContent = curso.materia;
+        seccionSeleccionada.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
+        contadorEstudiantes.textContent = `${estudiantes.length} ${estudiantes.length === 1 ? 'estudiante' : 'estudiantes'} de demostración`;
+        cuerpoTablaEstudiantes.replaceChildren();
+
+        estudiantes.forEach(estudiante => {
+            const fila = document.createElement('tr');
+            const cedula = document.createElement('td');
+            cedula.textContent = estudiante.cedula;
+            const nombre = document.createElement('td');
+            nombre.textContent = estudiante.nombre;
+            const observacion = document.createElement('td');
+            observacion.textContent = estudiante.ultimaObservacion
+                || 'Estudiante responsable (sin observaciones registradas).';
+            const acciones = document.createElement('td');
+            acciones.className = 'course-student-actions';
+            const botonVer = document.createElement('button');
+            botonVer.type = 'button';
+            botonVer.className = 'course-student-view-button';
+            botonVer.textContent = 'Ver detalles';
+            botonVer.setAttribute('aria-label', `Ver detalles de ${estudiante.nombre}`);
+            botonVer.addEventListener('click', () => {
+                nombreEstudianteDetalle.textContent = estudiante.nombre;
+                cedulaEstudianteDetalle.textContent = estudiante.cedula;
+                avatarEstudianteDetalle.textContent = 'ED';
+                seccionEstudianteDetalle.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
+                nacimientoEstudianteDetalle.textContent = 'No disponible en los datos de demostración';
+                apoyoEstudianteDetalle.textContent = 'No se incluyen datos médicos reales. La información de salud o apoyos debe provenir de un registro autorizado.';
+                representanteEstudianteDetalle.textContent = 'Representante de demostración';
+                telefonoRepresentanteDetalle.textContent = 'No disponible';
+
+                const materiasAsignadas = [...new Set(cursosCatalogo
+                    .filter(asignacion => asignacion.ano === curso.ano && asignacion.seccion === curso.seccion)
+                    .map(asignacion => asignacion.materia))];
+                materiasEstudianteDetalle.replaceChildren();
+                materiasAsignadas.forEach(materia => {
+                    const etiqueta = document.createElement('span');
+                    etiqueta.className = 'course-student-subject-tag';
+                    etiqueta.textContent = materia;
+                    materiasEstudianteDetalle.appendChild(etiqueta);
+                });
+
+                reportesEstudianteDetalle.replaceChildren();
+                const reporte = document.createElement('li');
+                const tipoReporte = document.createElement('span');
+                tipoReporte.textContent = estudiante.ultimaObservacion ? 'Última observación' : 'Estado actual';
+                const contenidoReporte = document.createElement('p');
+                contenidoReporte.textContent = observacion.textContent;
+                reporte.append(tipoReporte, contenidoReporte);
+                reportesEstudianteDetalle.appendChild(reporte);
+                dialogoEstudiante.showModal();
+            });
+            const botonReporte = document.createElement('button');
+            botonReporte.type = 'button';
+            botonReporte.className = 'course-student-report-button';
+            botonReporte.textContent = 'Generar reporte';
+            botonReporte.setAttribute('aria-label', `Generar reporte para ${estudiante.nombre}`);
+            acciones.append(botonVer, botonReporte);
+            fila.append(cedula, nombre, observacion, acciones);
+            cuerpoTablaEstudiantes.appendChild(fila);
+        });
+
+        if (!estudiantes.length) {
+            const filaVacia = document.createElement('tr');
+            const mensajeVacio = document.createElement('td');
+            mensajeVacio.colSpan = 4;
+            mensajeVacio.className = 'grades-empty-state';
+            mensajeVacio.textContent = 'No hay estudiantes de demostración que coincidan con la búsqueda.';
+            filaVacia.appendChild(mensajeVacio);
+            cuerpoTablaEstudiantes.appendChild(filaVacia);
+        }
+    }
+
+    listaCursos.onclick = event => {
+        const ubicacion = event.target.closest('.course-location-card');
+        if (!ubicacion || !listaCursos.contains(ubicacion)) return;
+
+        const curso = cursosCatalogo[Number(ubicacion.dataset.courseIndex)];
+        if (!curso) return;
+
+        cursoSeleccionado = curso;
+        busquedaEstudiante.value = '';
+        renderizarEstudiantesDemostracion(curso);
+        vistaCatalogo.hidden = true;
+        panelEstudiantes.hidden = false;
+        busquedaEstudiante.focus();
+    };
+
+    busquedaEstudiante.oninput = () => {
+        if (cursoSeleccionado) renderizarEstudiantesDemostracion(cursoSeleccionado);
+    };
+
+    botonVolver.onclick = () => {
+        const indiceCurso = cursoSeleccionado ? cursosCatalogo.indexOf(cursoSeleccionado) : -1;
+        cursoSeleccionado = null;
+        busquedaEstudiante.value = '';
+        panelEstudiantes.hidden = true;
+        vistaCatalogo.hidden = false;
+
+        const tarjetaAnterior = indiceCurso >= 0
+            ? listaCursos.querySelector(`[data-course-index="${indiceCurso}"]`)
+            : null;
+        if (tarjetaAnterior) tarjetaAnterior.focus();
+    };
 
     function aplicarFiltros() {
         const consulta = normalizar(busquedaMateria.value);
@@ -504,10 +655,15 @@ function activarResaltadoHorarioDesdeAsignaciones() {
         }
     };
 
-    lista.querySelectorAll('[data-subject]').forEach(elemento => {
-        if (elemento.classList.contains('assigned-course-group')) return;
+    lista.querySelectorAll('.assigned-course-group').forEach(grupo => {
+        grupo.addEventListener('mouseenter', () => resaltar(grupo));
+        grupo.addEventListener('mouseleave', limpiar);
+    });
+
+    lista.querySelectorAll('.assigned-course-group-heading, .assigned-course-section').forEach(elemento => {
+        const grupo = elemento.closest('.assigned-course-group');
         elemento.addEventListener('mouseenter', () => resaltar(elemento));
-        elemento.addEventListener('mouseleave', limpiar);
+        elemento.addEventListener('mouseleave', () => resaltar(grupo));
         elemento.addEventListener('focus', () => resaltar(elemento));
         elemento.addEventListener('blur', limpiar);
     });
@@ -762,32 +918,128 @@ function seleccionarAccion(modulo, boton) {
         if (modulo === 'Cursos') {
             contenidoModulo = `
                 <section class="course-catalog" aria-labelledby="course-catalog-title">
-                    <div class="course-filter-panel" aria-label="Filtros de cursos">
-                        <div class="course-filter-field">
-                            <label for="course-year-filter">Año escolar</label>
-                            <select id="course-year-filter">
-                                <option value="">Todos los años</option>
-                            </select>
+                    <div id="course-catalog-view">
+                        <div class="course-filter-panel" aria-label="Filtros de cursos">
+                            <div class="course-filter-field">
+                                <label for="course-year-filter">Año escolar</label>
+                                <select id="course-year-filter">
+                                    <option value="">Todos los años</option>
+                                </select>
+                            </div>
+                            <div class="course-filter-field">
+                                <label for="course-section-filter">Sección</label>
+                                <select id="course-section-filter">
+                                    <option value="">Todas las secciones</option>
+                                </select>
+                            </div>
+                            <div class="course-filter-field course-filter-search">
+                                <label for="course-subject-search">Buscar materia</label>
+                                <input id="course-subject-search" type="search" placeholder="Ej. Matemática" autocomplete="off">
+                            </div>
+                            <button type="button" class="course-clear-button" id="course-clear-filters">Limpiar filtros</button>
                         </div>
-                        <div class="course-filter-field">
-                            <label for="course-section-filter">Sección</label>
-                            <select id="course-section-filter">
-                                <option value="">Todas las secciones</option>
-                            </select>
+
+                        <div class="course-results-heading">
+                            <span id="course-results-count" role="status" aria-live="polite"></span>
+                            <span>Catálogo de asignaturas</span>
                         </div>
-                        <div class="course-filter-field course-filter-search">
-                            <label for="course-subject-search">Buscar materia</label>
-                            <input id="course-subject-search" type="search" placeholder="Ej. Matemática" autocomplete="off">
-                        </div>
-                        <button type="button" class="course-clear-button" id="course-clear-filters">Limpiar filtros</button>
+                        <div id="course-years" class="course-years" aria-busy="true"></div>
+                        <p id="course-empty-state" class="course-empty-state" hidden>No encontramos asignaturas con esos filtros. Prueba con otra búsqueda.</p>
                     </div>
 
-                    <div class="course-results-heading">
-                        <span id="course-results-count" role="status" aria-live="polite"></span>
-                        <span>Catálogo de asignaturas</span>
-                    </div>
-                    <div id="course-years" class="course-years" aria-busy="true"></div>
-                    <p id="course-empty-state" class="course-empty-state" hidden>No encontramos asignaturas con esos filtros. Prueba con otra búsqueda.</p>
+                    <section class="grade-record-panel course-students-panel" id="course-students-panel" hidden aria-labelledby="course-selected-subject">
+                        <div class="grade-record-toolbar">
+                            <button type="button" class="grade-back-button" id="course-back-to-catalog">
+                                <span aria-hidden="true">←</span>
+                                Volver a cursos
+                            </button>
+                        </div>
+                        <div class="grade-record-heading">
+                            <div>
+                                <span class="grade-record-eyebrow">ESTUDIANTES DEL CURSO</span>
+                                <h2 id="course-selected-subject">Estudiantes</h2>
+                                <p id="course-selected-section-name"></p>
+                            </div>
+                            <div class="grade-record-tools">
+                                <span class="course-demo-badge">Datos ficticios</span>
+                                <label class="sr-only" for="course-student-search">Buscar estudiante</label>
+                                <input id="course-student-search" class="admin-input grade-record-search" type="search" placeholder="Buscar estudiante..." autocomplete="off">
+                            </div>
+                        </div>
+                        <p class="course-demo-notice">Estudiantes ficticios para demostración; no son datos reales.</p>
+                        <div class="course-results-heading">
+                            <span id="course-student-count" role="status" aria-live="polite"></span>
+                            <span>Listado de estudiantes</span>
+                        </div>
+                        <div class="grade-table-scroll">
+                            <table class="admin-table course-students-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cédula</th>
+                                        <th>Estudiante</th>
+                                        <th>Última observación</th>
+                                        <th>Acciones</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="course-students-table-body"></tbody>
+                            </table>
+                        </div>
+                        <dialog class="course-student-dialog" id="course-student-detail-dialog" aria-labelledby="course-student-detail-title">
+                            <div class="course-student-dialog-content">
+                                <header class="course-student-profile">
+                                    <div class="course-student-avatar" id="course-student-detail-avatar" aria-hidden="true">ED</div>
+                                    <div class="course-student-profile-info">
+                                        <div class="course-student-profile-title">
+                                            <h2 id="course-student-detail-title"></h2>
+                                            <span class="course-student-section-badge" id="course-student-detail-section"></span>
+                                        </div>
+                                        <div class="course-student-identity-details">
+                                            <div>
+                                                <span>Cédula de Identidad</span>
+                                                <strong id="course-student-detail-id"></strong>
+                                            </div>
+                                            <div>
+                                                <span>Fecha de Nacimiento</span>
+                                                <strong id="course-student-detail-birth"></strong>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <button type="button" class="course-student-dialog-close" id="course-student-detail-close" aria-label="Cerrar">×</button>
+                                </header>
+                                <section class="course-student-support" aria-labelledby="course-student-support-title">
+                                    <span class="course-student-support-icon" aria-hidden="true">!</span>
+                                    <div>
+                                        <h3 id="course-student-support-title">Información de apoyo</h3>
+                                        <p id="course-student-detail-support"></p>
+                                    </div>
+                                </section>
+                                <div class="course-student-info-grid">
+                                    <section aria-labelledby="course-student-subjects-title">
+                                        <h3 id="course-student-subjects-title">Materias Asignadas</h3>
+                                        <div class="course-student-subjects" id="course-student-detail-subjects"></div>
+                                    </section>
+                                    <section aria-labelledby="course-student-guardian-title">
+                                        <h3 id="course-student-guardian-title">Datos del Representante</h3>
+                                        <div class="course-student-representative-card">
+                                            <div>
+                                                <span>Nombre y Apellido</span>
+                                                <strong id="course-student-detail-guardian"></strong>
+                                            </div>
+                                            <div>
+                                                <span>Número de Teléfono</span>
+                                                <strong id="course-student-detail-phone"></strong>
+                                            </div>
+                                        </div>
+                                    </section>
+                                </div>
+                                <section class="course-student-reports" aria-labelledby="course-student-reports-title">
+                                    <h3 id="course-student-reports-title">Observaciones y Reportes</h3>
+                                    <ol id="course-student-detail-reports"></ol>
+                                </section>
+                            </div>
+                            <p class="course-student-demo-footer">Estos datos son ficticios y no corresponden a alumnos reales.</p>
+                        </dialog>
+                    </section>
                 </section>
             `;
         }
@@ -796,7 +1048,7 @@ function seleccionarAccion(modulo, boton) {
             Cursos: {
                 titulo: 'Cursos',
                 subtitulo: 'Explora tus cursos',
-                descripcion: 'Consulta las asignaturas organizadas por año y sección.',
+                descripcion: 'Selecciona una sección para consultar estudiantes ficticios de demostración inscritos en la materia.',
                 icono: 'img/img_estudiante.png',
                 tituloId: 'course-catalog-title'
             },
