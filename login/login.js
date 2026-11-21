@@ -1,4 +1,4 @@
-function iniciarSesion(event) {
+async function iniciarSesion(event) {
   event.preventDefault();
   const formulario = document.getElementById('login-form');
   if (!formulario.reportValidity() || formulario.classList.contains('is-submitting')) return;
@@ -6,45 +6,72 @@ function iniciarSesion(event) {
   const boton = document.getElementById('login-submit');
   const contenedor = document.querySelector('.container');
   const estado = document.getElementById('login-status');
+  const labelBoton = document.getElementById('login-submit-label');
+  const spinner = document.getElementById('login-submit-spinner');
+  const iconoBoton = document.getElementById('login-submit-icon');
   const movimientoReducido = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
   const usuario = formulario.elements.usuario.value.trim();
+  const password = formulario.elements.password.value;
   const rol = formulario.elements.rol.value;
-
-  let destino;
-  switch (rol) {
-    case 'administracion':
-      destino = '../admin_dashboard.html';
-      break;
-    case 'docente_primaria':
-      destino = '../primaria_dashboard.html';
-      break;
-    case 'docente':
-      destino = '../liceo_dashboard.html';
-      break;
-    default:
-      throw new Error(`Perfil de acceso no reconocido: ${rol}`);
-  }
-
-  const urlDestino = new URL(destino, window.location.href);
-  urlDestino.searchParams.set('usuario', usuario);
-  urlDestino.searchParams.set('rol', rol);
-  sessionStorage.setItem('mandel.usuario', usuario);
-  sessionStorage.setItem('mandel.rol', rol);
 
   formulario.classList.add('is-submitting');
   formulario.setAttribute('aria-busy', 'true');
   boton.disabled = true;
-  document.getElementById('login-submit-label').textContent = 'Ingresando...';
-  document.getElementById('login-submit-spinner').hidden = false;
-  document.getElementById('login-submit-icon').hidden = true;
+  labelBoton.textContent = 'Validando...';
+  spinner.hidden = false;
+  iconoBoton.hidden = true;
+  estado.style.color = '#6b7280';
+  estado.textContent = 'Verificando credenciales en PostgreSQL...';
   estado.hidden = false;
 
-  window.setTimeout(() => {
-    contenedor.classList.add('login-transition-out');
+  try {
+    let resultado;
+
+    if (window.eel && typeof window.eel.autenticar_usuario === 'function') {
+      resultado = await window.eel.autenticar_usuario(usuario, password, rol)();
+    } else {
+      throw new Error('El servidor Python no está activo. Ejecuta: python main.py');
+    }
+
+    if (!resultado.ok) {
+      formulario.classList.remove('is-submitting');
+      formulario.removeAttribute('aria-busy');
+      boton.disabled = false;
+      labelBoton.textContent = 'Iniciar sesión';
+      spinner.hidden = true;
+      iconoBoton.hidden = false;
+      estado.style.color = '#c71f2d';
+      estado.textContent = resultado.mensaje;
+      return;
+    }
+
+    estado.style.color = '#15803d';
+    estado.textContent = `¡Bienvenido(a), ${resultado.usuario}! Abriendo panel...`;
+
+    const urlDestino = new URL(resultado.destino, window.location.href);
+    urlDestino.searchParams.set('usuario', resultado.usuario);
+    urlDestino.searchParams.set('rol', resultado.rol);
+    sessionStorage.setItem('mandel.usuario', resultado.usuario);
+    sessionStorage.setItem('mandel.rol', resultado.rol);
+
     window.setTimeout(() => {
-      window.location.href = urlDestino.href;
-    }, movimientoReducido ? 0 : 300);
-  }, movimientoReducido ? 250 : 500);
+      contenedor.classList.add('login-transition-out');
+      window.setTimeout(() => {
+        window.location.href = urlDestino.href;
+      }, movimientoReducido ? 0 : 300);
+    }, movimientoReducido ? 200 : 450);
+
+  } catch (error) {
+    formulario.classList.remove('is-submitting');
+    formulario.removeAttribute('aria-busy');
+    boton.disabled = false;
+    labelBoton.textContent = 'Iniciar sesión';
+    spinner.hidden = true;
+    iconoBoton.hidden = false;
+    estado.style.color = '#c71f2d';
+    estado.textContent = error.message || 'Error de conexión con el servidor local.';
+  }
 }
 
 function togglePasswordVisibility() {
