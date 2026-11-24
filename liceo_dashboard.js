@@ -1,5 +1,5 @@
 // ================= ESTADO GLOBAL Y VARIABLES DE CONTROL =================
-const usuarioSesion = new URLSearchParams(window.location.search).get('usuario') || 'Docente';
+const usuarioSesion = sessionStorage.getItem('mandel.usuario') || new URLSearchParams(window.location.search).get('usuario') || 'Docente';
 document.querySelectorAll('[data-session-user]').forEach(elemento => {
     elemento.textContent = usuarioSesion;
 });

@@ -5,6 +5,7 @@ from database import inicializar_db, validar_credenciales
 inicializar_db()
 
 ROOT_DIR = Path(__file__).parent
+PERFIL_APP = ROOT_DIR / ".chrome_profile"
 eel.init(str(ROOT_DIR))
 
 
@@ -14,4 +15,14 @@ def autenticar_usuario(usuario: str, password: str, rol: str) -> dict:
 
 
 if __name__ == "__main__":
-    eel.start("login/login.html", size=(1280, 800))
+    eel.start(
+        "login/login.html",
+        size=(1280, 800),
+        shutdown_delay=3.0,
+        cmdline_args=[
+            f"--user-data-dir={PERFIL_APP}",
+            "--no-first-run",
+            "--no-default-browser-check",
+            "--disable-save-password-bubble",
+        ],
+    )

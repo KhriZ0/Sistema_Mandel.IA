@@ -1,5 +1,5 @@
 // ================= ESTADO GLOBAL Y VARIABLES DE CONTROL =================
-const usuarioSesion = new URLSearchParams(window.location.search).get('usuario') || 'Docente';
+const usuarioSesion = sessionStorage.getItem('mandel.usuario') || new URLSearchParams(window.location.search).get('usuario') || 'Docente';
 document.querySelectorAll('[data-session-user]').forEach(elemento => {
     elemento.textContent = usuarioSesion;
 });
@@ -79,7 +79,7 @@ function mostrarInicio(boton) {
             <div class="charts-row">
                 <div class="chart-box">
                     <h3>Secciones Asignadas</h3>
-                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Cantidad de secciones bajo tu carga académica en Media General.</p>
+                    <p style="margin-top: 8px; font-size: 14px; color: #666;">Cantidad de secciones bajo tu carga académica en Primaria.</p>
                 </div>
                 <div class="chart-box">
                     <h3>Horarios de Clase</h3>
@@ -221,7 +221,7 @@ function seleccionarAccion(modulo, boton) {
         contenedor.innerHTML = `
             <div class="welcome-banner" style="padding: 20px 30px;">
                 <h1>Módulo: ${modulo}</h1>
-                <p>Gestión de Liceo • Panel Docente</p>
+                <p>Gestión de Primaria • Panel Docente</p>
             </div>
             ${contenidoModulo}
         `;

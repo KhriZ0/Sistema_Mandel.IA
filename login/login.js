@@ -49,16 +49,13 @@ async function iniciarSesion(event) {
     estado.style.color = '#15803d';
     estado.textContent = `¡Bienvenido(a), ${resultado.usuario}! Abriendo panel...`;
 
-    const urlDestino = new URL(resultado.destino, window.location.href);
-    urlDestino.searchParams.set('usuario', resultado.usuario);
-    urlDestino.searchParams.set('rol', resultado.rol);
     sessionStorage.setItem('mandel.usuario', resultado.usuario);
     sessionStorage.setItem('mandel.rol', resultado.rol);
 
     window.setTimeout(() => {
       contenedor.classList.add('login-transition-out');
       window.setTimeout(() => {
-        window.location.href = urlDestino.href;
+        window.location.href = resultado.destino;
       }, movimientoReducido ? 0 : 300);
     }, movimientoReducido ? 200 : 450);
 
