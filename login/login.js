@@ -51,6 +51,7 @@ async function iniciarSesion(event) {
 
     sessionStorage.setItem('mandel.usuario', resultado.usuario);
     sessionStorage.setItem('mandel.rol', resultado.rol);
+    sessionStorage.setItem('mandel.cargo', resultado.cargo || 'Administración');
 
     window.setTimeout(() => {
       contenedor.classList.add('login-transition-out');

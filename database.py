@@ -94,6 +94,7 @@ def validar_credenciales(usuario: str, password: str, rol: str) -> dict:
             "ok": True,
             "usuario": fila["nombre_completo"],
             "rol": rol,
+            "cargo": "Sv. Comunitario",
             "destino": rutas[rol],
         }
 
@@ -104,9 +105,16 @@ def validar_credenciales(usuario: str, password: str, rol: str) -> dict:
             "mensaje": "El perfil seleccionado no corresponde a este usuario."
         }
 
+    etiquetas_nivel = {
+        "administracion": "Administración",
+        "docente": "Docente • Media General",
+        "docente_primaria": "Docente • Primaria",
+    }
+
     return {
         "ok": True,
         "usuario": fila["nombre_completo"],
         "rol": fila["nivel"],
+        "cargo": etiquetas_nivel.get(fila["nivel"], fila["nivel"]),
         "destino": rutas[fila["nivel"]],
     }

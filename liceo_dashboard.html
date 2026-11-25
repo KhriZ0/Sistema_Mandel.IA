@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C.E.E. Nelson Mandela - Panel Docente (Liceo)</title>
+    <title>C.E.E. Nelson Mandela - Media General</title>
+    <link rel="icon" type="image/x-icon" href="img/favicon_sistema.ico">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -30,7 +31,7 @@
         <!-- Perfil del Docente -->
         <div class="user-profile">
             <div class="user-text">
-                <p><strong data-session-user>Docente</strong><br>Docente • Media General</p>
+                <p><strong data-session-user>Docente</strong><br><span data-session-role>Sv. Comunitario</span></p>
             </div>
             <img src="img/img_usuario.png" alt="Usuario" class="img-usuario">
             <a class="logout-link" href="logout.html">Cerrar sesión</a>
@@ -67,6 +68,9 @@
             <button type="button" class="nav-btn" data-module="Cursos">
                 <img src="img/img_estudiante.png" class="nav-icon" alt="Estudiantes"> Cursos
             </button>
+            <button type="button" class="nav-btn" data-module="Subir Planilla">
+                <img src="img/img_boletines.png" class="nav-icon" alt="Subir planilla"> Subir planilla
+            </button>
         </nav>
 
         <!-- Columna Central Expandida: Área dinámica de Liceo -->
@@ -83,27 +87,38 @@
             </div>
 
             <div class="widgets-row">
-                <section class="widget academic-period-card" aria-labelledby="academic-period-title" data-period-status="in-progress">
-                    <div class="academic-period-top">
+                <section class="widget academic-period-card academic-period-card--centered" aria-labelledby="academic-period-title" data-period-status="in-progress">
+                    <div class="academic-period-main">
                         <span class="academic-period-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="5" width="18" height="16" rx="2"></rect>
                                 <path d="M16 3v4M8 3v4M3 11h18"></path>
                             </svg>
                         </span>
+                        <div class="academic-period-content">
+                            <h3 id="academic-period-title">Período académico actual</h3>
+                            <p class="academic-period-year" data-academic-period-year>2026 - 2027</p>
+                        </div>
                         <span class="academic-period-status" role="status" aria-live="polite">
                             <span class="academic-period-status-dot" aria-hidden="true"></span>
                             <span data-period-status-label>En curso</span>
                         </span>
                     </div>
-                    <div class="academic-period-content">
-                        <h3 id="academic-period-title">Período académico actual</h3>
-                        <p class="academic-period-year" data-academic-period-year>2026 - 2027</p>
+
+                    <div class="academic-period-meta">
+                        <div class="academic-period-meta-item">
+                            <span>Momento / Lapso en curso</span>
+                            <strong data-academic-term>I Momento</strong>
+                        </div>
+                        <div class="academic-period-meta-item">
+                            <span>Código DEA del plantel</span>
+                            <strong>OD05361512</strong>
+                        </div>
                     </div>
                 </section>
                 <div class="widget actions">
                     <h3>Accesos directos</h3>
-                    <div class="action-buttons action-buttons--shortcuts">
+                    <div class="action-buttons action-buttons--shortcuts liceo-shortcuts-grid">
                         <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
                             <span class="shortcut-icon" aria-hidden="true">
                                 <img src="img/img_notas.png" alt="">
@@ -121,6 +136,12 @@
                                 <img src="img/img_estudiante.png" alt="">
                             </span>
                             <span>Cursos</span>
+                        </button>
+                        <button type="button" class="shortcut-button shortcut-button--sheet" data-module="Subir Planilla">
+                            <span class="shortcut-icon" aria-hidden="true">
+                                <img src="img/img_boletines.png" alt="">
+                            </span>
+                            <span>Subir planilla</span>
                         </button>
                     </div>
                 </div>

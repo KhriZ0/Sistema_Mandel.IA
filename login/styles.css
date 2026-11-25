@@ -25,18 +25,16 @@ body {
   justify-content: center;
   padding: 20px;
   overflow-x: hidden;
-  background: radial-gradient(circle at 25% 20%, #f3f4f6 0%, #e5e7eb 55%, #d1d5db 100%);
+  background: url("assets/login_fondo.png") center center / cover no-repeat fixed;
 }
 
-/* Halo ambiental gris neutro muy sutil */
+/* Halo ambiental muy sutil para que la tarjeta central destaque */
 body::before {
   content: "";
   position: fixed;
   inset: 0;
   z-index: -1;
-  background:
-    radial-gradient(ellipse at 20% 15%, rgba(255, 255, 255, 0.7), transparent 45%),
-    radial-gradient(ellipse at 85% 85%, rgba(156, 163, 175, 0.2), transparent 50%);
+  background: rgba(255, 255, 255, 0.12);
   pointer-events: none;
 }
 

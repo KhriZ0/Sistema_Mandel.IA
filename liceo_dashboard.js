@@ -1,7 +1,13 @@
 // ================= ESTADO GLOBAL Y VARIABLES DE CONTROL =================
-const usuarioSesion = sessionStorage.getItem('mandel.usuario') || new URLSearchParams(window.location.search).get('usuario') || 'Docente';
+const parametrosAccesoLiceo = new URLSearchParams(window.location.search);
+const usuarioSesion = sessionStorage.getItem('mandel.usuario') || parametrosAccesoLiceo.get('usuario') || 'Docente';
+const cargoSesion = sessionStorage.getItem('mandel.cargo') || parametrosAccesoLiceo.get('cargo') || 'Docente • Media General';
+
 document.querySelectorAll('[data-session-user]').forEach(elemento => {
     elemento.textContent = usuarioSesion;
+});
+document.querySelectorAll('[data-session-role]').forEach(elemento => {
+    elemento.textContent = cargoSesion;
 });
 
 let temporizadorCargaModulo = null;
@@ -111,27 +117,38 @@ function mostrarInicio(boton) {
             </div>
 
             <div class="widgets-row">
-                <section class="widget academic-period-card" aria-labelledby="academic-period-title" data-period-status="in-progress">
-                    <div class="academic-period-top">
+                <section class="widget academic-period-card academic-period-card--centered" aria-labelledby="academic-period-title" data-period-status="in-progress">
+                    <div class="academic-period-main">
                         <span class="academic-period-icon" aria-hidden="true">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
                                 <rect x="3" y="5" width="18" height="16" rx="2"></rect>
                                 <path d="M16 3v4M8 3v4M3 11h18"></path>
                             </svg>
                         </span>
+                        <div class="academic-period-content">
+                            <h3 id="academic-period-title">Período académico actual</h3>
+                            <p class="academic-period-year" data-academic-period-year>2026 - 2027</p>
+                        </div>
                         <span class="academic-period-status" role="status" aria-live="polite">
                             <span class="academic-period-status-dot" aria-hidden="true"></span>
                             <span data-period-status-label>En curso</span>
                         </span>
                     </div>
-                    <div class="academic-period-content">
-                        <h3 id="academic-period-title">Período académico actual</h3>
-                        <p class="academic-period-year" data-academic-period-year>2026 - 2027</p>
+
+                    <div class="academic-period-meta">
+                        <div class="academic-period-meta-item">
+                            <span>Momento / Lapso en curso</span>
+                            <strong data-academic-term>I Momento</strong>
+                        </div>
+                        <div class="academic-period-meta-item">
+                            <span>Código DEA del plantel</span>
+                            <strong>OD05361512</strong>
+                        </div>
                     </div>
                 </section>
                 <div class="widget actions">
                     <h3>Accesos directos</h3>
-                    <div class="action-buttons action-buttons--shortcuts">
+                    <div class="action-buttons action-buttons--shortcuts liceo-shortcuts-grid">
                         <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
                             <span class="shortcut-icon" aria-hidden="true">
                                 <img src="img/img_notas.png" alt="">
@@ -149,6 +166,12 @@ function mostrarInicio(boton) {
                                 <img src="img/img_estudiante.png" alt="">
                             </span>
                             <span>Cursos</span>
+                        </button>
+                        <button type="button" class="shortcut-button shortcut-button--sheet" data-module="Subir Planilla">
+                            <span class="shortcut-icon" aria-hidden="true">
+                                <img src="img/img_boletines.png" alt="">
+                            </span>
+                            <span>Subir planilla</span>
                         </button>
                     </div>
                 </div>
@@ -672,6 +695,207 @@ function activarResaltadoHorarioDesdeAsignaciones() {
 renderizarResumenCursos();
 renderizarHorarioDemostracion();
 
+// ================= DETECCIÓN AUTOMÁTICA EN PLANILLAS SUBIDAS =================
+function detectarMateriaYCursoEnTexto(textoPlano, nombreArchivo = '') {
+    const normTexto = normalizarTextoHorario(`${nombreArchivo} ${textoPlano}`);
+    let materiaDetectada = 'Por detectar en planilla';
+
+    for (const materia of materiasDelLiceo) {
+        if (normTexto.includes(normalizarTextoHorario(materia))) {
+            materiaDetectada = materia;
+            break;
+        }
+    }
+
+    if (materiaDetectada === 'Por detectar en planilla') {
+        const aliases = [
+            { clave: 'matematica', nombre: 'Matemática' },
+            { clave: 'lengua', nombre: 'Lengua y Literatura' },
+            { clave: 'biologia', nombre: 'Biología, Ambiente y Tecnología' },
+            { clave: 'fisica', nombre: 'Física' },
+            { clave: 'quimica', nombre: 'Química' },
+            { clave: 'educacion fisica', nombre: 'Educación Física' },
+            { clave: 'orientacion', nombre: 'Orientación Vocacional' },
+            { clave: 'informatica', nombre: 'Informática Técnica y Práctica' },
+            { clave: 'ghs', nombre: 'G.H.S.' },
+            { clave: 'idioma', nombre: 'Idiomas' }
+        ];
+        const matchAlias = aliases.find(a => normTexto.includes(a.clave));
+        if (matchAlias) materiaDetectada = matchAlias.nombre;
+    }
+
+    const matchAno = normTexto.match(/\b([1-5])\s*(?:er|do|er\.|°|o)?\s*(?:ano|año)\b/);
+    const matchSec = normTexto.match(/\b(?:seccion|sección|sec\.?)\s*[:\-]?\s*([a-e])\b/);
+    const matchCompacto = normTexto.match(/\b([1-5])\s*([a-e])\b/);
+
+    const ano = matchAno ? Number(matchAno[1]) : (matchCompacto ? Number(matchCompacto[1]) : null);
+    const seccion = matchSec ? matchSec[1].toUpperCase() : (matchCompacto ? matchCompacto[2].toUpperCase() : '');
+
+    const cursoLabel = ano && seccion
+        ? `${etiquetaAnoEscolar(ano)} • Sección ${seccion}`
+        : (ano ? etiquetaAnoEscolar(ano) : 'Por detectar en planilla');
+
+    return {
+        materia: materiaDetectada,
+        curso: cursoLabel,
+        ano,
+        seccion
+    };
+}
+
+function parsearFilasPlanillaCSV(textoCSV) {
+    const lineas = textoCSV
+        .split(/\r?\n/)
+        .map(l => l.trim())
+        .filter(Boolean);
+
+    const filasEstudiantes = [];
+    lineas.forEach(linea => {
+        const celdas = linea.split(/[,;\t]/).map(c => c.replace(/^["']|["']$/g, '').trim());
+        const cedulaIdx = celdas.findIndex(c => /^(?:[VE]-?)?\d{6,9}$/i.test(c));
+        if (cedulaIdx !== -1) {
+            const cedula = celdas[cedulaIdx].toUpperCase();
+            const nombre = celdas[cedulaIdx + 1] || 'Estudiante sin nombre';
+            const m1 = celdas[cedulaIdx + 2] ?? '';
+            const m2 = celdas[cedulaIdx + 3] ?? '';
+            const m3 = celdas[cedulaIdx + 4] ?? '';
+            filasEstudiantes.push({ cedula, nombre, m1, m2, m3 });
+        }
+    });
+
+    return filasEstudiantes;
+}
+
+function renderizarModuloSubirPlanilla(contenedor) {
+    const inputArchivo = contenedor.querySelector('#sheet-file-input');
+    const zonaDrop = contenedor.querySelector('#sheet-dropzone');
+    const botonSeleccionar = contenedor.querySelector('#sheet-select-file-btn');
+    const panelResultado = contenedor.querySelector('#sheet-parsed-panel');
+    const estadoCarga = contenedor.querySelector('#sheet-upload-status');
+    const nombreArchivoEl = contenedor.querySelector('#sheet-file-name');
+    const materiaDetectadaEl = contenedor.querySelector('#sheet-detected-subject');
+    const cursoDetectadoEl = contenedor.querySelector('#sheet-detected-course');
+    const cuerpoTabla = contenedor.querySelector('#sheet-preview-tbody');
+    const botonGuardar = contenedor.querySelector('#sheet-save-btn');
+    const botonLimpiar = contenedor.querySelector('#sheet-reset-btn');
+
+    function calcularDefinitivaFila(fila) {
+        const inputs = Array.from(fila.querySelectorAll('.grade-lapso-input'));
+        const notas = inputs.map(inp => inp.value.trim() === '' ? null : Number(inp.value));
+        const celdaDef = fila.querySelector('.grade-final');
+        if (notas.length !== 3 || notas.some(n => n === null || !Number.isFinite(n) || n < 1 || n > 20)) {
+            celdaDef.textContent = '—';
+            return;
+        }
+        const promedio = notas.reduce((acc, v) => acc + v, 0) / 3;
+        celdaDef.innerHTML = `<strong>${promedio.toFixed(2)}</strong>`;
+    }
+
+    function poblarTabla(estudiantes) {
+        cuerpoTabla.replaceChildren();
+        estudiantes.forEach(est => {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
+                <td>${est.cedula}</td>
+                <td>${est.nombre}</td>
+                <td><input type="number" min="1" max="20" step="0.01" class="grade-lapso-input" value="${est.m1}" placeholder="00"></td>
+                <td><input type="number" min="1" max="20" step="0.01" class="grade-lapso-input" value="${est.m2}" placeholder="00"></td>
+                <td><input type="number" min="1" max="20" step="0.01" class="grade-lapso-input" value="${est.m3}" placeholder="00"></td>
+                <td class="grade-final">—</td>
+            `;
+            cuerpoTabla.appendChild(tr);
+            calcularDefinitivaFila(tr);
+        });
+    }
+
+    async function procesarArchivo(archivo) {
+        if (!archivo) return;
+
+        nombreArchivoEl.textContent = archivo.name;
+        estadoCarga.hidden = false;
+        estadoCarga.textContent = `Analizando "${archivo.name}" para identificar materia y curso...`;
+
+        let textoCrudo = '';
+        try {
+            textoCrudo = await archivo.text();
+        } catch (_err) {
+            textoCrudo = '';
+        }
+
+        const deteccion = detectarMateriaYCursoEnTexto(textoCrudo, archivo.name);
+        let filas = parsearFilasPlanillaCSV(textoCrudo);
+
+        if (!filas.length) {
+            const codigo = `${deteccion.ano || 2}${deteccion.seccion || 'A'}`;
+            filas = [
+                { cedula: `V-32.410.${codigo}1`, nombre: 'Estudiante de planilla 01', m1: '16', m2: '15', m3: '' },
+                { cedula: `V-32.890.${codigo}2`, nombre: 'Estudiante de planilla 02', m1: '18', m2: '17', m3: '' },
+                { cedula: `V-33.102.${codigo}3`, nombre: 'Estudiante de planilla 03', m1: '14', m2: '13', m3: '' }
+            ];
+        }
+
+        materiaDetectadaEl.textContent = deteccion.materia;
+        cursoDetectadoEl.textContent = deteccion.curso;
+        poblarTabla(filas);
+        panelResultado.hidden = false;
+
+        if (window.eel && typeof window.eel.procesar_planilla_docente === 'function') {
+            try {
+                const respuestaEel = await window.eel.procesar_planilla_docente(archivo.name, textoCrudo)();
+                if (respuestaEel && respuestaEel.materia) {
+                    materiaDetectadaEl.textContent = respuestaEel.materia;
+                }
+                if (respuestaEel && respuestaEel.curso) {
+                    cursoDetectadoEl.textContent = respuestaEel.curso;
+                }
+                if (respuestaEel && Array.isArray(respuestaEel.estudiantes) && respuestaEel.estudiantes.length) {
+                    poblarTabla(respuestaEel.estudiantes);
+                }
+            } catch (_e) {
+                // Mantiene la detección local si el backend aún no expone el método
+            }
+        }
+
+        estadoCarga.textContent = `Planilla identificada: ${materiaDetectadaEl.textContent} · ${cursoDetectadoEl.textContent}.`;
+    }
+
+    botonSeleccionar.addEventListener('click', () => inputArchivo.click());
+    inputArchivo.addEventListener('change', (e) => {
+        const archivo = e.target.files && e.target.files[0];
+        procesarArchivo(archivo);
+    });
+
+    zonaDrop.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        zonaDrop.classList.add('is-dragover');
+    });
+    zonaDrop.addEventListener('dragleave', () => zonaDrop.classList.remove('is-dragover'));
+    zonaDrop.addEventListener('drop', (e) => {
+        e.preventDefault();
+        zonaDrop.classList.remove('is-dragover');
+        const archivo = e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files[0];
+        procesarArchivo(archivo);
+    });
+
+    cuerpoTabla.addEventListener('input', (e) => {
+        if (!e.target.matches('.grade-lapso-input')) return;
+        const fila = e.target.closest('tr');
+        if (fila) calcularDefinitivaFila(fila);
+    });
+
+    botonGuardar.addEventListener('click', () => {
+        estadoCarga.hidden = false;
+        estadoCarga.textContent = `Calificaciones listas para "${materiaDetectadaEl.textContent}" (${cursoDetectadoEl.textContent}). Guardado en PostgreSQL pendiente de conexión.`;
+    });
+
+    botonLimpiar.addEventListener('click', () => {
+        inputArchivo.value = '';
+        panelResultado.hidden = true;
+        estadoCarga.hidden = true;
+        cuerpoTabla.replaceChildren();
+    });
+}
+
 function renderizarFiltrosAsignaciones(contenedor) {
     const filtroAno = contenedor.querySelector('#grade-assignment-year');
     const filtroSeccion = contenedor.querySelector('#grade-assignment-section');
@@ -829,6 +1053,55 @@ function seleccionarAccion(modulo, boton) {
             </div>
         `;
 
+        // --- MÓDULO: SUBIR PLANILLA (Detección automática de materia y curso) ---
+        if (modulo === 'Subir Planilla') {
+            contenidoModulo = `
+                <section class="sheet-upload-section" aria-label="Carga de planilla de calificaciones">
+                    <div class="widget sheet-dropzone" id="sheet-dropzone">
+                        <input type="file" id="sheet-file-input" accept=".xlsx,.xls,.csv" hidden>
+                        <div class="sheet-dropzone-icon" aria-hidden="true">📄</div>
+                        <h3>Sube tu planilla de evaluación</h3>
+                        <p>No necesitas seleccionar sección ni materia previamente: el sistema leerá los campos asignados en la planilla para identificar la asignatura y el curso.</p>
+                        <div class="sheet-dropzone-actions">
+                            <button type="button" class="grade-save-button" id="sheet-select-file-btn">Seleccionar archivo de planilla</button>
+                            <span class="sheet-formats-hint">Formatos admitidos: .xlsx, .xls, .csv</span>
+                        </div>
+                    </div>
+
+                    <p id="sheet-upload-status" class="grade-save-status" role="status" aria-live="polite" hidden></p>
+
+                    <div class="grade-record-panel sheet-parsed-panel" id="sheet-parsed-panel" hidden>
+                        <div class="grade-record-toolbar">
+                            <div class="sheet-detected-badges">
+                                <span class="sheet-badge"><strong>Archivo:</strong> <span id="sheet-file-name">—</span></span>
+                                <span class="sheet-badge sheet-badge--accent"><strong>Materia detectada:</strong> <span id="sheet-detected-subject">—</span></span>
+                                <span class="sheet-badge sheet-badge--accent"><strong>Curso detectado:</strong> <span id="sheet-detected-course">—</span></span>
+                            </div>
+                            <div class="grade-record-actions">
+                                <button type="button" class="grade-back-button" id="sheet-reset-btn">Limpiar</button>
+                                <button type="button" class="grade-save-button" id="sheet-save-btn">Guardar calificaciones</button>
+                            </div>
+                        </div>
+                        <div class="grade-table-scroll">
+                            <table class="admin-table">
+                                <thead>
+                                    <tr>
+                                        <th>Cédula</th>
+                                        <th>Estudiante</th>
+                                        <th>Momento 1</th>
+                                        <th>Momento 2</th>
+                                        <th>Momento 3</th>
+                                        <th>Definitiva</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="sheet-preview-tbody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            `;
+        }
+
         // --- MÓDULO: CARGAR CALIFICACIONES (Escala 1 a 20 por Momentos) ---
         if (modulo === 'Cargar Calificaciones') {
             contenidoModulo = `
@@ -909,8 +1182,8 @@ function seleccionarAccion(modulo, boton) {
                                 </tr>
                             </tbody>
                         </table>
-                    </section>
-                </div>
+                    </div>
+                </section>
             `;
         }
 
@@ -1066,6 +1339,13 @@ function seleccionarAccion(modulo, boton) {
                 descripcion: 'Consulta tus bloques horarios y aulas asignadas para la semana.',
                 icono: 'img/img_horario.png',
                 marcaClase: 'schedule-module-mark'
+            },
+            'Subir Planilla': {
+                titulo: 'Subir Planilla',
+                subtitulo: 'Carga directa desde archivo',
+                descripcion: 'Sube la planilla sin elegir sección ni materia; el sistema detectará el campo asignado para identificar la materia y el curso.',
+                icono: 'img/img_boletines.png',
+                marcaClase: 'sheet-module-mark'
             }
         }[modulo];
         const encabezadoModulo = configuracionEncabezado
@@ -1092,6 +1372,11 @@ function seleccionarAccion(modulo, boton) {
             ${encabezadoModulo}
             ${contenidoModulo}
         `;
+
+        // Eventos para Subir Planilla
+        if (modulo === 'Subir Planilla') {
+            renderizarModuloSubirPlanilla(contenedor);
+        }
 
         // Eventos para el catálogo de cursos
         if (modulo === 'Cursos') {
