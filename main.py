@@ -15,14 +15,21 @@ def autenticar_usuario(usuario: str, password: str, rol: str) -> dict:
 
 
 if __name__ == "__main__":
-    eel.start(
-        "login/login.html",
-        size=(1280, 800),
-        shutdown_delay=3.0,
-        cmdline_args=[
+    opciones_app = {
+        "size": (1280, 800),
+        "shutdown_delay": 3.0,
+        "cmdline_args": [
             f"--user-data-dir={PERFIL_APP}",
             "--no-first-run",
             "--no-default-browser-check",
             "--disable-save-password-bubble",
         ],
-    )
+    }
+
+    try:
+        eel.start("login/login.html", mode="chrome", **opciones_app)
+    except EnvironmentError:
+        try:
+            eel.start("login/login.html", mode="edge", **opciones_app)
+        except EnvironmentError:
+            eel.start("login/login.html", mode="default", size=(1280, 800), shutdown_delay=3.0)
