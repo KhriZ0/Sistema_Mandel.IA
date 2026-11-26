@@ -12,11 +12,18 @@ document.querySelectorAll('[data-session-role]').forEach(elemento => {
 
 let temporizadorCargaModulo = null;
 let observadorTablaCalificaciones = null;
-let seccionesAsignadasDocente = []; // Se llenará desde Python/Eel según el docente logueado
+let seccionesAsignadasDocente = [];
 let aplicarFiltroTablaCalificaciones = null;
 let cursoCalificacionesSeleccionado = null;
 
 let cursosCatalogo = [];
+let horarioLiceo = [];
+
+const FRANJAS_HORARIAS_LICEO = [
+    { inicio: '07:00', fin: '08:20', etiqueta: '7:00am - 8:20am' },
+    { inicio: '08:30', fin: '09:50', etiqueta: '8:30am - 9:50am' },
+    { inicio: '10:00', fin: '11:20', etiqueta: '10:00am - 11:20am' }
+];
 
 const materiasDelLiceo = [
     'Lengua y Literatura',
@@ -44,23 +51,6 @@ const iconosMaterias = {
     'informatica tecnica y practica': '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="13" rx="2"/><path d="M8 21h8m-4-4v4M8 9l-2 2 2 2m8-4 2 2-2 2m-3-5-2 6"/></svg>'
 };
 
-cursosCatalogo = [
-    { ano: 1, seccion: 'A', materia: 'Lengua y Literatura', docente: '' },
-    { ano: 1, seccion: 'A', materia: 'Idiomas', docente: '' },
-    { ano: 1, seccion: 'C', materia: 'Matemática', docente: '' },
-    { ano: 2, seccion: 'B', materia: 'Biología, Ambiente y Tecnología', docente: '' },
-    { ano: 2, seccion: 'B', materia: 'Educación Física', docente: '' },
-    { ano: 2, seccion: 'C', materia: 'Química', docente: '' },
-    { ano: 3, seccion: 'A', materia: 'Física', docente: '' },
-    { ano: 3, seccion: 'C', materia: 'G.H.S.', docente: '' },
-    { ano: 3, seccion: 'C', materia: 'Informática Técnica y Práctica', docente: '' },
-    { ano: 4, seccion: 'B', materia: 'Orientación Vocacional', docente: '' },
-    { ano: 4, seccion: 'B', materia: 'Matemática', docente: '' },
-    { ano: 5, seccion: 'A', materia: 'Biología, Ambiente y Tecnología', docente: '' },
-    { ano: 5, seccion: 'C', materia: 'Lengua y Literatura', docente: '' },
-    { ano: 5, seccion: 'C', materia: 'Física', docente: '' }
-];
-
 function etiquetaAnoEscolar(ano) {
     return Number(ano) === 1 ? '1er Año' : `${ano}° Año`;
 }
@@ -72,6 +62,49 @@ function sincronizarSeccionesConCursos() {
 }
 
 sincronizarSeccionesConCursos();
+
+function formatearHoraCorta(valorHora) {
+    const limpio = String(valorHora || '').trim();
+    if (!limpio) return '';
+    const partes = limpio.split(':');
+    if (partes.length < 2) return limpio;
+    const horas = Number(partes[0]);
+    const minutos = partes[1].padStart(2, '0');
+    if (!Number.isFinite(horas)) return limpio;
+    const sufijo = horas >= 12 ? 'pm' : 'am';
+    const hora12 = horas % 12 === 0 ? 12 : horas % 12;
+    return `${hora12}:${minutos}${sufijo}`;
+}
+
+function normalizarRegistroHorarioLiceo(item) {
+    const inicioCrudo = String(item.hora_inicio || '').trim();
+    const finCrudo = String(item.hora_fin || '').trim();
+    const rangoCalculado = (inicioCrudo || finCrudo)
+        ? `${formatearHoraCorta(inicioCrudo) || inicioCrudo} - ${formatearHoraCorta(finCrudo) || finCrudo}`
+        : '';
+
+    return {
+        idHorario: item.id_horario ?? item.idHorario ?? null,
+        dia: String(item.dia || '').trim(),
+        horaInicio: inicioCrudo,
+        horaFin: finCrudo,
+        bloque: String(item.bloque || rangoCalculado).trim(),
+        gradoCursando: String(item.grado_cursando || item.ano || '').trim(),
+        codigoGrupo: String(item.codigo_grupo || item.seccion || '').trim(),
+        idAsignatura: item.id_asignatura ?? item.idAsignatura ?? null,
+        materia: String(item.materia || item.asignatura || '').trim(),
+        aula: String(item.aula || '').trim()
+    };
+}
+
+function actualizarHorarioLiceo(bloques) {
+    if (!Array.isArray(bloques)) {
+        throw new TypeError('El horario de liceo debe proporcionarse como una lista.');
+    }
+    horarioLiceo = bloques.map(normalizarRegistroHorarioLiceo);
+    renderizarHorarioDemostracion();
+    renderizarHorarioSemanalLiceo();
+}
 
 // ================= 1. GESTIÓN DE NAVEGACIÓN LATERAL =================
 function activarBoton(botonSeleccionado) {
@@ -87,9 +120,9 @@ function mostrarCargaModulo(contenedor, renderizar) {
         observadorTablaCalificaciones.disconnect();
         observadorTablaCalificaciones = null;
     }
-    
+
     contenedor.style.opacity = '0.5';
-    
+
     temporizadorCargaModulo = window.setTimeout(() => {
         renderizar();
         contenedor.style.opacity = '1';
@@ -102,7 +135,7 @@ function mostrarCargaModulo(contenedor, renderizar) {
 function mostrarInicio(boton) {
     activarBoton(boton);
     const contenedor = document.getElementById('main-content');
-    
+
     mostrarCargaModulo(contenedor, () => {
         contenedor.innerHTML = `
             <div class="welcome-banner course-module-banner home-module-banner">
@@ -112,7 +145,7 @@ function mostrarInicio(boton) {
                     <p class="course-module-description">Desde aquí puedes revisar tus asignaciones y acceder rápidamente a cursos, horarios y calificaciones.</p>
                 </div>
                 <span class="course-catalog-mark home-module-mark" aria-hidden="true">
-                    <img src="img/img_inicio.png" alt="">
+                    <img src="../img/img_inicio.png" alt="">
                 </span>
             </div>
 
@@ -151,25 +184,25 @@ function mostrarInicio(boton) {
                     <div class="action-buttons action-buttons--shortcuts liceo-shortcuts-grid">
                         <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_notas.png" alt="">
+                                <img src="../img/img_notas.png" alt="">
                             </span>
                             <span>Cargar notas</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--schedule" data-module="Ver Horarios">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_horario.png" alt="">
+                                <img src="../img/img_horario.png" alt="">
                             </span>
                             <span>Ver Horario</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--courses" data-module="Cursos">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_estudiante.png" alt="">
+                                <img src="../img/img_estudiante.png" alt="">
                             </span>
                             <span>Cursos</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--sheet" data-module="Subir Planilla">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_boletines.png" alt="">
+                                <img src="../img/img_boletines.png" alt="">
                             </span>
                             <span>Subir planilla</span>
                         </button>
@@ -194,10 +227,10 @@ function mostrarInicio(boton) {
                             <h3 id="schedule-title">Horarios de Clase</h3>
                             <p>Bloques horarios y materias asignadas para la semana.</p>
                         </div>
-                        <span class="schedule-demo-label">Demostración</span>
+                        <span class="schedule-demo-label">Estructura base</span>
                     </div>
-                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de demostración"></div>
-                    <p class="schedule-note">Materias de demostración · Aulas por asignar</p>
+                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de clase"></div>
+                    <p class="schedule-note">Estructura semanal lista para sincronizar con la base de datos</p>
                 </section>
             </div>
         `;
@@ -206,7 +239,6 @@ function mostrarInicio(boton) {
     });
 }
 
-// Función lista para ser llamada desde Python vía Eel: eel.actualizarSeccionesAsignadas(['1er Año A', '3er Año B'])
 function actualizarSeccionesAsignadas(secciones) {
     if (!Array.isArray(secciones)) {
         throw new TypeError('Las secciones asignadas deben proporcionarse como una lista.');
@@ -232,16 +264,6 @@ function renderizarCatalogoCursos(contenedor) {
     const cuerpoTablaEstudiantes = contenedor.querySelector('#course-students-table-body');
     const botonVolver = contenedor.querySelector('#course-back-to-catalog');
     const dialogoEstudiante = contenedor.querySelector('#course-student-detail-dialog');
-    const nombreEstudianteDetalle = contenedor.querySelector('#course-student-detail-title');
-    const cedulaEstudianteDetalle = contenedor.querySelector('#course-student-detail-id');
-    const avatarEstudianteDetalle = contenedor.querySelector('#course-student-detail-avatar');
-    const seccionEstudianteDetalle = contenedor.querySelector('#course-student-detail-section');
-    const nacimientoEstudianteDetalle = contenedor.querySelector('#course-student-detail-birth');
-    const apoyoEstudianteDetalle = contenedor.querySelector('#course-student-detail-support');
-    const materiasEstudianteDetalle = contenedor.querySelector('#course-student-detail-subjects');
-    const representanteEstudianteDetalle = contenedor.querySelector('#course-student-detail-guardian');
-    const telefonoRepresentanteDetalle = contenedor.querySelector('#course-student-detail-phone');
-    const reportesEstudianteDetalle = contenedor.querySelector('#course-student-detail-reports');
     const botonCerrarDialogo = contenedor.querySelector('#course-student-detail-close');
     const normalizar = texto => String(texto).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().trim();
     let cursoSeleccionado = null;
@@ -292,10 +314,6 @@ function renderizarCatalogoCursos(contenedor) {
             ubicacion.dataset.courseIndex = String(curso.indice);
             ubicacion.dataset.year = String(curso.ano);
             ubicacion.dataset.section = String(curso.seccion);
-            ubicacion.setAttribute(
-                'aria-label',
-                `Ver estudiantes de ${materiaAsignada.nombre}, ${etiquetaAnoEscolar(curso.ano)}, Sección ${curso.seccion}`
-            );
 
             const etiqueta = document.createElement('span');
             etiqueta.className = 'course-location-label';
@@ -323,90 +341,19 @@ function renderizarCatalogoCursos(contenedor) {
         listaCursos.appendChild(bloqueMateria);
     });
 
-    function renderizarEstudiantesDemostracion(curso) {
-        const codigoSeccion = `${curso.ano}${curso.seccion}`;
-        const consulta = normalizar(busquedaEstudiante.value);
-        const estudiantes = [1, 2, 3].map(numero => ({
-            cedula: `DEMO-${codigoSeccion}-${String(numero).padStart(2, '0')}`,
-            nombre: `Estudiante de demostración ${codigoSeccion}-${numero}`,
-            ultimaObservacion: numero === 2
-                ? 'Participa activamente en clase. (Observación de demostración)'
-                : ''
-        })).filter(estudiante =>
-            normalizar(`${estudiante.cedula} ${estudiante.nombre}`).includes(consulta)
-        );
-
+    function renderizarEstudiantesSeccion(curso) {
         tituloMateriaSeleccionada.textContent = curso.materia;
         seccionSeleccionada.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
-        contadorEstudiantes.textContent = `${estudiantes.length} ${estudiantes.length === 1 ? 'estudiante' : 'estudiantes'} de demostración`;
+        contadorEstudiantes.textContent = '0 estudiantes asignados';
         cuerpoTablaEstudiantes.replaceChildren();
 
-        estudiantes.forEach(estudiante => {
-            const fila = document.createElement('tr');
-            const cedula = document.createElement('td');
-            cedula.textContent = estudiante.cedula;
-            const nombre = document.createElement('td');
-            nombre.textContent = estudiante.nombre;
-            const observacion = document.createElement('td');
-            observacion.textContent = estudiante.ultimaObservacion
-                || 'Estudiante responsable (sin observaciones registradas).';
-            const acciones = document.createElement('td');
-            acciones.className = 'course-student-actions';
-            const botonVer = document.createElement('button');
-            botonVer.type = 'button';
-            botonVer.className = 'course-student-view-button';
-            botonVer.textContent = 'Ver detalles';
-            botonVer.setAttribute('aria-label', `Ver detalles de ${estudiante.nombre}`);
-            botonVer.addEventListener('click', () => {
-                nombreEstudianteDetalle.textContent = estudiante.nombre;
-                cedulaEstudianteDetalle.textContent = estudiante.cedula;
-                avatarEstudianteDetalle.textContent = 'ED';
-                seccionEstudianteDetalle.textContent = `${etiquetaAnoEscolar(curso.ano)} • Sección ${curso.seccion}`;
-                nacimientoEstudianteDetalle.textContent = 'No disponible en los datos de demostración';
-                apoyoEstudianteDetalle.textContent = 'No se incluyen datos médicos reales. La información de salud o apoyos debe provenir de un registro autorizado.';
-                representanteEstudianteDetalle.textContent = 'Representante de demostración';
-                telefonoRepresentanteDetalle.textContent = 'No disponible';
-
-                const materiasAsignadas = [...new Set(cursosCatalogo
-                    .filter(asignacion => asignacion.ano === curso.ano && asignacion.seccion === curso.seccion)
-                    .map(asignacion => asignacion.materia))];
-                materiasEstudianteDetalle.replaceChildren();
-                materiasAsignadas.forEach(materia => {
-                    const etiqueta = document.createElement('span');
-                    etiqueta.className = 'course-student-subject-tag';
-                    etiqueta.textContent = materia;
-                    materiasEstudianteDetalle.appendChild(etiqueta);
-                });
-
-                reportesEstudianteDetalle.replaceChildren();
-                const reporte = document.createElement('li');
-                const tipoReporte = document.createElement('span');
-                tipoReporte.textContent = estudiante.ultimaObservacion ? 'Última observación' : 'Estado actual';
-                const contenidoReporte = document.createElement('p');
-                contenidoReporte.textContent = observacion.textContent;
-                reporte.append(tipoReporte, contenidoReporte);
-                reportesEstudianteDetalle.appendChild(reporte);
-                dialogoEstudiante.showModal();
-            });
-            const botonReporte = document.createElement('button');
-            botonReporte.type = 'button';
-            botonReporte.className = 'course-student-report-button';
-            botonReporte.textContent = 'Generar reporte';
-            botonReporte.setAttribute('aria-label', `Generar reporte para ${estudiante.nombre}`);
-            acciones.append(botonVer, botonReporte);
-            fila.append(cedula, nombre, observacion, acciones);
-            cuerpoTablaEstudiantes.appendChild(fila);
-        });
-
-        if (!estudiantes.length) {
-            const filaVacia = document.createElement('tr');
-            const mensajeVacio = document.createElement('td');
-            mensajeVacio.colSpan = 4;
-            mensajeVacio.className = 'grades-empty-state';
-            mensajeVacio.textContent = 'No hay estudiantes de demostración que coincidan con la búsqueda.';
-            filaVacia.appendChild(mensajeVacio);
-            cuerpoTablaEstudiantes.appendChild(filaVacia);
-        }
+        const filaVacia = document.createElement('tr');
+        const mensajeVacio = document.createElement('td');
+        mensajeVacio.colSpan = 4;
+        mensajeVacio.className = 'grades-empty-state';
+        mensajeVacio.textContent = 'Los estudiantes aparecerán aquí al conectar con la base de datos.';
+        filaVacia.appendChild(mensajeVacio);
+        cuerpoTablaEstudiantes.appendChild(filaVacia);
     }
 
     listaCursos.onclick = event => {
@@ -418,14 +365,10 @@ function renderizarCatalogoCursos(contenedor) {
 
         cursoSeleccionado = curso;
         busquedaEstudiante.value = '';
-        renderizarEstudiantesDemostracion(curso);
+        renderizarEstudiantesSeccion(curso);
         vistaCatalogo.hidden = true;
         panelEstudiantes.hidden = false;
         busquedaEstudiante.focus();
-    };
-
-    busquedaEstudiante.oninput = () => {
-        if (cursoSeleccionado) renderizarEstudiantesDemostracion(cursoSeleccionado);
     };
 
     botonVolver.onclick = () => {
@@ -465,7 +408,9 @@ function renderizarCatalogoCursos(contenedor) {
         });
 
         contador.textContent = `${materiasVisibles} ${materiasVisibles === 1 ? 'materia' : 'materias'} • ${asignacionesVisibles} ${asignacionesVisibles === 1 ? 'asignación' : 'asignaciones'}`;
-        estadoVacio.textContent = 'No encontramos asignaturas con esos filtros. Prueba con otra búsqueda.';
+        estadoVacio.textContent = cursosCatalogo.length
+            ? 'No encontramos asignaturas con esos filtros. Prueba con otra búsqueda.'
+            : 'Aún no tienes materias asignadas en el catálogo.';
         estadoVacio.hidden = asignacionesVisibles > 0;
         listaCursos.setAttribute('aria-busy', 'false');
     }
@@ -563,14 +508,14 @@ function renderizarResumenCursos() {
         const asignaciones = document.createElement('div');
         asignaciones.className = 'assigned-course-locations';
         materiaAsignada.asignaciones.forEach(asignacion => {
-                const etiqueta = document.createElement('span');
-                etiqueta.className = 'assigned-course-section';
-                etiqueta.textContent = `${etiquetaAnoEscolar(asignacion.ano)} • Sección ${asignacion.seccion}`;
-                etiqueta.dataset.subject = normalizarTextoHorario(materiaAsignada.nombre);
-                etiqueta.dataset.year = String(asignacion.ano);
-                etiqueta.dataset.section = String(asignacion.seccion);
-                etiqueta.tabIndex = 0;
-                asignaciones.appendChild(etiqueta);
+            const etiqueta = document.createElement('span');
+            etiqueta.className = 'assigned-course-section';
+            etiqueta.textContent = `${etiquetaAnoEscolar(asignacion.ano)} • Sección ${asignacion.seccion}`;
+            etiqueta.dataset.subject = normalizarTextoHorario(materiaAsignada.nombre);
+            etiqueta.dataset.year = String(asignacion.ano);
+            etiqueta.dataset.section = String(asignacion.seccion);
+            etiqueta.tabIndex = 0;
+            asignaciones.appendChild(etiqueta);
         });
 
         grupo.append(encabezado, asignaciones);
@@ -591,18 +536,10 @@ function renderizarHorarioDemostracion() {
     if (!horario) return;
 
     const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
-    const bloques = ['7:00 – 8:20', '8:30 – 9:50', '10:00 – 11:20'];
+    const bloquesBase = FRANJAS_HORARIAS_LICEO.map(f => f.etiqueta);
     horario.replaceChildren();
 
-    if (!cursosCatalogo.length) {
-        const vacio = document.createElement('p');
-        vacio.className = 'schedule-empty';
-        vacio.textContent = 'No hay materias de demostración para mostrar.';
-        horario.appendChild(vacio);
-        return;
-    }
-
-    const columnas = dias.map((dia, indiceDia) => {
+    const columnas = dias.map(dia => {
         const columna = document.createElement('section');
         columna.className = 'schedule-day';
         columna.setAttribute('aria-label', dia);
@@ -611,26 +548,49 @@ function renderizarHorarioDemostracion() {
         titulo.textContent = dia;
         columna.appendChild(titulo);
 
-        const materiasDelDia = cursosCatalogo
-            .map((curso, indiceCurso) => ({ curso, indiceBloque: Math.floor(indiceCurso / dias.length) }))
-            .filter(({ curso }, indiceCurso) => indiceCurso % dias.length === indiceDia);
-        materiasDelDia.forEach(({ curso, indiceBloque }) => {
+        const bloquesDia = horarioLiceo.filter(
+            item => normalizarTextoHorario(item.dia) === normalizarTextoHorario(dia)
+        );
+        const listaBloques = bloquesDia.length
+            ? bloquesDia
+            : bloquesBase.map(hora => ({
+                dia,
+                bloque: hora,
+                materia: '',
+                ano: '',
+                seccion: '',
+                aula: ''
+            }));
+
+        listaBloques.forEach(item => {
             const bloque = document.createElement('article');
-            bloque.className = 'schedule-class';
-            bloque.dataset.subject = normalizarTextoHorario(curso.materia);
-            bloque.dataset.year = String(curso.ano);
-            bloque.dataset.section = String(curso.seccion);
+            const tieneMateria = Boolean(String(item.materia || '').trim());
+            bloque.className = tieneMateria ? 'schedule-class' : 'schedule-class schedule-class--empty';
+            if (tieneMateria) {
+                bloque.dataset.subject = normalizarTextoHorario(item.materia);
+                if (item.ano) bloque.dataset.year = String(item.ano);
+                if (item.seccion) bloque.dataset.section = String(item.seccion);
+            }
 
             const hora = document.createElement('span');
             hora.className = 'schedule-time';
-            hora.textContent = bloques[indiceBloque] || `${indiceBloque + 1}° bloque`;
+            hora.textContent = item.bloque || '—';
 
             const nombre = document.createElement('h5');
-            nombre.textContent = curso.materia;
+            nombre.textContent = tieneMateria ? item.materia : '—';
 
             const seccion = document.createElement('span');
             seccion.className = 'schedule-section';
-            seccion.textContent = `${etiquetaAnoEscolar(curso.ano)} · Sección ${curso.seccion}`;
+            const partesDetalle = [];
+            if (item.ano && item.seccion) {
+                partesDetalle.push(`${etiquetaAnoEscolar(item.ano)} · Sección ${item.seccion}`);
+            } else if (item.ano) {
+                partesDetalle.push(etiquetaAnoEscolar(item.ano));
+            }
+            if (item.aula) {
+                partesDetalle.push(item.aula);
+            }
+            seccion.textContent = partesDetalle.length ? partesDetalle.join(' · ') : 'Sin asignar';
 
             bloque.append(hora, nombre, seccion);
             columna.appendChild(bloque);
@@ -641,6 +601,124 @@ function renderizarHorarioDemostracion() {
 
     columnas.forEach(columna => horario.appendChild(columna));
     activarResaltadoHorarioDesdeAsignaciones();
+}
+
+function renderizarHorarioSemanalLiceo() {
+    const contenedor = document.getElementById('liceo-weekly-timetable');
+    if (!contenedor) return;
+
+    const dias = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+    const registrosNormalizados = horarioLiceo.map(normalizarRegistroHorarioLiceo);
+
+    const franjasExtra = [];
+    registrosNormalizados.forEach(reg => {
+        const etiqueta = reg.bloque || 'Sin hora';
+        const existeEnBase = FRANJAS_HORARIAS_LICEO.some(f =>
+            normalizarTextoHorario(f.etiqueta) === normalizarTextoHorario(etiqueta)
+            || (reg.horaInicio && f.inicio === reg.horaInicio.slice(0, 5))
+        );
+        const existeEnExtra = franjasExtra.some(f =>
+            normalizarTextoHorario(f.etiqueta) === normalizarTextoHorario(etiqueta)
+        );
+        if (!existeEnBase && !existeEnExtra) {
+            franjasExtra.push({
+                inicio: reg.horaInicio.slice(0, 5),
+                fin: reg.horaFin.slice(0, 5),
+                etiqueta
+            });
+        }
+    });
+
+    const franjas = [...FRANJAS_HORARIAS_LICEO, ...franjasExtra];
+
+    const tabla = document.createElement('table');
+    tabla.className = 'liceo-timetable-grid';
+
+    const thead = document.createElement('thead');
+    const filaCabecera = document.createElement('tr');
+    const thHora = document.createElement('th');
+    thHora.className = 'liceo-timetable-hour-col';
+    thHora.textContent = 'Hora / Bloque';
+    filaCabecera.appendChild(thHora);
+
+    dias.forEach(dia => {
+        const thDia = document.createElement('th');
+        thDia.textContent = dia;
+        filaCabecera.appendChild(thDia);
+    });
+    thead.appendChild(filaCabecera);
+    tabla.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    franjas.forEach(franja => {
+        const fila = document.createElement('tr');
+        const celdaHora = document.createElement('td');
+        celdaHora.className = 'liceo-timetable-slot-label';
+        celdaHora.textContent = franja.etiqueta;
+        fila.appendChild(celdaHora);
+
+        dias.forEach(dia => {
+            const celda = document.createElement('td');
+            const coincidencia = registrosNormalizados.find(reg => {
+                const mismoDia = normalizarTextoHorario(reg.dia) === normalizarTextoHorario(dia);
+                if (!mismoDia) return false;
+                if (franja.inicio && reg.horaInicio) {
+                    return reg.horaInicio.slice(0, 5) === franja.inicio;
+                }
+                return normalizarTextoHorario(reg.bloque) === normalizarTextoHorario(franja.etiqueta);
+            });
+
+            const tieneDatos = coincidencia && (
+                coincidencia.materia
+                || coincidencia.gradoCursando
+                || coincidencia.codigoGrupo
+                || coincidencia.idAsignatura
+            );
+
+            if (!tieneDatos) {
+                celda.className = 'liceo-timetable-cell liceo-timetable-cell--empty';
+                celda.textContent = '—';
+            } else {
+                celda.className = 'liceo-timetable-cell';
+                const entrada = document.createElement('div');
+                entrada.className = 'liceo-timetable-entry';
+
+                const tituloMateria = document.createElement('span');
+                tituloMateria.className = 'liceo-timetable-subject';
+                tituloMateria.textContent = coincidencia.materia
+                    || (coincidencia.idAsignatura ? `Asignatura #${coincidencia.idAsignatura}` : 'Asignatura asignada');
+                entrada.appendChild(tituloMateria);
+
+                const partesMeta = [];
+                if (coincidencia.gradoCursando) partesMeta.push(coincidencia.gradoCursando);
+                if (coincidencia.codigoGrupo) partesMeta.push(`Grupo ${coincidencia.codigoGrupo}`);
+                if (coincidencia.aula) partesMeta.push(coincidencia.aula);
+
+                if (partesMeta.length) {
+                    const meta = document.createElement('span');
+                    meta.className = 'liceo-timetable-meta';
+                    meta.textContent = partesMeta.join(' · ');
+                    entrada.appendChild(meta);
+                }
+
+                if (coincidencia.bloque) {
+                    const horaDetalle = document.createElement('span');
+                    horaDetalle.className = 'liceo-timetable-time';
+                    horaDetalle.textContent = coincidencia.bloque;
+                    entrada.appendChild(horaDetalle);
+                }
+
+                celda.appendChild(entrada);
+            }
+
+            fila.appendChild(celda);
+        });
+
+        tbody.appendChild(fila);
+    });
+
+    tabla.appendChild(tbody);
+    contenedor.replaceChildren(tabla);
 }
 
 function activarResaltadoHorarioDesdeAsignaciones() {
@@ -663,6 +741,7 @@ function activarResaltadoHorarioDesdeAsignaciones() {
         let coincidencias = 0;
 
         horario.querySelectorAll('.schedule-class').forEach(bloque => {
+            if (!bloque.dataset.subject) return;
             const coincideMateria = bloque.dataset.subject === materia;
             const coincideAsignacion = !ano
                 || (bloque.dataset.year === ano && bloque.dataset.section === seccion);
@@ -823,16 +902,7 @@ function renderizarModuloSubirPlanilla(contenedor) {
         }
 
         const deteccion = detectarMateriaYCursoEnTexto(textoCrudo, archivo.name);
-        let filas = parsearFilasPlanillaCSV(textoCrudo);
-
-        if (!filas.length) {
-            const codigo = `${deteccion.ano || 2}${deteccion.seccion || 'A'}`;
-            filas = [
-                { cedula: `V-32.410.${codigo}1`, nombre: 'Estudiante de planilla 01', m1: '16', m2: '15', m3: '' },
-                { cedula: `V-32.890.${codigo}2`, nombre: 'Estudiante de planilla 02', m1: '18', m2: '17', m3: '' },
-                { cedula: `V-33.102.${codigo}3`, nombre: 'Estudiante de planilla 03', m1: '14', m2: '13', m3: '' }
-            ];
-        }
+        const filas = parsearFilasPlanillaCSV(textoCrudo);
 
         materiaDetectadaEl.textContent = deteccion.materia;
         cursoDetectadoEl.textContent = deteccion.curso;
@@ -848,15 +918,15 @@ function renderizarModuloSubirPlanilla(contenedor) {
                 if (respuestaEel && respuestaEel.curso) {
                     cursoDetectadoEl.textContent = respuestaEel.curso;
                 }
-                if (respuestaEel && Array.isArray(respuestaEel.estudiantes) && respuestaEel.estudiantes.length) {
+                if (respuestaEel && Array.isArray(respuestaEel.estudiantes)) {
                     poblarTabla(respuestaEel.estudiantes);
                 }
             } catch (_e) {
-                // Mantiene la detección local si el backend aún no expone el método
+                // Mantiene la lectura local si aún no está conectado el backend
             }
         }
 
-        estadoCarga.textContent = `Planilla identificada: ${materiaDetectadaEl.textContent} · ${cursoDetectadoEl.textContent}.`;
+        estadoCarga.textContent = `Planilla analizada: ${materiaDetectadaEl.textContent} · ${cursoDetectadoEl.textContent}.`;
     }
 
     botonSeleccionar.addEventListener('click', () => inputArchivo.click());
@@ -1047,11 +1117,22 @@ function seleccionarAccion(modulo, boton) {
     const contenedor = document.getElementById('main-content');
 
     mostrarCargaModulo(contenedor, () => {
-        let contenidoModulo = `
-            <div class="widget">
-                <p>Aquí se mostrará tu horario semanal de clases y salones asignados al conectar la base de datos.</p>
-            </div>
-        `;
+        let contenidoModulo = '';
+
+        if (modulo === 'Ver Horarios') {
+            contenidoModulo = `
+                <section class="liceo-timetable-card" aria-label="Horario semanal por horas académicas">
+                    <div class="liceo-timetable-header">
+                        <div>
+                            <h3>Horario semanal por bloques</h3>
+                            <p>Franjas horarias de lunes a viernes listas para los registros de la tabla horario.</p>
+                        </div>
+                        <span class="schedule-demo-label">Horas académicas</span>
+                    </div>
+                    <div class="liceo-timetable-scroll" id="liceo-weekly-timetable"></div>
+                </section>
+            `;
+        }
 
         // --- MÓDULO: SUBIR PLANILLA (Detección automática de materia y curso) ---
         if (modulo === 'Subir Planilla') {
@@ -1234,12 +1315,10 @@ function seleccionarAccion(modulo, boton) {
                                 <p id="course-selected-section-name"></p>
                             </div>
                             <div class="grade-record-tools">
-                                <span class="course-demo-badge">Datos ficticios</span>
                                 <label class="sr-only" for="course-student-search">Buscar estudiante</label>
                                 <input id="course-student-search" class="admin-input grade-record-search" type="search" placeholder="Buscar estudiante..." autocomplete="off">
                             </div>
                         </div>
-                        <p class="course-demo-notice">Estudiantes ficticios para demostración; no son datos reales.</p>
                         <div class="course-results-heading">
                             <span id="course-student-count" role="status" aria-live="polite"></span>
                             <span>Listado de estudiantes</span>
@@ -1310,7 +1389,6 @@ function seleccionarAccion(modulo, boton) {
                                     <ol id="course-student-detail-reports"></ol>
                                 </section>
                             </div>
-                            <p class="course-student-demo-footer">Estos datos son ficticios y no corresponden a alumnos reales.</p>
                         </dialog>
                     </section>
                 </section>
@@ -1321,15 +1399,15 @@ function seleccionarAccion(modulo, boton) {
             Cursos: {
                 titulo: 'Cursos',
                 subtitulo: 'Explora tus cursos',
-                descripcion: 'Selecciona una sección para consultar estudiantes ficticios de demostración inscritos en la materia.',
-                icono: 'img/img_estudiante.png',
+                descripcion: 'Selecciona una sección para consultar los estudiantes inscritos en la materia.',
+                icono: '../img/img_estudiante.png',
                 tituloId: 'course-catalog-title'
             },
             'Cargar Calificaciones': {
                 titulo: 'Cargar Calificaciones',
                 subtitulo: 'Materias asignadas',
                 descripcion: 'Selecciona una materia de tu carga académica para registrar las calificaciones.',
-                icono: 'img/img_notas.png',
+                icono: '../img/img_notas.png',
                 marcaClase: 'grade-module-mark',
                 bannerId: 'grade-module-banner'
             },
@@ -1337,14 +1415,14 @@ function seleccionarAccion(modulo, boton) {
                 titulo: 'Ver Horarios',
                 subtitulo: 'Horarios de clase',
                 descripcion: 'Consulta tus bloques horarios y aulas asignadas para la semana.',
-                icono: 'img/img_horario.png',
+                icono: '../img/img_horario.png',
                 marcaClase: 'schedule-module-mark'
             },
             'Subir Planilla': {
                 titulo: 'Subir Planilla',
                 subtitulo: 'Carga directa desde archivo',
                 descripcion: 'Sube la planilla sin elegir sección ni materia; el sistema detectará el campo asignado para identificar la materia y el curso.',
-                icono: 'img/img_boletines.png',
+                icono: '../img/img_boletines.png',
                 marcaClase: 'sheet-module-mark'
             }
         }[modulo];
@@ -1373,17 +1451,18 @@ function seleccionarAccion(modulo, boton) {
             ${contenidoModulo}
         `;
 
-        // Eventos para Subir Planilla
+        if (modulo === 'Ver Horarios') {
+            renderizarHorarioSemanalLiceo();
+        }
+
         if (modulo === 'Subir Planilla') {
             renderizarModuloSubirPlanilla(contenedor);
         }
 
-        // Eventos para el catálogo de cursos
         if (modulo === 'Cursos') {
             renderizarCatalogoCursos(contenedor);
         }
 
-        // Eventos para Cargar Calificaciones
         if (modulo === 'Cargar Calificaciones') {
             const tabla = contenedor.querySelector('.admin-table');
             const cuerpoTabla = tabla.querySelector('tbody');
@@ -1537,7 +1616,6 @@ function seleccionarAccion(modulo, boton) {
             observadorTablaCalificaciones = new MutationObserver(filtrarFilas);
             observadorTablaCalificaciones.observe(cuerpoTabla, { childList: true });
 
-            // Cálculo automático de definitiva en base a 20
             tabla.addEventListener('input', (e) => {
                 if (!e.target.matches('.grade-lapso-input')) return;
                 const fila = e.target.closest('tr');
@@ -1596,7 +1674,6 @@ function enviarMensaje(event) {
     agregarBurbuja(texto, 'user');
     input.value = '';
 
-    // Punto de conexión para Python / Eel
     setTimeout(() => {
         agregarBurbuja(`Procesando consulta en la base de datos local sobre: "<em>${texto}</em>"...`, 'ai');
     }, 450);

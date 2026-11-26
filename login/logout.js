@@ -1,6 +1,7 @@
 const tarjetaSalida = document.querySelector('.logout-card');
 sessionStorage.removeItem('mandel.usuario');
 sessionStorage.removeItem('mandel.rol');
+sessionStorage.removeItem('mandel.cargo');
 
 window.setTimeout(() => {
   if (tarjetaSalida) {

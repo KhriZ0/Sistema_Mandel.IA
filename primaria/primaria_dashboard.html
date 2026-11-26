@@ -3,86 +3,84 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>C.E.E. Nelson Mandela - Media General</title>
-    <link rel="icon" type="image/x-icon" href="img/favicon_sistema.ico">
-    <link rel="stylesheet" href="style.css">
+    <title>C.E.E. Nelson Mandela - Educación Básica (Primaria)</title>
+    <link rel="icon" type="image/x-icon" href="../img/favicon_sistema.ico">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="primaria.css">
 </head>
 <body>
     <!-- Encabezado Principal Unificado -->
     <header class="top-header">
-        <img src="img/img_miranda.png" class="header-bg" alt="Fondo Miranda">
-        
+        <img src="../img/img_miranda.png" class="header-bg" alt="Fondo Miranda">
+
         <div class="header-left-group">
             <div class="logo-container">
-                <img src="img/logo_mandela.png" alt="Nelson Mandela" class="logo-mandela">
+                <img src="../img/logo_mandela.png" alt="Nelson Mandela" class="logo-mandela">
                 <div class="logo-text">
                     <h2>C.E.E. Nelson Mandela</h2>
                     <p>Sistema Integral de Gestión Educativa</p>
                 </div>
             </div>
-            
+
             <div class="header-divider"></div>
-            
+
             <div class="quote-container">
-                <p>"La educación es el arma más poderosa para cambiar el mundo."<br>— Nelson Mandela.</p>
+                <p>"Una buena cabeza y un buen corazón son siempre una combinación formidable"<br>— Nelson Mandela.</p>
             </div>
         </div>
-        
+
         <!-- Perfil del Docente -->
         <div class="user-profile">
             <div class="user-text">
-                <p><strong data-session-user>Docente</strong><br><span data-session-role>Sv. Comunitario</span></p>
+                <p><strong data-session-user>Docente</strong><br><span data-session-role>Docente • Primaria</span></p>
             </div>
-            <img src="img/img_usuario.png" alt="Usuario" class="img-usuario">
-            <a class="logout-link" href="logout.html">Cerrar sesión</a>
+            <img src="../img/img_usuario.png" alt="Usuario" class="img-usuario">
+            <a class="logout-link" href="../login/logout.html">Cerrar sesión</a>
         </div>
     </header>
 
     <!-- Contenedor Principal de 2 Columnas -->
     <div class="main-layout">
-        
+
         <!-- Columna Izquierda: Membrete + Menú acotado al rol Docente -->
         <nav class="sidebar-left" id="actions-nav">
-            
-            <!-- Membrete de Gestión de Liceo -->
+
+            <!-- Membrete de Gestión de Primaria -->
             <div class="sidebar-membrete">
                 <div class="membrete-icon-box">
                     <svg viewBox="0 0 24 24"><path d="M5 13.18v4L12 21l7-3.82v-4L12 17l-7-3.82zM12 3L1 9l11 6 9-4.91V17h2V9L12 3z"/></svg>
                 </div>
                 <div class="membrete-info">
-                    <span class="membrete-badge">NIVEL MEDIA GENERAL</span>
-                    <strong class="membrete-title">Gestión de Liceo</strong>
+                    <span class="membrete-badge">EDUCACIÓN BÁSICA</span>
+                    <strong class="membrete-title">Gestión de Primaria</strong>
                     <span class="membrete-desc">Panel Docente</span>
                 </div>
             </div>
 
             <button type="button" class="nav-btn active" data-action="home">
-                <img src="img/img_inicio.png" class="nav-icon" alt="Inicio"> Inicio
+                <img src="../img/img_inicio.png" class="nav-icon" alt="Inicio"> Inicio
             </button>
-            <button type="button" class="nav-btn" data-module="Cargar Calificaciones">
-                <img src="img/img_notas.png" class="nav-icon" alt="Notas"> Cargar notas
+            <button type="button" class="nav-btn" data-module="Boletín Descriptivo">
+                <img src="../img/img_notas.png" class="nav-icon" alt="Boletín"> Boletín Descriptivo
             </button>
             <button type="button" class="nav-btn" data-module="Ver Horarios">
-                <img src="img/img_horario.png" class="nav-icon" alt="Horarios"> Ver Horario
+                <img src="../img/img_horario.png" class="nav-icon" alt="Horarios"> Ver Horario
             </button>
-            <button type="button" class="nav-btn" data-module="Cursos">
-                <img src="img/img_estudiante.png" class="nav-icon" alt="Estudiantes"> Cursos
-            </button>
-            <button type="button" class="nav-btn" data-module="Subir Planilla">
-                <img src="img/img_boletines.png" class="nav-icon" alt="Subir planilla"> Subir planilla
+            <button type="button" class="nav-btn" data-module="Secciones">
+                <img src="../img/img_estudiante.png" class="nav-icon" alt="Secciones"> Secciones
             </button>
         </nav>
 
-        <!-- Columna Central Expandida: Área dinámica de Liceo -->
+        <!-- Columna Central Expandida: Área dinámica de Primaria -->
         <main class="content-center" id="main-content">
             <div class="welcome-banner course-module-banner home-module-banner">
                 <div>
                     <h1>¡Bienvenido(a), <span data-session-user>Docente</span>!</h1>
-                    <h2>Gestión de Educación Media General</h2>
-                    <p class="course-module-description">Desde aquí puedes revisar tus asignaciones y acceder rápidamente a cursos, horarios y calificaciones.</p>
+                    <h2>Gestión de Educación Básica (1ro a 6to Grado)</h2>
+                    <p class="course-module-description">Consulta tus secciones asignadas, registra boletines descriptivos y revisa el horario del aula.</p>
                 </div>
                 <span class="course-catalog-mark home-module-mark" aria-hidden="true">
-                    <img src="img/img_inicio.png" alt="">
+                    <img src="../img/img_inicio.png" alt="">
                 </span>
             </div>
 
@@ -107,8 +105,8 @@
 
                     <div class="academic-period-meta">
                         <div class="academic-period-meta-item">
-                            <span>Momento / Lapso en curso</span>
-                            <strong data-academic-term>I Momento</strong>
+                            <span>Lapso / Momento en curso</span>
+                            <strong data-academic-term>I Lapso</strong>
                         </div>
                         <div class="academic-period-meta-item">
                             <span>Código DEA del plantel</span>
@@ -118,30 +116,24 @@
                 </section>
                 <div class="widget actions">
                     <h3>Accesos directos</h3>
-                    <div class="action-buttons action-buttons--shortcuts liceo-shortcuts-grid">
-                        <button type="button" class="shortcut-button shortcut-button--grades" data-module="Cargar Calificaciones">
+                    <div class="action-buttons action-buttons--shortcuts primaria-shortcuts-grid">
+                        <button type="button" class="shortcut-button shortcut-button--grades" data-module="Boletín Descriptivo">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_notas.png" alt="">
+                                <img src="../img/img_notas.png" alt="">
                             </span>
-                            <span>Cargar notas</span>
+                            <span>Boletín Descriptivo</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--schedule" data-module="Ver Horarios">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_horario.png" alt="">
+                                <img src="../img/img_horario.png" alt="">
                             </span>
                             <span>Ver Horario</span>
                         </button>
-                        <button type="button" class="shortcut-button shortcut-button--courses" data-module="Cursos">
+                        <button type="button" class="shortcut-button shortcut-button--courses" data-module="Secciones">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_estudiante.png" alt="">
+                                <img src="../img/img_estudiante.png" alt="">
                             </span>
-                            <span>Cursos</span>
-                        </button>
-                        <button type="button" class="shortcut-button shortcut-button--sheet" data-module="Subir Planilla">
-                            <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_boletines.png" alt="">
-                            </span>
-                            <span>Subir planilla</span>
+                            <span>Secciones</span>
                         </button>
                     </div>
                 </div>
@@ -152,7 +144,7 @@
                 <div class="chart-box assigned-courses-box">
                     <div class="assigned-courses-heading">
                         <div>
-                            <h3>Secciones Asignadas</h3>
+                            <h3>Secciones de Aula Asignadas</h3>
                             <p id="assigned-courses-summary" aria-live="polite"></p>
                         </div>
                         <span class="assigned-courses-count" id="assigned-courses-count"></span>
@@ -162,13 +154,11 @@
                 <section class="chart-box schedule-box" aria-labelledby="schedule-title">
                     <div class="schedule-heading">
                         <div>
-                            <h3 id="schedule-title">Horarios de Clase</h3>
-                            <p>Bloques horarios y materias asignadas para la semana.</p>
+                            <h3 id="schedule-title">Horario Semanal</h3>
+                            <p>Grado, sección, Maestro Guía, aula y bloque de actividad.</p>
                         </div>
-                        <span class="schedule-demo-label">Demostración</span>
                     </div>
-                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de demostración"></div>
-                    <p class="schedule-note">Materias de demostración · Aulas por asignar</p>
+                    <div class="schedule-week" id="demo-schedule" aria-label="Horario semanal de Primaria"></div>
                 </section>
             </div>
         </main>
@@ -182,7 +172,7 @@
         </div>
         <button type="button" class="ai-fab-btn" data-chat-toggle aria-label="Abrir Asistente MandellA">
             <span class="ai-fab-badge">IA</span>
-            <img src="img/logo_mandelia.png" alt="MandellA">
+            <img src="../img/logo_mandelia.png" alt="MandellA">
         </button>
     </div>
 
@@ -193,7 +183,7 @@
     <aside class="ai-chat-drawer" id="ai-chat-drawer">
         <div class="chat-drawer-header">
             <div class="chat-header-brand">
-                <img src="img/logo_mandelia.png" alt="Logo MandellA" class="chat-header-logo">
+                <img src="../img/logo_mandelia.png" alt="Logo MandellA" class="chat-header-logo">
                 <div class="chat-header-title">
                     <h3>MandellA</h3>
                     <span><i class="online-indicator"></i> Motor Local Offline • Listo</span>
@@ -205,13 +195,13 @@
         <div class="chat-messages" id="chat-messages">
             <div class="msg-bubble msg-ai">
                 <strong>MandellA</strong>
-                ¡Hola, <span data-session-user>Docente</span>! Estoy activo en modo local sin internet. Puedo ayudarte a consultar promedios, verificar secciones de 1ro a 5to año o redactar observaciones académicas. ¿Qué necesitas?
+                ¡Hola, <span data-session-user>Docente</span>! Estoy activo en modo local sin internet. Puedo ayudarte a consultar secciones de Educación Básica, estados de avance o redactar observaciones descriptivas. ¿Qué necesitas?
             </div>
         </div>
 
         <div class="chat-suggestions">
             <button type="button" class="suggestion-chip" data-suggestion="Resumen de secciones">Resumen de secciones</button>
-            <button type="button" class="suggestion-chip" data-suggestion="Estudiantes aplazados">Estudiantes aplazados</button>
+            <button type="button" class="suggestion-chip" data-suggestion="Alumnos en refuerzo pedagógico">Alumnos en refuerzo</button>
             <button type="button" class="suggestion-chip" data-suggestion="Redactar observación">Redactar observación</button>
         </div>
 
@@ -221,8 +211,8 @@
         </form>
     </aside>
 
-    <!-- Lógica acoplada de Liceo -->
+    <!-- Lógica acoplada de Primaria -->
     <script src="/eel.js"></script>
-    <script src="liceo_dashboard.js"></script>
+    <script src="primaria_dashboard.js"></script>
 </body>
 </html>

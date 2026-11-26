@@ -204,7 +204,7 @@ function mostrarInicio(boton) {
                     <p class="course-module-description">Desde aquí puedes administrar estudiantes, docentes, secciones, horarios y reportes académicos.</p>
                 </div>
                 <span class="course-catalog-mark home-module-mark" aria-hidden="true">
-                    <img src="img/img_inicio.png" alt="">
+                    <img src="../img/img_inicio.png" alt="">
                 </span>
             </div>
 
@@ -243,25 +243,25 @@ function mostrarInicio(boton) {
                     <div class="action-buttons action-buttons--shortcuts admin-shortcuts-grid">
                         <button type="button" class="shortcut-button shortcut-button--enroll" data-module="Estudiantes" data-subview="inscribir">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_estudiante.png" alt="">
+                                <img src="../img/img_estudiante.png" alt="">
                             </span>
                             <span>Inscribir Estudiante</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--assign" data-module="Docentes" data-subview="asignar">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_profesor.png" alt="">
+                                <img src="../img/img_profesor.png" alt="">
                             </span>
                             <span>Asignar Materias</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--curriculum" data-module="Materias" data-subview="malla">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_materias.png" alt="">
+                                <img src="../img/img_materias.png" alt="">
                             </span>
                             <span>Malla Curricular</span>
                         </button>
                         <button type="button" class="shortcut-button shortcut-button--search" data-module="Estudiantes" data-subview="consultar">
                             <span class="shortcut-icon" aria-hidden="true">
-                                <img src="img/img_reportes.png" alt="">
+                                <img src="../img/img_reportes.png" alt="">
                             </span>
                             <span>Consultar Estudiantes</span>
                         </button>
@@ -1536,31 +1536,31 @@ function seleccionarModulo(modulo, boton, subvista = '') {
             Estudiantes: {
                 subtitulo: 'Registro, inscripción y consulta estudiantil',
                 descripcion: 'Filtra por nivel educativo, grado/año, docente o materia, y gestiona inscripciones nuevas o regulares.',
-                icono: 'img/img_estudiante.png',
+                icono: '../img/img_estudiante.png',
                 marcaClase: 'home-module-mark'
             },
             Docentes: {
                 subtitulo: 'Nómina, cargos y estado del personal docente',
                 descripcion: 'Registra nuevos docentes, ajusta nombres o cargos y deshabilita los que ya no participan en el plantel.',
-                icono: 'img/img_profesor.png',
+                icono: '../img/img_profesor.png',
                 marcaClase: 'grade-module-mark'
             },
             Secciones: {
                 subtitulo: 'Organización de grados, años y grupos',
                 descripcion: 'Crea secciones de Primaria y Liceo, asigna estudiantes y deja los cursos listos para materias y docentes.',
-                icono: 'img/img_secciones.png',
+                icono: '../img/img_secciones.png',
                 marcaClase: 'home-module-mark'
             },
             Materias: {
                 subtitulo: 'Asignación por docente, curso y bloque horario',
                 descripcion: 'Las materias de la malla son fijas; aquí defines qué docente imparte cada asignatura y en qué horario lo ve.',
-                icono: 'img/img_materias.png',
+                icono: '../img/img_materias.png',
                 marcaClase: 'schedule-module-mark'
             },
             Notas: {
                 subtitulo: 'Supervisión y carga de calificaciones',
                 descripcion: 'Filtra por sección o busca estudiantes para revisar y registrar calificaciones por momento.',
-                icono: 'img/img_notas.png',
+                icono: '../img/img_notas.png',
                 marcaClase: 'grade-module-mark'
             }
         }[modulo];
@@ -1588,7 +1588,7 @@ function seleccionarModulo(modulo, boton, subvista = '') {
                         <p class="course-module-description">Espacio de gestión administrativa del plantel.</p>
                     </div>
                     <span class="course-catalog-mark home-module-mark" aria-hidden="true">
-                        <img src="img/img_inicio.png" alt="">
+                        <img src="../img/img_inicio.png" alt="">
                     </span>
                 </div>
             `;

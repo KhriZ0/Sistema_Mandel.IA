@@ -83,9 +83,9 @@ def validar_credenciales(usuario: str, password: str, rol: str) -> dict:
         return {"ok": False, "mensaje": "Este usuario está desactivado."}
 
     rutas = {
-        "administracion": "/admin_dashboard.html",
-        "docente": "/liceo_dashboard.html",
-        "docente_primaria": "/primaria_dashboard.html",
+        "administracion": "/administracion/admin_dashboard.html",
+        "docente": "/liceo/liceo_dashboard.html",
+        "docente_primaria": "/primaria/primaria_dashboard.html",
     }
 
     # El usuario maestro 'admin' entra a cualquiera de las 3 interfaces según el perfil elegido

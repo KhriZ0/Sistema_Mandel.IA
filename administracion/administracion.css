@@ -1,0 +1,458 @@
+/* ================= MÓDULO ESTUDIANTES ADMINISTRACIÓN ================= */
+.students-admin-module {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 28px;
+}
+
+.students-admin-toolbar-card {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.students-level-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    background: var(--gris-fondo);
+    border: 1px solid var(--borde);
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.students-level-tab {
+    padding: 12px 16px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--borde);
+    font-size: 13.5px;
+    font-weight: 700;
+    color: #4b5563;
+    cursor: pointer;
+    transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+.students-level-tab:last-child {
+    border-right: none;
+}
+
+.students-level-tab:hover {
+    background: #eaecef;
+    color: var(--negro);
+}
+
+.students-level-tab.is-active {
+    background: var(--negro);
+    color: var(--blanco);
+}
+
+.students-filters-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.students-filters-row--liceo {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.students-filter-field {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.students-filter-field--wide {
+    grid-column: span 2;
+}
+
+.students-select {
+    width: 100%;
+    padding: 10px 12px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 6px;
+    font-size: 14px;
+    color: var(--texto-oscuro);
+    outline: none;
+}
+
+.students-select:focus {
+    border-color: var(--amarillo);
+}
+
+.students-admin-actions-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding-top: 8px;
+    border-top: 1px solid #edf0ee;
+}
+
+.students-admin-count {
+    font-size: 13px;
+    font-weight: 700;
+    color: #4b5563;
+}
+
+.students-enroll-toggle-btn {
+    border-radius: 7px;
+    padding: 9px 16px;
+    font-size: 13px;
+}
+
+.students-enrollment-card h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--negro);
+}
+
+.students-enrollment-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.students-enrollment-submit button {
+    width: 100%;
+    border-radius: 7px;
+}
+
+.students-enrollment-feedback {
+    margin-top: 12px;
+    padding: 10px 14px;
+    background: #eaf8f0;
+    border: 1px solid #c7ead5;
+    color: #18764d;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.students-level-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+.students-level-pill--primaria {
+    background: #eaf8f0;
+    color: #18764d;
+    border: 1px solid #c7ead5;
+}
+
+.students-level-pill--liceo {
+    background: #edf5ff;
+    color: #1558a6;
+    border: 1px solid #c9def8;
+}
+
+.student-status-switch {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    font-size: 12.5px;
+    font-weight: 700;
+}
+
+.student-status-toggle {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 40px;
+    height: 22px;
+    background: #cbd5e1;
+    border-radius: 999px;
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.student-status-toggle::after {
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 16px;
+    height: 16px;
+    background: var(--blanco);
+    border-radius: 50%;
+    transition: transform 0.2s ease;
+}
+
+.student-status-toggle:checked {
+    background: #18764d;
+}
+
+.student-status-toggle:checked::after {
+    transform: translateX(18px);
+}
+
+@media (max-width: 900px) {
+    .students-level-tabs,
+    .students-filters-row,
+    .students-filters-row--liceo,
+    .students-enrollment-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .students-filter-field--wide {
+        grid-column: auto;
+    }
+}
+
+/* ================= MÓDULO DOCENTES ADMINISTRACIÓN ================= */
+.docentes-admin-module {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 28px;
+}
+
+.docentes-admin-toolbar {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.docentes-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.docentes-form-card h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--negro);
+}
+
+.docentes-form-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+}
+
+.docentes-form-actions {
+    grid-column: 1 / -1;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 4px;
+}
+
+.docente-cancel-btn {
+    padding: 10px 18px;
+    background: var(--blanco);
+    border: 1px solid var(--borde);
+    border-radius: 7px;
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--texto-oscuro);
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.docente-cancel-btn:hover {
+    background: var(--gris-fondo);
+    border-color: #c7cdd6;
+}
+
+.docente-edit-btn {
+    padding: 6px 12px;
+    background: #edf5ff;
+    color: #1558a6;
+    border: 1px solid #c9def8;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.docente-edit-btn:hover {
+    background: #dcecff;
+    border-color: #9ec4f2;
+}
+
+.docente-level-pill {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+}
+
+.docente-level-pill--primaria {
+    background: #eaf8f0;
+    color: #18764d;
+    border: 1px solid #c7ead5;
+}
+
+.docente-level-pill--liceo {
+    background: #edf5ff;
+    color: #1558a6;
+    border: 1px solid #c9def8;
+}
+
+.docente-level-pill--ambos {
+    background: #fff6ea;
+    color: #9a5b13;
+    border: 1px solid #f2d4ab;
+}
+
+@media (max-width: 900px) {
+    .docentes-filters-grid,
+    .docentes-form-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================= MÓDULO SECCIONES ADMINISTRACIÓN ================= */
+.secciones-admin-module {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 28px;
+}
+
+.secciones-admin-module h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--negro);
+}
+
+.secciones-create-grid {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.secciones-submit-btn {
+    width: 100%;
+    border-radius: 7px;
+}
+
+.secciones-assign-student-box {
+    margin-top: 18px;
+    padding-top: 16px;
+    border-top: 1px solid #edf0ee;
+}
+
+.secciones-assign-row {
+    display: grid;
+    grid-template-columns: 1.6fr 1fr auto;
+    gap: 12px;
+    align-items: center;
+}
+
+.secciones-assign-btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    white-space: nowrap;
+}
+
+.secciones-filter-bar {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr auto;
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 16px;
+}
+
+.secciones-ready-tag {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #edf0f4;
+    color: #596579;
+}
+
+.secciones-ready-tag.is-ready {
+    background: #edf5ff;
+    color: #1558a6;
+    border: 1px solid #c9def8;
+}
+
+@media (max-width: 900px) {
+    .secciones-create-grid,
+    .secciones-assign-row,
+    .secciones-filter-bar {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* ================= MÓDULO MATERIAS ADMINISTRACIÓN ================= */
+.materias-admin-module {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding-bottom: 28px;
+}
+
+.materias-admin-module h3 {
+    margin-bottom: 14px;
+    font-size: 16px;
+    color: var(--negro);
+}
+
+.materias-assign-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    align-items: end;
+}
+
+.materias-filter-bar {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    align-items: end;
+    margin-bottom: 16px;
+}
+
+.materia-bloque-tag {
+    display: inline-block;
+    padding: 3px 9px;
+    border-radius: 999px;
+    font-size: 11.5px;
+    font-weight: 700;
+    background: #fff6d8;
+    color: #574300;
+    border: 1px solid #efd16a;
+}
+
+.materia-remove-btn {
+    padding: 6px 12px;
+    background: #fff4f4;
+    color: var(--rojo);
+    border: 1px solid #f3c4c4;
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background-color 0.2s ease, border-color 0.2s ease;
+}
+
+.materia-remove-btn:hover {
+    background: #ffe3e3;
+    border-color: var(--rojo);
+}
+
+@media (max-width: 900px) {
+    .materias-assign-grid,
+    .materias-filter-bar {
+        grid-template-columns: 1fr;
+    }
+}
