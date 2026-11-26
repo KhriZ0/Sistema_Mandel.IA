@@ -37,9 +37,9 @@ CREATE TABLE IF NOT EXISTS public.estudiantes (
     telefono_representante VARCHAR(50),
     telefono_estudiante VARCHAR(50),
     estado_estudiante VARCHAR(20),
-    asignatura_pendiente VARCHAR(20)
-    representante VARCHAR(100),
-    inasistencias NUMERIC(4, 2),
+    asignatura_pendiente VARCHAR(20),
+    inasistencias NUMERIC(4,2),
+    representante VARCHAR(100)
 );
 
 CREATE TABLE IF NOT EXISTS public.horario (
