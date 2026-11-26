@@ -38,6 +38,8 @@ CREATE TABLE IF NOT EXISTS public.estudiantes (
     telefono_estudiante VARCHAR(50),
     estado_estudiante VARCHAR(20),
     asignatura_pendiente VARCHAR(20)
+    representante VARCHAR(100),
+    inasistencias NUMERIC(4, 2),
 );
 
 CREATE TABLE IF NOT EXISTS public.horario (
@@ -64,21 +66,8 @@ CREATE TABLE IF NOT EXISTS public.usuarios (
     id_usuario SERIAL PRIMARY KEY,
     nombre_usuario VARCHAR(50) UNIQUE NOT NULL,
     contrasena VARCHAR(255) NOT NULL,
-    nombre_completo VARCHAR(120) NOT NULL,
     nivel VARCHAR(30) NOT NULL CHECK (nivel IN ('administracion', 'docente', 'docente_primaria')),
     estado VARCHAR(10) NOT NULL DEFAULT 'ACTIVO'
-);
-
-CREATE TABLE IF NOT EXISTS public.boletin_descriptivo (
-    cedula VARCHAR(20) NOT NULL REFERENCES public.estudiantes(cedula),
-    grado_cursando VARCHAR(20) NOT NULL,
-    codigo_grupo VARCHAR(10) NOT NULL,
-    lapso SMALLINT NOT NULL CHECK (lapso BETWEEN 1 AND 3),
-    literal VARCHAR(1) NOT NULL CHECK (literal IN ('A', 'B', 'C', 'D', 'E', 'F')),
-    estado_avance VARCHAR(30) NOT NULL,
-    observacion VARCHAR(500),
-    fecha_registro DATE NOT NULL DEFAULT CURRENT_DATE,
-    PRIMARY KEY (cedula, grado_cursando, codigo_grupo, lapso)
 );
 
 -- Datos semilla iniciales del respaldo

@@ -12,9 +12,58 @@ document.querySelectorAll('[data-session-role]').forEach(elemento => {
 
 let temporizadorCargaModulo = null;
 let seccionesAsignadasDocente = [];
-let seccionesPrimaria = [];
+let seccionesPrimaria = [{
+    grado: 1,
+    seccion: 'A',
+    maestroGuia: 'Por asignar',
+    aula: 'Por asignar',
+    alumnos: 1
+}];
 let horarioPrimaria = [];
-let alumnosDescriptivos = [];
+let alumnosDescriptivos = [{
+    numeroLista: '1',
+    cedula: 'DEMO-001',
+    nombre: 'Alumno de ejemplo',
+    grado: 1,
+    seccion: 'A',
+    lapso: 'Lapso 1',
+    momento: 1,
+    fechaDesde: '',
+    fechaHasta: '',
+    asistencia: 0,
+    inasistencias: 0,
+    justificadas: 0,
+    literal: 'B',
+    estadoAvance: 'En proceso',
+    esEjemplo: true,
+    observacion: 'Participa con interés y demuestra avances en las actividades.',
+    historial: [
+        {
+            periodo: '2025 - 2026',
+            lapso: 2,
+            momento: 3,
+            fechaDesde: '2026-01-12',
+            fechaHasta: '2026-04-10',
+            asistencia: 53,
+            inasistencias: 2,
+            justificadas: 1,
+            observacion: 'Consolida aprendizajes y participa en actividades grupales.',
+            fechaRegistro: '10/04/2026'
+        },
+        {
+            periodo: '2025 - 2026',
+            lapso: 1,
+            momento: 2,
+            fechaDesde: '2025-09-15',
+            fechaHasta: '2025-12-12',
+            asistencia: 55,
+            inasistencias: 3,
+            justificadas: 2,
+            observacion: 'Muestra interés y avances en las actividades del aula.',
+            fechaRegistro: '12/12/2025'
+        }
+    ]
+}];
 
 function etiquetaGradoEscolar(grado) {
     const nombres = { 1: '1er', 2: '2do', 3: '3er', 4: '4to', 5: '5to', 6: '6to' };
@@ -36,6 +85,84 @@ function escaparHtml(texto) {
         .replace(/>/g, '&gt;')
         .replace(/"/g, '&quot;')
         .replace(/'/g, '&#039;');
+}
+
+function crearPdfVistaPrevia(alumno, numeroLista, datosBoletin) {
+    const textoPlano = texto => String(texto ?? '')
+        .normalize('NFD')
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\x20-\x7E]/g, '');
+    const escaparTextoPdf = texto => textoPlano(texto)
+        .replace(/\\/g, '\\\\')
+        .replace(/\(/g, '\\(')
+        .replace(/\)/g, '\\)');
+    const envolverTexto = texto => {
+        const palabras = textoPlano(texto).split(/\s+/).filter(Boolean);
+        const lineas = [];
+        let linea = '';
+
+        palabras.forEach(palabra => {
+            const candidata = linea ? `${linea} ${palabra}` : palabra;
+            if (candidata.length > 78 && linea) {
+                lineas.push(linea);
+                linea = palabra;
+            } else {
+                linea = candidata;
+            }
+        });
+        if (linea) lineas.push(linea);
+        return lineas;
+    };
+
+    const lineasObservacion = envolverTexto(datosBoletin.observacion);
+    const lineas = [
+        'VISTA PREVIA - BOLETIN DESCRIPTIVO',
+        'Formato institucional final pendiente de diseno.',
+        '',
+        `Numero de lista: ${numeroLista}`,
+        `Cedula escolar: ${alumno.cedula}`,
+        `Nombre del alumno: ${alumno.nombre}`,
+        `Grado y seccion: ${etiquetaGradoEscolar(alumno.grado)} - ${alumno.seccion}`,
+        `Momento: ${datosBoletin.momento}`,
+        `Fecha desde: ${datosBoletin.fechaDesde || 'No indicada'}`,
+        `Fecha hasta: ${datosBoletin.fechaHasta || 'No indicada'}`,
+        `Asistencia: ${datosBoletin.asistencia}`,
+        `Inasistencias: ${datosBoletin.inasistencias}`,
+        `Justificadas: ${datosBoletin.justificadas}`,
+        '',
+        'Informacion de la actuacion integral del estudiante:',
+        ...(lineasObservacion.length ? lineasObservacion : ['Sin observaciones.'])
+    ];
+    const comandos = ['BT'];
+    lineas.forEach((linea, indice) => {
+        const tamano = indice === 0 ? 18 : 12;
+        const y = 742 - indice * 24;
+        comandos.push(`/F1 ${tamano} Tf 1 0 0 1 50 ${y} Tm (${escaparTextoPdf(linea)}) Tj`);
+    });
+    comandos.push('ET');
+
+    const contenido = comandos.join('\n');
+    const objetos = [
+        '<< /Type /Catalog /Pages 2 0 R >>',
+        '<< /Type /Pages /Kids [3 0 R] /Count 1 >>',
+        '<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 4 0 R >> >> /Contents 5 0 R >>',
+        '<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>',
+        `<< /Length ${contenido.length} >>\nstream\n${contenido}\nendstream`
+    ];
+    let pdf = '%PDF-1.4\n';
+    const offsets = [0];
+    objetos.forEach((objeto, indice) => {
+        offsets.push(pdf.length);
+        pdf += `${indice + 1} 0 obj\n${objeto}\nendobj\n`;
+    });
+
+    const posicionXref = pdf.length;
+    pdf += `xref\n0 ${objetos.length + 1}\n0000000000 65535 f \n`;
+    offsets.slice(1).forEach(offset => {
+        pdf += `${String(offset).padStart(10, '0')} 00000 n \n`;
+    });
+    pdf += `trailer\n<< /Size ${objetos.length + 1} /Root 1 0 R >>\nstartxref\n${posicionXref}\n%%EOF`;
+    return pdf;
 }
 
 function sincronizarSeccionesConCursos() {
@@ -81,16 +208,36 @@ function actualizarAlumnosDescriptivos(alumnos) {
         throw new TypeError('Los alumnos descriptivos deben proporcionarse como una lista.');
     }
     alumnosDescriptivos = alumnos.map(item => ({
+        numeroLista: String(item.numeroLista || item.numero_lista || '').trim(),
         cedula: String(item.cedula || '').trim(),
         nombre: String(item.nombre || '').trim(),
         grado: Number(item.grado),
         seccion: String(item.seccion || '').trim(),
+        esEjemplo: false,
         lapso: String(item.lapso || 'Lapso 1').trim(),
+        momento: Number(item.momento || 1),
+        fechaDesde: String(item.fechaDesde || item.fecha_desde || '').trim(),
+        fechaHasta: String(item.fechaHasta || item.fecha_hasta || '').trim(),
+        asistencia: Number(item.asistencia || 0),
+        inasistencias: Number(item.inasistencias || 0),
+        justificadas: Number(item.justificadas || 0),
         literal: ['A', 'B', 'C', 'D', 'E', 'F'].includes(String(item.literal || 'B').trim().toUpperCase())
             ? String(item.literal).trim().toUpperCase()
             : 'B',
         estadoAvance: String(item.estadoAvance || item.estado_avance || 'En proceso').trim(),
-        observacion: String(item.observacion || '').trim()
+        observacion: String(item.observacion || '').trim(),
+        historial: Array.isArray(item.historial) ? item.historial.map(registro => ({
+            periodo: String(registro.periodo || '').trim(),
+            lapso: Number(registro.lapso || 0),
+            momento: Number(registro.momento || 1),
+            fechaDesde: String(registro.fechaDesde || registro.fecha_desde || '').trim(),
+            fechaHasta: String(registro.fechaHasta || registro.fecha_hasta || '').trim(),
+            asistencia: Number(registro.asistencia || 0),
+            inasistencias: Number(registro.inasistencias || 0),
+            justificadas: Number(registro.justificadas || 0),
+            observacion: String(registro.observacion || '').trim(),
+            fechaRegistro: String(registro.fechaRegistro || '').trim()
+        })) : []
     }));
 }
 
@@ -325,12 +472,6 @@ function seleccionarAccion(modulo, boton) {
                                 <button type="button" class="course-clear-button" id="grade-clear-assignment-filters">Limpiar filtros</button>
                             </div>
                         </div>
-                        <div class="grade-toolbar-actions">
-                            <input type="file" id="grade-import-file" accept=".xlsx,.xls" hidden>
-                            <button type="button" class="grade-back-button" id="grade-import-button">Importar Excel</button>
-                            <button type="button" class="grade-back-button" id="grade-export-button">Exportar Excel</button>
-                            <button type="button" class="grade-save-button" id="grade-save-all-button">Guardar</button>
-                        </div>
                     </div>
                     <div class="grade-record-heading">
                         <div>
@@ -344,19 +485,105 @@ function seleccionarAccion(modulo, boton) {
                         <table class="admin-table">
                             <thead>
                                 <tr>
+                                    <th>Número de lista</th>
                                     <th>Cédula escolar</th>
-                                    <th>Alumno</th>
-                                    <th>Matemática</th>
-                                    <th>Lengua</th>
-                                    <th>Ciencias</th>
-                                    <th>Sociales</th>
-                                    <th>Observaciones</th>
-                                    <th>Acción</th>
+                                    <th>Nombre del alumno</th>
+                                    <th>Boletines anteriores</th>
+                                    <th>Acciones</th>
                                 </tr>
                             </thead>
                             <tbody id="descriptive-grades-body"></tbody>
                         </table>
                     </div>
+                    <dialog class="descriptive-report-dialog descriptive-editor-dialog" id="descriptive-report-dialog" aria-labelledby="descriptive-report-title">
+                        <div class="descriptive-report-content">
+                            <header class="descriptive-report-header">
+                                <div>
+                                    <span class="grade-record-eyebrow">BOLETÍN DESCRIPTIVO</span>
+                                    <h2 id="descriptive-report-title">Generar boletín descriptivo</h2>
+                                </div>
+                                <button type="button" class="descriptive-report-close" id="descriptive-report-close" aria-label="Cerrar">×</button>
+                            </header>
+                            <div class="descriptive-student-details">
+                                <div><span>Número de lista</span><strong id="descriptive-report-list-number"></strong></div>
+                                <div><span>Cédula escolar</span><strong id="descriptive-report-cedula"></strong></div>
+                                <div><span>Nombre del alumno</span><strong id="descriptive-report-name"></strong></div>
+                                <div><span>Grado y sección</span><strong id="descriptive-report-section"></strong></div>
+                            </div>
+                            <div class="descriptive-report-fields">
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-moment">Momento</label>
+                                    <select class="admin-input" id="descriptive-report-moment">
+                                        <option value="1">Momento 1</option>
+                                        <option value="2">Momento 2</option>
+                                        <option value="3">Momento 3</option>
+                                    </select>
+                                </div>
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-date-from">Fecha desde</label>
+                                    <input class="admin-input" id="descriptive-report-date-from" type="date">
+                                </div>
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-date-to">Fecha hasta</label>
+                                    <input class="admin-input" id="descriptive-report-date-to" type="date">
+                                </div>
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-attendance">Asistencia</label>
+                                    <input class="admin-input" id="descriptive-report-attendance" type="number" min="0" step="1" value="0">
+                                </div>
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-absences">Inasistencias</label>
+                                    <input class="admin-input" id="descriptive-report-absences" type="number" min="0" step="1" value="0">
+                                </div>
+                                <div class="descriptive-report-field">
+                                    <label for="descriptive-report-justified">Justificadas</label>
+                                    <input class="admin-input" id="descriptive-report-justified" type="number" min="0" step="1" value="0">
+                                </div>
+                            </div>
+                            <label class="descriptive-report-label" for="descriptive-report-observations">Información de la actuación integral del estudiante</label>
+                            <textarea class="admin-input descriptive-report-observations" id="descriptive-report-observations" maxlength="500" rows="7"></textarea>
+                            <p class="descriptive-report-status" id="descriptive-report-status" role="status" aria-live="polite" hidden></p>
+                            <footer class="descriptive-report-actions">
+                                <input type="file" id="descriptive-report-file" accept=".txt,text/plain" hidden>
+                                <button type="button" class="grade-back-button" id="descriptive-report-import" title="Importar información desde un archivo de texto">Importar</button>
+                                <button type="button" class="grade-back-button" id="descriptive-report-export">Exportar</button>
+                                <button type="button" class="grade-back-button" id="descriptive-report-preview">Vista previa</button>
+                                <button type="button" class="grade-save-button" id="descriptive-report-save">Guardar</button>
+                            </footer>
+                        </div>
+                    </dialog>
+                    <dialog class="descriptive-report-dialog descriptive-history-dialog" id="descriptive-history-dialog" aria-labelledby="descriptive-history-title">
+                        <div class="descriptive-report-content">
+                            <header class="descriptive-report-header">
+                                <div>
+                                    <span class="grade-record-eyebrow">HISTORIAL ACADÉMICO</span>
+                                    <h2 id="descriptive-history-title">Boletines anteriores</h2>
+                                    <p class="descriptive-history-student" id="descriptive-history-student"></p>
+                                </div>
+                                <button type="button" class="descriptive-report-close" id="descriptive-history-close" aria-label="Cerrar">×</button>
+                            </header>
+                            <p class="descriptive-report-status" id="descriptive-history-status" role="status" aria-live="polite" hidden></p>
+                            <div class="grade-table-scroll">
+                                <table class="admin-table">
+                                    <thead>
+                                        <tr>
+                                            <th>Lapso</th>
+                                            <th>Período</th>
+                                            <th>Momento</th>
+                                            <th>Desde</th>
+                                            <th>Hasta</th>
+                                            <th>Asistencia</th>
+                                            <th>Inasistencias</th>
+                                            <th>Justificadas</th>
+                                            <th>Información de actuación integral</th>
+                                            <th>Fecha de registro</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="descriptive-history-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </dialog>
                 </section>
             `;
         }
@@ -435,7 +662,7 @@ function seleccionarAccion(modulo, boton) {
             'Boletín Descriptivo': {
                 titulo: 'Boletín Descriptivo',
                 subtitulo: 'Registro cualitativo por sección',
-                descripcion: 'Selecciona una sección para revisar y registrar literales y observaciones descriptivas.',
+                descripcion: 'Consulta y registra la descripción de cada alumno.',
                 icono: '../img/img_notas.png',
                 marcaClase: 'grade-module-mark',
                 bannerId: 'grade-module-banner'
@@ -513,14 +740,15 @@ function seleccionarAccion(modulo, boton) {
             const contador = contenedor.querySelector('#grade-assignment-count');
             const seccionAsignada = seccionesPrimaria[0];
 
-            const calificacionesPrueba = ['A', 'B', 'C', 'D', 'E', 'F'];
-            const selectorMateria = (alumno, materia) => `
-                <select class="grade-literal-select" aria-label="${materia} de ${escaparHtml(alumno.nombre)}">
-                    ${calificacionesPrueba.map(literal =>
-                        `<option ${literal === alumno.literal ? 'selected' : ''}>${literal}</option>`
-                    ).join('')}
-                </select>
-            `;
+            const obtenerNumeroLista = alumno => {
+                const alumnosSeccion = seccionAsignada
+                    ? alumnosDescriptivos.filter(item =>
+                        item.grado === seccionAsignada.grado
+                        && item.seccion === seccionAsignada.seccion
+                    )
+                    : [];
+                return alumno.numeroLista || String(alumnosSeccion.indexOf(alumno) + 1);
+            };
 
             const renderizarTabla = () => {
                 const consulta = normalizarTexto(filtro.value);
@@ -528,36 +756,64 @@ function seleccionarAccion(modulo, boton) {
                     ? alumnosDescriptivos.filter(alumno =>
                         alumno.grado === seccionAsignada.grado
                         && alumno.seccion === seccionAsignada.seccion
-                        && (!consulta || normalizarTexto(`${alumno.cedula} ${alumno.nombre}`).includes(consulta))
                     )
                     : [];
+                const alumnosVisibles = alumnosSeccion.filter(alumno =>
+                    !consulta || normalizarTexto(`${alumno.cedula} ${alumno.nombre}`).includes(consulta)
+                );
 
-                contador.textContent = `${alumnosSeccion.length} ${alumnosSeccion.length === 1 ? 'alumno' : 'alumnos'}`;
-                cuerpo.innerHTML = alumnosSeccion.map(alumno => `
+                contador.textContent = `${alumnosVisibles.length} ${alumnosVisibles.length === 1 ? 'alumno' : 'alumnos'}`;
+                cuerpo.innerHTML = alumnosVisibles.map(alumno => `
                     <tr data-cedula="${escaparHtml(alumno.cedula)}">
+                        <td>${escaparHtml(obtenerNumeroLista(alumno))}</td>
                         <td>${escaparHtml(alumno.cedula)}</td>
                         <td>${escaparHtml(alumno.nombre)}</td>
-                        <td>${selectorMateria(alumno, 'Matemática')}</td>
-                        <td>${selectorMateria(alumno, 'Lengua')}</td>
-                        <td>${selectorMateria(alumno, 'Ciencias')}</td>
-                        <td>${selectorMateria(alumno, 'Sociales')}</td>
                         <td>
-                            <input class="admin-input descriptive-observation"
-                                value="${escaparHtml(alumno.observacion)}"
-                                aria-label="Observaciones de ${escaparHtml(alumno.nombre)}">
+                            <button type="button" class="grade-back-button grade-history-action">Ver anteriores</button>
                         </td>
                         <td>
-                            <button type="button" class="grade-save-button grade-row-action">Guardar</button>
+                            <button type="button" class="grade-save-button grade-row-action">Generar boletín</button>
                         </td>
                     </tr>
                 `).join('') || `
                     <tr>
-                        <td colspan="8" class="grades-empty-state">
+                        <td colspan="5" class="grades-empty-state">
                             No hay alumnos registrados en la sección asignada.
                         </td>
                     </tr>
                 `;
             };
+
+            const dialogo = contenedor.querySelector('#descriptive-report-dialog');
+            const campoObservaciones = contenedor.querySelector('#descriptive-report-observations');
+            const campoMomento = contenedor.querySelector('#descriptive-report-moment');
+            const campoFechaDesde = contenedor.querySelector('#descriptive-report-date-from');
+            const campoFechaHasta = contenedor.querySelector('#descriptive-report-date-to');
+            const campoAsistencia = contenedor.querySelector('#descriptive-report-attendance');
+            const campoInasistencias = contenedor.querySelector('#descriptive-report-absences');
+            const campoJustificadas = contenedor.querySelector('#descriptive-report-justified');
+            const estadoDialogo = contenedor.querySelector('#descriptive-report-status');
+            const botonGuardar = contenedor.querySelector('#descriptive-report-save');
+            const dialogoHistorial = contenedor.querySelector('#descriptive-history-dialog');
+            const cuerpoHistorial = contenedor.querySelector('#descriptive-history-body');
+            const estadoHistorial = contenedor.querySelector('#descriptive-history-status');
+            let alumnoSeleccionado = null;
+
+            const mostrarEstadoDialogo = (mensaje, esError) => {
+                estadoDialogo.textContent = mensaje;
+                estadoDialogo.classList.toggle('is-error', Boolean(esError));
+                estadoDialogo.hidden = !mensaje;
+            };
+
+            const obtenerDatosBoletin = () => ({
+                momento: Number(campoMomento.value),
+                fechaDesde: campoFechaDesde.value,
+                fechaHasta: campoFechaHasta.value,
+                asistencia: Number(campoAsistencia.value),
+                inasistencias: Number(campoInasistencias.value),
+                justificadas: Number(campoJustificadas.value),
+                observacion: campoObservaciones.value.trim()
+            });
 
             if (seccionAsignada) {
                 contenedor.querySelector('#grade-selected-subject').textContent =
@@ -582,11 +838,163 @@ function seleccionarAccion(modulo, boton) {
                 const alumno = alumnosDescriptivos.find(item => item.cedula === fila.dataset.cedula);
                 if (!alumno) return;
 
-                alumno.observacion = fila.querySelector('.descriptive-observation').value.trim();
-                boton.textContent = 'Guardado';
-                window.setTimeout(() => {
-                    boton.textContent = 'Guardar';
-                }, 1200);
+                alumnoSeleccionado = alumno;
+                contenedor.querySelector('#descriptive-report-list-number').textContent =
+                    obtenerNumeroLista(alumno);
+                contenedor.querySelector('#descriptive-report-cedula').textContent = alumno.cedula;
+                contenedor.querySelector('#descriptive-report-name').textContent = alumno.nombre;
+                contenedor.querySelector('#descriptive-report-section').textContent =
+                    `${etiquetaGradoEscolar(alumno.grado)} • Sección ${alumno.seccion}`;
+                campoObservaciones.value = alumno.observacion;
+                campoMomento.value = String(alumno.momento || 1);
+                campoFechaDesde.value = alumno.fechaDesde || '';
+                campoFechaHasta.value = alumno.fechaHasta || '';
+                campoAsistencia.value = String(alumno.asistencia || 0);
+                campoInasistencias.value = String(alumno.inasistencias || 0);
+                campoJustificadas.value = String(alumno.justificadas || 0);
+                mostrarEstadoDialogo('', false);
+                dialogo.showModal();
+            });
+
+            const mostrarHistorial = alumno => {
+                contenedor.querySelector('#descriptive-history-student').textContent =
+                    `${alumno.nombre} • ${alumno.cedula}`;
+                const registros = Array.isArray(alumno.historial) ? alumno.historial : [];
+                estadoHistorial.textContent = registros.length
+                    ? 'Datos de ejemplo almacenados solo en la memoria de esta sesión.'
+                    : 'No hay registros visuales anteriores para este alumno.';
+                estadoHistorial.classList.remove('is-error');
+                estadoHistorial.hidden = false;
+                cuerpoHistorial.innerHTML = registros.map(registro => `
+                    <tr>
+                        <td>Lapso ${escaparHtml(registro.lapso)}</td>
+                        <td>${escaparHtml(registro.periodo || 'Período anterior')}</td>
+                        <td>${escaparHtml(registro.momento)}</td>
+                        <td>${escaparHtml(registro.fechaDesde || '—')}</td>
+                        <td>${escaparHtml(registro.fechaHasta || '—')}</td>
+                        <td>${escaparHtml(registro.asistencia)}</td>
+                        <td>${escaparHtml(registro.inasistencias)}</td>
+                        <td>${escaparHtml(registro.justificadas)}</td>
+                        <td>${escaparHtml(registro.observacion || 'Sin información')}</td>
+                        <td>${escaparHtml(registro.fechaRegistro || '—')}</td>
+                    </tr>
+                `).join('') || `
+                    <tr><td colspan="10" class="grades-empty-state">No hay boletines de lapsos anteriores para este alumno.</td></tr>
+                `;
+                dialogoHistorial.showModal();
+            };
+
+            cuerpo.addEventListener('click', event => {
+                const boton = event.target.closest('.grade-history-action');
+                if (!boton) return;
+
+                const fila = boton.closest('tr[data-cedula]');
+                const alumno = alumnosDescriptivos.find(item => item.cedula === fila.dataset.cedula);
+                if (alumno) mostrarHistorial(alumno);
+            });
+
+            contenedor.querySelector('#descriptive-history-close').addEventListener('click', () => dialogoHistorial.close());
+            contenedor.querySelector('#descriptive-report-close').addEventListener('click', () => dialogo.close());
+            contenedor.querySelector('#descriptive-report-import').addEventListener('click', () => {
+                contenedor.querySelector('#descriptive-report-file').click();
+            });
+            contenedor.querySelector('#descriptive-report-file').addEventListener('change', async event => {
+                const archivo = event.target.files[0];
+                if (!archivo) return;
+
+                try {
+                    const texto = await archivo.text();
+                    if (texto.length > 500) {
+                        throw new Error('La información importada supera el límite de 500 caracteres.');
+                    }
+                    campoObservaciones.value = texto;
+                    mostrarEstadoDialogo('Información importada. Pulsa Guardar para aplicar los cambios.', false);
+                } catch (error) {
+                    mostrarEstadoDialogo(error.message || 'No se pudo importar el archivo.', true);
+                } finally {
+                    event.target.value = '';
+                }
+            });
+            contenedor.querySelector('#descriptive-report-export').addEventListener('click', () => {
+                if (!alumnoSeleccionado) return;
+
+                const datosBoletin = obtenerDatosBoletin();
+                const contenido = [
+                    'Boletín descriptivo',
+                    `Número de lista: ${obtenerNumeroLista(alumnoSeleccionado)}`,
+                    `Cédula escolar: ${alumnoSeleccionado.cedula}`,
+                    `Nombre del alumno: ${alumnoSeleccionado.nombre}`,
+                    `Sección: ${etiquetaGradoEscolar(alumnoSeleccionado.grado)} • ${alumnoSeleccionado.seccion}`,
+                    `Momento: ${datosBoletin.momento}`,
+                    `Fecha desde: ${datosBoletin.fechaDesde || 'No indicada'}`,
+                    `Fecha hasta: ${datosBoletin.fechaHasta || 'No indicada'}`,
+                    `Asistencia: ${datosBoletin.asistencia}`,
+                    `Inasistencias: ${datosBoletin.inasistencias}`,
+                    `Justificadas: ${datosBoletin.justificadas}`,
+                    '',
+                    'Información de la actuación integral del estudiante:',
+                    datosBoletin.observacion
+                ].join('\r\n');
+                const archivo = new Blob([contenido], { type: 'text/plain;charset=utf-8' });
+                const url = URL.createObjectURL(archivo);
+                const enlace = document.createElement('a');
+                enlace.href = url;
+                enlace.download = `boletin-${alumnoSeleccionado.cedula.replace(/[^a-zA-Z0-9._-]/g, '_')}.txt`;
+                enlace.click();
+                window.setTimeout(() => URL.revokeObjectURL(url), 1000);
+            });
+            contenedor.querySelector('#descriptive-report-preview').addEventListener('click', () => {
+                if (!alumnoSeleccionado) return;
+
+                let url = '';
+                try {
+                    const contenido = crearPdfVistaPrevia(
+                        alumnoSeleccionado,
+                        obtenerNumeroLista(alumnoSeleccionado),
+                        obtenerDatosBoletin()
+                    );
+                    url = URL.createObjectURL(new Blob([contenido], { type: 'application/pdf' }));
+                    const ventana = window.open(url, '_blank');
+                    if (!ventana) {
+                        URL.revokeObjectURL(url);
+                        throw new Error('El navegador bloqueó la ventana de vista previa. Permite las ventanas emergentes para abrir el PDF.');
+                    }
+                    ventana.opener = null;
+                    window.setTimeout(() => URL.revokeObjectURL(url), 60000);
+                    mostrarEstadoDialogo('Vista previa PDF abierta. El formato final se añadirá más adelante.', false);
+                } catch (error) {
+                    mostrarEstadoDialogo(error.message || 'No se pudo generar la vista previa PDF.', true);
+                }
+            });
+            botonGuardar.addEventListener('click', () => {
+                if (!alumnoSeleccionado) return;
+
+                const datosBoletin = obtenerDatosBoletin();
+                if (!Number.isInteger(datosBoletin.momento) || datosBoletin.momento < 1 || datosBoletin.momento > 3) {
+                    mostrarEstadoDialogo('Selecciona un momento válido.', true);
+                    return;
+                }
+                if (![datosBoletin.asistencia, datosBoletin.inasistencias, datosBoletin.justificadas]
+                    .every(valor => Number.isInteger(valor) && valor >= 0)) {
+                    mostrarEstadoDialogo('Asistencia, inasistencias y justificadas deben ser números enteros no negativos.', true);
+                    return;
+                }
+                if (datosBoletin.fechaDesde && datosBoletin.fechaHasta
+                    && datosBoletin.fechaDesde > datosBoletin.fechaHasta) {
+                    mostrarEstadoDialogo('La fecha Desde no puede ser posterior a la fecha Hasta.', true);
+                    return;
+                }
+                if (datosBoletin.observacion.length > 500) {
+                    mostrarEstadoDialogo('La información no puede superar los 500 caracteres.', true);
+                    return;
+                }
+
+                Object.assign(alumnoSeleccionado, datosBoletin);
+                renderizarTabla();
+                mostrarEstadoDialogo(
+                    'Boletín guardado en la memoria de esta sesión; no se envió a la base de datos.',
+                    false
+                );
             });
 
             renderizarTabla();
