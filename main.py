@@ -1,6 +1,6 @@
 import eel
 from pathlib import Path
-from database import inicializar_db, validar_credenciales
+from database import inicializar_db, validar_credenciales, guardar_boletin_descriptivo
 
 inicializar_db()
 
@@ -12,6 +12,11 @@ eel.init(str(ROOT_DIR))
 @eel.expose
 def autenticar_usuario(usuario: str, password: str, rol: str) -> dict:
     return validar_credenciales(usuario, password, rol)
+
+
+@eel.expose
+def guardar_registro_descriptivo(registros: list) -> dict:
+    return guardar_boletin_descriptivo(registros)
 
 
 if __name__ == "__main__":

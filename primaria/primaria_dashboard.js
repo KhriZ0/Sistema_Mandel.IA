@@ -29,6 +29,15 @@ function normalizarTexto(texto) {
         .trim();
 }
 
+function escaparHtml(texto) {
+    return String(texto ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 function sincronizarSeccionesConCursos() {
     seccionesAsignadasDocente = [...new Set(seccionesPrimaria.map(seccion =>
         `${etiquetaGradoEscolar(seccion.grado)} • Sección ${seccion.seccion}`
@@ -77,7 +86,9 @@ function actualizarAlumnosDescriptivos(alumnos) {
         grado: Number(item.grado),
         seccion: String(item.seccion || '').trim(),
         lapso: String(item.lapso || 'Lapso 1').trim(),
-        literal: String(item.literal || 'B').trim(),
+        literal: ['A', 'B', 'C', 'D', 'E', 'F'].includes(String(item.literal || 'B').trim().toUpperCase())
+            ? String(item.literal).trim().toUpperCase()
+            : 'B',
         estadoAvance: String(item.estadoAvance || item.estado_avance || 'En proceso').trim(),
         observacion: String(item.observacion || '').trim()
     }));
@@ -304,65 +315,43 @@ function seleccionarAccion(modulo, boton) {
         let contenidoModulo = '';
 
         if (modulo === 'Boletín Descriptivo') {
-            const opcionesGrado = [...new Set(seccionesPrimaria.map(item => item.grado))].sort((a, b) => a - b);
-            const opcionesSeccion = [...new Set(seccionesPrimaria.map(item => item.seccion))].sort((a, b) => a.localeCompare(b, 'es'));
-
             contenidoModulo = `
-                <section class="grade-selection-panel" aria-label="Boletín descriptivo por sección">
-                    <div class="course-filter-panel">
-                        <div class="course-filter-field">
-                            <label for="grade-assignment-year">Grado</label>
-                            <select id="grade-assignment-year">
-                                <option value="">Todos los grados</option>
-                                ${opcionesGrado.map(grado => `<option value="${grado}">${etiquetaGradoEscolar(grado)}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="course-filter-field">
-                            <label for="grade-assignment-section">Sección</label>
-                            <select id="grade-assignment-section">
-                                <option value="">Todas las secciones</option>
-                                ${opcionesSeccion.map(seccion => `<option value="${seccion}">Sección ${seccion}</option>`).join('')}
-                            </select>
-                        </div>
-                        <div class="course-filter-field">
-                            <label for="grade-assignment-search">Buscar alumno</label>
-                            <input id="grade-assignment-search" type="search" placeholder="Nombre o cédula" autocomplete="off">
-                        </div>
-                        <button type="button" class="course-clear-button" id="grade-clear-assignment-filters">Limpiar filtros</button>
-                    </div>
-                    <div class="course-results-heading">
-                        <span id="grade-assignment-count" role="status" aria-live="polite"></span>
-                        <span>Secciones de Educación Básica</span>
-                    </div>
-                    <div id="grade-assigned-courses" class="course-years" aria-busy="false"></div>
-                </section>
-
-                <section class="grade-record-panel" id="grades-table-panel" hidden>
+                <section class="grade-record-panel" id="grades-table-panel">
                     <div class="grade-record-toolbar">
-                        <button type="button" class="grade-back-button" id="grade-back-to-assignments">← Volver a secciones</button>
-                        <button type="button" class="grade-save-button" id="grade-save-button">Guardar registro cualitativo</button>
+                        <div class="course-filter-field">
+                            <label for="grade-table-student-search">Buscar alumno</label>
+                            <div class="grade-search-actions">
+                                <input id="grade-table-student-search" class="admin-input grade-record-search" type="search" placeholder="Nombre o cédula escolar" autocomplete="off">
+                                <button type="button" class="course-clear-button" id="grade-clear-assignment-filters">Limpiar filtros</button>
+                            </div>
+                        </div>
+                        <div class="grade-toolbar-actions">
+                            <input type="file" id="grade-import-file" accept=".xlsx,.xls" hidden>
+                            <button type="button" class="grade-back-button" id="grade-import-button">Importar Excel</button>
+                            <button type="button" class="grade-back-button" id="grade-export-button">Exportar Excel</button>
+                            <button type="button" class="grade-save-button" id="grade-save-all-button">Guardar</button>
+                        </div>
                     </div>
                     <div class="grade-record-heading">
                         <div>
                             <span class="grade-record-eyebrow">BOLETÍN DESCRIPTIVO</span>
-                            <h2 id="grade-selected-subject">Alumnos</h2>
+                            <h2 id="grade-selected-subject">Sección asignada</h2>
                             <p id="grade-selected-section-name"></p>
                         </div>
-                        <div class="grade-record-tools">
-                            <span class="grade-scale-badge">Escala cualitativa A–E</span>
-                        </div>
+                        <span id="grade-assignment-count" class="grade-scale-badge" role="status" aria-live="polite"></span>
                     </div>
-                    <p id="grade-save-status" class="grade-save-status" role="status" aria-live="polite" hidden></p>
                     <div class="grade-table-scroll">
                         <table class="admin-table">
                             <thead>
                                 <tr>
-                                    <th>Cédula</th>
+                                    <th>Cédula escolar</th>
                                     <th>Alumno</th>
-                                    <th>Lapso</th>
-                                    <th>Literal</th>
-                                    <th>Estado de avance</th>
-                                    <th>Observación descriptiva</th>
+                                    <th>Matemática</th>
+                                    <th>Lengua</th>
+                                    <th>Ciencias</th>
+                                    <th>Sociales</th>
+                                    <th>Observaciones</th>
+                                    <th>Acción</th>
                                 </tr>
                             </thead>
                             <tbody id="descriptive-grades-body"></tbody>
@@ -519,107 +508,88 @@ function seleccionarAccion(modulo, boton) {
         }
 
         if (modulo === 'Boletín Descriptivo') {
-            const listado = contenedor.querySelector('#grade-assigned-courses');
-            const panel = contenedor.querySelector('#grades-table-panel');
-            const gradoFiltro = contenedor.querySelector('#grade-assignment-year');
-            const seccionFiltro = contenedor.querySelector('#grade-assignment-section');
-            const alumnoFiltro = contenedor.querySelector('#grade-assignment-search');
-            const contador = contenedor.querySelector('#grade-assignment-count');
             const cuerpo = contenedor.querySelector('#descriptive-grades-body');
-            let seleccionActual = null;
+            const filtro = contenedor.querySelector('#grade-table-student-search');
+            const contador = contenedor.querySelector('#grade-assignment-count');
+            const seccionAsignada = seccionesPrimaria[0];
 
-            const renderizarSecciones = () => {
-                const filtradas = seccionesPrimaria.filter(item =>
-                    (!gradoFiltro.value || item.grado === Number(gradoFiltro.value))
-                    && (!seccionFiltro.value || item.seccion === seccionFiltro.value)
-                );
-                contador.textContent = `${filtradas.length} ${filtradas.length === 1 ? 'sección' : 'secciones'}`;
-                listado.innerHTML = filtradas.map(item => `
-                    <button type="button" class="course-location-card grade-assignment-card" data-grado="${item.grado}" data-seccion="${item.seccion}">
-                        <span class="course-location-label">${etiquetaGradoEscolar(item.grado)} • Sección ${item.seccion}</span>
-                        <span class="grade-assignment-action">Abrir boletín descriptivo</span>
-                        <span class="course-teacher">Maestro Guía: ${item.maestroGuia}</span>
-                    </button>
-                `).join('') || '<p class="course-empty-state">No hay secciones asignadas para este filtro.</p>';
-            };
+            const calificacionesPrueba = ['A', 'B', 'C', 'D', 'E', 'F'];
+            const selectorMateria = (alumno, materia) => `
+                <select class="grade-literal-select" aria-label="${materia} de ${escaparHtml(alumno.nombre)}">
+                    ${calificacionesPrueba.map(literal =>
+                        `<option ${literal === alumno.literal ? 'selected' : ''}>${literal}</option>`
+                    ).join('')}
+                </select>
+            `;
 
-            const renderizarAlumnos = (grado, seccion) => {
-                seleccionActual = { grado, seccion };
-                const aula = seccionesPrimaria.find(item => item.grado === grado && item.seccion === seccion);
-                const consulta = normalizarTexto(alumnoFiltro.value);
-                const alumnos = alumnosDescriptivos.filter(item =>
-                    item.grado === grado
-                    && item.seccion === seccion
-                    && (!consulta || normalizarTexto(`${item.cedula} ${item.nombre}`).includes(consulta))
-                );
-                contenedor.querySelector('#grade-selected-subject').textContent = `${etiquetaGradoEscolar(grado)} • Sección ${seccion}`;
-                contenedor.querySelector('#grade-selected-section-name').textContent = aula
-                    ? `Maestro Guía: ${aula.maestroGuia} • ${aula.aula}`
-                    : '';
-                cuerpo.innerHTML = alumnos.map(alumno => `
-                    <tr>
-                        <td>${alumno.cedula}</td>
-                        <td>${alumno.nombre}</td>
+            const renderizarTabla = () => {
+                const consulta = normalizarTexto(filtro.value);
+                const alumnosSeccion = seccionAsignada
+                    ? alumnosDescriptivos.filter(alumno =>
+                        alumno.grado === seccionAsignada.grado
+                        && alumno.seccion === seccionAsignada.seccion
+                        && (!consulta || normalizarTexto(`${alumno.cedula} ${alumno.nombre}`).includes(consulta))
+                    )
+                    : [];
+
+                contador.textContent = `${alumnosSeccion.length} ${alumnosSeccion.length === 1 ? 'alumno' : 'alumnos'}`;
+                cuerpo.innerHTML = alumnosSeccion.map(alumno => `
+                    <tr data-cedula="${escaparHtml(alumno.cedula)}">
+                        <td>${escaparHtml(alumno.cedula)}</td>
+                        <td>${escaparHtml(alumno.nombre)}</td>
+                        <td>${selectorMateria(alumno, 'Matemática')}</td>
+                        <td>${selectorMateria(alumno, 'Lengua')}</td>
+                        <td>${selectorMateria(alumno, 'Ciencias')}</td>
+                        <td>${selectorMateria(alumno, 'Sociales')}</td>
                         <td>
-                            <select>
-                                <option ${alumno.lapso === 'Lapso 1' ? 'selected' : ''}>Lapso 1</option>
-                                <option ${alumno.lapso === 'Lapso 2' ? 'selected' : ''}>Lapso 2</option>
-                                <option ${alumno.lapso === 'Lapso 3' ? 'selected' : ''}>Lapso 3</option>
-                            </select>
+                            <input class="admin-input descriptive-observation"
+                                value="${escaparHtml(alumno.observacion)}"
+                                aria-label="Observaciones de ${escaparHtml(alumno.nombre)}">
                         </td>
                         <td>
-                            <select>
-                                ${['A', 'B', 'C', 'D', 'E'].map(literal => `<option ${literal === alumno.literal ? 'selected' : ''}>${literal}</option>`).join('')}
-                            </select>
-                        </td>
-                        <td>
-                            <select>
-                                ${['Consolidado', 'En proceso', 'Iniciado', 'En refuerzo pedagógico'].map(estado => `<option ${estado === alumno.estadoAvance ? 'selected' : ''}>${estado}</option>`).join('')}
-                            </select>
-                        </td>
-                        <td>
-                            <input class="admin-input" value="${alumno.observacion}" aria-label="Observación descriptiva">
+                            <button type="button" class="grade-save-button grade-row-action">Guardar</button>
                         </td>
                     </tr>
-                `).join('') || '<tr><td colspan="6" class="grades-empty-state">Los alumnos aparecerán aquí al sincronizar con la base de datos.</td></tr>';
-                listado.parentElement.hidden = true;
-                panel.hidden = false;
+                `).join('') || `
+                    <tr>
+                        <td colspan="8" class="grades-empty-state">
+                            No hay alumnos registrados en la sección asignada.
+                        </td>
+                    </tr>
+                `;
             };
 
-            listado.addEventListener('click', event => {
-                const tarjeta = event.target.closest('[data-grado]');
-                if (tarjeta) renderizarAlumnos(Number(tarjeta.dataset.grado), tarjeta.dataset.seccion);
-            });
+            if (seccionAsignada) {
+                contenedor.querySelector('#grade-selected-subject').textContent =
+                    `${etiquetaGradoEscolar(seccionAsignada.grado)} • Sección ${seccionAsignada.seccion}`;
+                contenedor.querySelector('#grade-selected-section-name').textContent =
+                    `Maestro Guía: ${seccionAsignada.maestroGuia} • ${seccionAsignada.aula}`;
+            }
 
-            gradoFiltro.addEventListener('change', renderizarSecciones);
-            seccionFiltro.addEventListener('change', renderizarSecciones);
-            alumnoFiltro.addEventListener('input', () => {
-                if (!panel.hidden && seleccionActual) {
-                    renderizarAlumnos(seleccionActual.grado, seleccionActual.seccion);
-                }
-            });
+            filtro.addEventListener('input', renderizarTabla);
 
             contenedor.querySelector('#grade-clear-assignment-filters').addEventListener('click', () => {
-                gradoFiltro.value = '';
-                seccionFiltro.value = '';
-                alumnoFiltro.value = '';
-                renderizarSecciones();
+                filtro.value = '';
+                renderizarTabla();
+                filtro.focus();
             });
 
-            contenedor.querySelector('#grade-back-to-assignments').addEventListener('click', () => {
-                seleccionActual = null;
-                panel.hidden = true;
-                listado.parentElement.hidden = false;
-                renderizarSecciones();
+            cuerpo.addEventListener('click', event => {
+                const boton = event.target.closest('.grade-row-action');
+                if (!boton) return;
+
+                const fila = boton.closest('tr[data-cedula]');
+                const alumno = alumnosDescriptivos.find(item => item.cedula === fila.dataset.cedula);
+                if (!alumno) return;
+
+                alumno.observacion = fila.querySelector('.descriptive-observation').value.trim();
+                boton.textContent = 'Guardado';
+                window.setTimeout(() => {
+                    boton.textContent = 'Guardar';
+                }, 1200);
             });
 
-            contenedor.querySelector('#grade-save-button').addEventListener('click', () => {
-                const estado = contenedor.querySelector('#grade-save-status');
-                estado.textContent = 'El registro cualitativo está listo para guardarse en PostgreSQL.';
-                estado.hidden = false;
-            });
-
-            renderizarSecciones();
+            renderizarTabla();
         }
     });
 }

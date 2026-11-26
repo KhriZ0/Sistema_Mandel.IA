@@ -62,6 +62,59 @@ def inicializar_db():
     conn.close()
 
 
+def guardar_boletin_descriptivo(registros: list) -> dict:
+    if not isinstance(registros, list):
+        return {"ok": False, "mensaje": "Los registros deben proporcionarse como una lista."}
+
+    conn = get_connection()
+    cursor = conn.cursor()
+    guardados = 0
+
+    try:
+        for registro in registros:
+            cedula = str(registro.get("cedula", "")).strip()
+            grado = str(registro.get("grado", "")).strip()
+            seccion = str(registro.get("seccion", "")).strip()
+            lapso_texto = str(registro.get("lapso", "")).strip()
+
+            if not cedula or not grado or not seccion:
+                continue
+
+            try:
+                lapso = int(lapso_texto.rsplit(" ", 1)[-1])
+            except (TypeError, ValueError):
+                continue
+
+            literal = str(registro.get("literal", "")).strip().upper()
+            estado = str(registro.get("estadoAvance", "En proceso")).strip()
+            observacion = str(registro.get("observacion", "")).strip()
+
+            if literal not in ("A", "B", "C", "D", "E", "F"):
+                continue
+
+            cursor.execute("""
+                INSERT INTO public.boletin_descriptivo
+                    (cedula, grado_cursando, codigo_grupo, lapso, literal, estado_avance, observacion)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
+                ON CONFLICT (cedula, grado_cursando, codigo_grupo, lapso)
+                DO UPDATE SET
+                    literal = EXCLUDED.literal,
+                    estado_avance = EXCLUDED.estado_avance,
+                    observacion = EXCLUDED.observacion,
+                    fecha_registro = CURRENT_DATE;
+            """, (cedula, grado, seccion, lapso, literal, estado, observacion))
+            guardados += 1
+
+        conn.commit()
+        return {"ok": True, "mensaje": f"{guardados} registros cualitativos guardados correctamente."}
+    except Exception as error:
+        conn.rollback()
+        return {"ok": False, "mensaje": f"No fue posible guardar el boletín: {error}"}
+    finally:
+        cursor.close()
+        conn.close()
+
+
 def validar_credenciales(usuario: str, password: str, rol: str) -> dict:
     conn = get_connection()
     cursor = conn.cursor(cursor_factory=RealDictCursor)

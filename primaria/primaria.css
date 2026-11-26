@@ -452,7 +452,12 @@
     outline-color: rgba(21, 88, 166, 0.16);
 }
 
+.grade-selection-panel .course-filter-panel {
+    grid-template-columns: minmax(200px, 1fr) auto;
+}
+
 .grade-selection-panel .course-clear-button {
+    justify-self: end;
     color: var(--grade-accent);
     background: var(--grade-accent-soft);
     border-color: var(--grade-accent-border);
@@ -518,12 +523,31 @@
 
 .grade-record-toolbar {
     display: flex;
-    align-items: center;
+    align-items: end;
     justify-content: space-between;
     gap: 12px;
     padding: 14px 20px;
     background: #f7f9fc;
     border-bottom: 1px solid #e8edf3;
+}
+
+.grade-search-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.grade-search-actions .grade-record-search {
+    flex: 1;
+}
+
+.grade-toolbar-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    margin-left: auto;
+    flex-wrap: wrap;
 }
 
 .grade-back-button,
@@ -610,12 +634,59 @@
     font-weight: 700;
 }
 
+.grade-record-tools {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.grade-record-search {
+    width: 210px;
+}
+
+.descriptive-lapso,
+.descriptive-status,
+.grade-literal-select {
+    min-height: 38px;
+    padding: 7px 10px;
+    border: 1px solid #d8e2dc;
+    border-radius: 8px;
+    background: #fff;
+    color: #26352e;
+}
+
+.descriptive-lapso {
+    min-width: 112px;
+}
+
+.descriptive-status {
+    min-width: 175px;
+}
+
+.grade-literal-select {
+    min-width: 72px;
+    font-weight: 800;
+    text-align: center;
+}
+
+.descriptive-observation {
+    min-width: 220px;
+}
+
 .grade-table-scroll {
     overflow-x: auto;
 }
 
 .grade-record-panel .admin-table {
     min-width: 800px;
+}
+
+.grade-record-panel .admin-table th,
+.grade-record-panel .admin-table td {
+    text-align: center;
+    vertical-align: middle;
 }
 
 .grade-record-panel .grades-empty-state {

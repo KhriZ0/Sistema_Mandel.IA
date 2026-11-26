@@ -69,6 +69,18 @@ CREATE TABLE IF NOT EXISTS public.usuarios (
     estado VARCHAR(10) NOT NULL DEFAULT 'ACTIVO'
 );
 
+CREATE TABLE IF NOT EXISTS public.boletin_descriptivo (
+    cedula VARCHAR(20) NOT NULL REFERENCES public.estudiantes(cedula),
+    grado_cursando VARCHAR(20) NOT NULL,
+    codigo_grupo VARCHAR(10) NOT NULL,
+    lapso SMALLINT NOT NULL CHECK (lapso BETWEEN 1 AND 3),
+    literal VARCHAR(1) NOT NULL CHECK (literal IN ('A', 'B', 'C', 'D', 'E', 'F')),
+    estado_avance VARCHAR(30) NOT NULL,
+    observacion VARCHAR(500),
+    fecha_registro DATE NOT NULL DEFAULT CURRENT_DATE,
+    PRIMARY KEY (cedula, grado_cursando, codigo_grupo, lapso)
+);
+
 -- Datos semilla iniciales del respaldo
 INSERT INTO public.asignatura (id_asignatura, nombre, descripcion)
 VALUES (1, 'Matematica', NULL)
